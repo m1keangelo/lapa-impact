@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <g stroke="#E8A33D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- photo frame -->
+    <rect x="70" y="42" width="260" height="216" rx="16"/>
+    <!-- inner mat -->
+    <rect x="96" y="68" width="208" height="164" rx="10" opacity="0.45"/>
+    <!-- small mountain inside -->
+    <path d="M118 206 L168 138 L204 184 L226 158 L282 206" opacity="0.85"/>
+    <!-- sun -->
+    <circle cx="254" cy="104" r="13"/>
+    <!-- empty corner fold -->
+    <path d="M284 42 L330 88" opacity="0.35"/>
+  </g>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <g stroke="#E8A33D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Andes peak -->
+    <path d="M22 36 L32 16 L42 36"/>
+    <path d="M28.5 27 L32 20.5 L35.5 27"/>
+    <!-- open cupped hand -->
+    <path d="M12 38 C12 50 21 58 32 58 C43 58 52 50 52 38"/>
+    <path d="M12 38 L7 32"/>
+    <path d="M52 38 L57 32"/>
+  </g>
+</svg>
