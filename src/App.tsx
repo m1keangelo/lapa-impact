@@ -6,6 +6,7 @@ import Impact from './pages/Impact';
 import Feed from './pages/Feed';
 import Gallery from './pages/Gallery';
 import Admin from './pages/Admin';
+import DonateSuccess from './pages/DonateSuccess';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="feed" element={<Feed />} />
         <Route path="gallery" element={<Gallery />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="donate/success" element={<DonateSuccess />} />
         <Route path="*" element={<Home />} />
       </Route>
     </Routes>

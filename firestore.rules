@@ -51,6 +51,14 @@ service cloud.firestore {
       allow create, update, delete: if request.auth != null;
     }
 
+    // stripeSessions/{sessionId} — written ONLY by the stripeWebhook Cloud
+    // Function (Admin SDK bypasses rules). Fully closed to clients: the
+    // public lookupDonation function reads it server-side and returns only
+    // the confirmation status + donor code, never email or other PII.
+    match /stripeSessions/{sessionId} {
+      allow read, write: if false;
+    }
+
     // Deny everything else by default.
     match /{document=**} {
       allow read, write: if false;

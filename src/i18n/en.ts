@@ -76,9 +76,9 @@ export const en = {
         { word: 'arrive.', accent: true },
       ] as { word: string; accent?: boolean }[],
       sub: "Earthquake relief in Colombia's mountain villages — tracked in public, in real time. Donations in. Transfers out. Photos from the field. No black box.",
-      givenByDonors: 'Given by donors',
-      sentToField: 'Sent to the field',
-      familiesHelped: 'Families helped',
+      givenByDonors: 'In the pot',
+      sentToField: 'Deployed to the field',
+      familiesHelped: 'Families reached',
       enterCode: 'Enter your donor code',
       watchFeed: 'Watch the live feed ↓',
       scroll: 'scroll',
@@ -94,24 +94,24 @@ export const en = {
     },
     journey: {
       eyebrow: 'The journey',
-      title: 'How a dollar travels.',
-      aria: 'How a dollar travels',
+      title: 'How the pot moves.',
+      aria: 'How the pot moves',
       steps: [
         {
           title: 'You give.',
-          body: 'A donor in Ohio gives $50 from her phone. It lands in the ledger the same minute — amount, time, name. No batching, no delay.',
+          body: 'A donor in Ohio gives $50 from her phone. Her gift joins the pot the same minute — amount, time, name. No batching, no delay.',
         },
         {
-          title: "It's tracked.",
-          body: 'Every dollar is recorded in a public ledger you can open right now. Totals update live — the numbers on this page are this minute’s numbers.',
+          title: 'It pools.',
+          body: 'Every gift joins one pooled fund — nothing earmarked, nothing pre-allocated by guesswork. The whole ledger is public: the numbers on this page are this minute’s numbers.',
         },
         {
-          title: 'It crosses.',
-          body: 'Funds transfer to our field coordinator in Colombia. Each transfer is logged with recipient, purpose, and proof.',
+          title: 'It deploys.',
+          body: 'The team deploys the pot against what the field needs today — funds transfer to our coordinator in Colombia, each transfer logged with recipient, purpose, and proof.',
         },
         {
           title: 'It arrives.',
-          body: 'Supplies reach mountain villages. Photos come back from the field and appear here — matched to the gifts that paid for them.',
+          body: 'Supplies reach mountain villages. Photos come back from the field and appear here — proof of what the pot deployed.',
         },
       ] as { title: string; body: string }[],
     },
@@ -178,7 +178,7 @@ export const en = {
     reconnectingBanner: 'Reconnecting to the field…',
     signedInAs: (last4: string) => `Signed in as code •••• ${last4}`,
     greetingWord: 'Hola,',
-    intro: "Here's everything your generosity has done — updated live from the field.",
+    intro: 'Your gift joined the pot — here’s what the pot has deployed, updated live from the field.',
     toastGift: 'Your gift was recorded — thank you.',
     notFoundTitle: "We can't find a ledger for this code.",
     notFoundBody:
@@ -190,13 +190,14 @@ export const en = {
     deltaGifts: (count: number, first: string) =>
       `${count} ${count === 1 ? 'gift' : 'gifts'} · first gift ${first}`,
     deltaNoGifts: 'no gifts recorded yet',
-    stat2Label: 'Sent to the field',
-    stat2Delta: (total: string) => `your share of the ${total} transferred`,
+    stat2Label: 'Deployed to the field',
+    stat2Delta: (total: string) =>
+      `your share of the pot — part of the ${total} deployed so far`,
     stat3Label: 'Families reached',
-    stat3Delta: 'through the work your gifts funded',
+    stat3Delta: 'through what the pot deployed',
     biggerTitle: "You're part of something bigger.",
-    biggerIn: 'in from all donors',
-    biggerOut: 'out to the field',
+    biggerIn: 'into the pot from all donors',
+    biggerOut: 'deployed to the field',
     biggerFamilies: 'families helped',
     footerNote: 'Your code is your key — bookmark it. We never ask for a password.',
     givingTotalsAria: 'Your giving totals',
@@ -215,14 +216,14 @@ export const en = {
     supplies: 'Supplies delivered',
     fallback: 'Field impact',
     loadingAria: 'Loading your footprint',
-    sectionAria: 'What your giving funded',
+    sectionAria: 'What the pot deployed — your share',
   },
 
   giftHistory: {
     title: 'Your gifts',
     emptyTitle: 'No gifts recorded yet.',
     emptyBody: 'When your next gift lands, it will appear here within seconds.',
-    giftTitle: 'Gift to LAPA Mission',
+    giftTitle: 'Gift to the pot',
     loadingAria: 'Loading your gifts',
     sectionAria: 'Your gifts',
   },
@@ -289,7 +290,7 @@ export const en = {
     noGifts: 'No gifts recorded yet.',
     thankYou: 'Thank you.',
     transparency:
-      'This ledger is public by design. Amounts are exact; identities are partial. Questions? Contact the mission.',
+      'All gifts pool into one fund, deployed daily against what the field needs. This ledger is public by design. Amounts are exact; identities are partial. Questions? Contact the mission.',
   },
 
   gallery: {
@@ -377,7 +378,7 @@ export const en = {
       useExisting: '← Use an existing code instead',
       createNew: 'Create a new donor with a fresh code',
       noteOptional: 'Note (optional)',
-      notePh: 'For the river families…',
+      notePh: 'Wherever the field needs it most today…',
       recordGift: 'Record gift',
       donorCreated: 'Donor created — share this code',
       copyFailed: 'Copy failed — select the code manually.',
@@ -447,6 +448,37 @@ export const en = {
       transferOut: 'Transfer out',
       publishedToGallery: 'Published to the gallery',
       photoFromField: 'Photo from the field',
+    },
+  },
+
+  donate: {
+    button: 'Donate',
+    giveNow: 'Give now',
+    giveAria: 'Give now — opens secure Stripe checkout in a new tab',
+    potNote:
+      'All gifts pool into one fund — nothing earmarked. The team deploys the pot daily against what the field needs right now.',
+    success: {
+      confirmingTitle: 'Confirming your gift with Stripe…',
+      confirmingBody:
+        'Hang tight — Stripe is telling us your gift landed. This usually takes a few seconds; keep this tab open.',
+      confirmedTitle: 'Your gift is in the pot.',
+      confirmedBody:
+        'Thank you. Your gift joined one pooled fund — the team deploys it against what the field needs today. This code is your window into all of it:',
+      yourCode: 'Your donor code',
+      codeHint:
+        'Keep it safe — it opens your personal impact page. We never ask for a password.',
+      copyCode: 'Copy code',
+      seeMyImpact: 'See my impact',
+      watchFeed: 'Watch the live feed',
+      timeoutTitle: 'Still confirming…',
+      timeoutBody:
+        'Stripe is taking longer than usual to confirm your gift. If your payment went through, your code is on its way — contact us and we’ll sort it out.',
+      contactNote: 'Contact the mission and mention the time of your gift.',
+      unavailableTitle: 'Donation tracking is offline right now.',
+      unavailableBody:
+        'This build isn’t wired to live payment confirmation. In the live app, your donor code appears here seconds after checkout.',
+      backHome: 'Back to home',
+      loadingAria: 'Confirming your donation',
     },
   },
 };

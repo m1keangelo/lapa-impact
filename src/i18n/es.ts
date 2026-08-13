@@ -74,9 +74,9 @@ export const es: Dictionary = {
         { word: 'llegar.', accent: true },
       ] as { word: string; accent?: boolean }[],
       sub: 'Ayuda por el terremoto en las aldeas de montaña de Colombia — registrada en público, en tiempo real. Entran donaciones. Salen transferencias. Llegan fotos del campo. Sin caja negra.',
-      givenByDonors: 'Donado por donantes',
-      sentToField: 'Enviado al campo',
-      familiesHelped: 'Familias ayudadas',
+      givenByDonors: 'En el fondo',
+      sentToField: 'Desplegado al campo',
+      familiesHelped: 'Familias alcanzadas',
       enterCode: 'Ingresa tu código de donante',
       watchFeed: 'Mira el registro en vivo ↓',
       scroll: 'desliza',
@@ -92,24 +92,24 @@ export const es: Dictionary = {
     },
     journey: {
       eyebrow: 'El recorrido',
-      title: 'El viaje de un dólar.',
-      aria: 'El viaje de un dólar',
+      title: 'Cómo se mueve el fondo.',
+      aria: 'Cómo se mueve el fondo',
       steps: [
         {
           title: 'Tú donas.',
-          body: 'Una donante en Ohio dona $50 desde su celular. Cae en el registro en ese mismo minuto — monto, hora y nombre. Sin lotes, sin demoras.',
+          body: 'Una donante en Ohio dona $50 desde su celular. Su donativo se suma al fondo en ese mismo minuto — monto, hora y nombre. Sin lotes, sin demoras.',
         },
         {
-          title: 'Queda registrado.',
-          body: 'Cada dólar queda en un registro público que puedes abrir ahora mismo. Los totales se actualizan en vivo — las cifras de esta página son las de este minuto.',
+          title: 'Se suma al fondo.',
+          body: 'Cada donativo entra a un solo fondo común — nada preasignado, nada repartido por suposiciones. Todo el registro es público: las cifras de esta página son las de este minuto.',
         },
         {
-          title: 'Cruza la frontera.',
-          body: 'Los fondos se transfieren a nuestro coordinador de campo en Colombia. Cada transferencia se registra con destinatario, propósito y comprobante.',
+          title: 'Se despliega.',
+          body: 'El equipo despliega el fondo contra lo que el campo necesita hoy — las transferencias van a nuestro coordinador en Colombia, cada una con destinatario, propósito y comprobante.',
         },
         {
           title: 'Llega a destino.',
-          body: 'Los suministros llegan a las aldeas de montaña. Las fotos regresan del campo y aparecen aquí — vinculadas a los donativos que las pagaron.',
+          body: 'Los suministros llegan a las aldeas de montaña. Las fotos regresan del campo y aparecen aquí — prueba de lo que el fondo desplegó.',
         },
       ] as { title: string; body: string }[],
     },
@@ -176,7 +176,7 @@ export const es: Dictionary = {
     reconnectingBanner: 'Reconectando con el campo…',
     signedInAs: (last4: string) => `Sesión con código •••• ${last4}`,
     greetingWord: 'Hola,',
-    intro: 'Esto es todo lo que tu generosidad ha logrado — actualizado en vivo desde el campo.',
+    intro: 'Tu donativo se sumó al fondo — esto es lo que el fondo ha desplegado, en vivo desde el campo.',
     toastGift: 'Tu donativo quedó registrado — gracias.',
     notFoundTitle: 'No encontramos un registro para este código.',
     notFoundBody:
@@ -188,13 +188,14 @@ export const es: Dictionary = {
     deltaGifts: (count: number, first: string) =>
       `${count} ${count === 1 ? 'donativo' : 'donativos'} · primero en ${first}`,
     deltaNoGifts: 'aún no hay donativos registrados',
-    stat2Label: 'Enviado al campo',
-    stat2Delta: (total: string) => `tu parte de los ${total} transferidos`,
+    stat2Label: 'Desplegado al campo',
+    stat2Delta: (total: string) =>
+      `tu parte del fondo — dentro de los ${total} desplegados hasta ahora`,
     stat3Label: 'Familias alcanzadas',
-    stat3Delta: 'a través del trabajo que financiaron tus donativos',
+    stat3Delta: 'a través de lo que el fondo desplegó',
     biggerTitle: 'Eres parte de algo más grande.',
-    biggerIn: 'recibido de todos los donantes',
-    biggerOut: 'enviado al campo',
+    biggerIn: 'al fondo de todos los donantes',
+    biggerOut: 'desplegado al campo',
     biggerFamilies: 'familias ayudadas',
     footerNote: 'Tu código es tu llave — guárdalo. Nunca te pediremos una contraseña.',
     givingTotalsAria: 'Tus totales de donación',
@@ -213,14 +214,14 @@ export const es: Dictionary = {
     supplies: 'Suministros entregados',
     fallback: 'Impacto de campo',
     loadingAria: 'Cargando tu huella',
-    sectionAria: 'Lo que financiaron tus donativos',
+    sectionAria: 'Lo que el fondo desplegó — tu parte',
   },
 
   giftHistory: {
     title: 'Tus donativos',
     emptyTitle: 'Aún no hay donativos registrados.',
     emptyBody: 'Cuando llegue tu próximo donativo, aparecerá aquí en segundos.',
-    giftTitle: 'Donativo a LAPA Mission',
+    giftTitle: 'Donativo al fondo común',
     loadingAria: 'Cargando tus donativos',
     sectionAria: 'Tus donativos',
   },
@@ -287,7 +288,7 @@ export const es: Dictionary = {
     noGifts: 'Aún no hay donativos registrados.',
     thankYou: 'Gracias.',
     transparency:
-      'Este registro es público por diseño. Los montos son exactos; las identidades son parciales. ¿Preguntas? Contacta a la misión.',
+      'Todos los donativos se suman a un solo fondo, desplegado a diario según lo que el campo necesita. Este registro es público por diseño. Los montos son exactos; las identidades son parciales. ¿Preguntas? Contacta a la misión.',
   },
 
   gallery: {
@@ -375,7 +376,7 @@ export const es: Dictionary = {
       useExisting: '← Usar un código existente',
       createNew: 'Crear un donante nuevo con un código nuevo',
       noteOptional: 'Nota (opcional)',
-      notePh: 'Para las familias del río…',
+      notePh: 'Donde el campo más lo necesite hoy…',
       recordGift: 'Registrar donativo',
       donorCreated: 'Donante creado — comparte este código',
       copyFailed: 'No se pudo copiar — selecciona el código manualmente.',
@@ -445,6 +446,37 @@ export const es: Dictionary = {
       transferOut: 'Transferencia enviada',
       publishedToGallery: 'Publicada en la galería',
       photoFromField: 'Foto del campo',
+    },
+  },
+
+  donate: {
+    button: 'Donar',
+    giveNow: 'Dona ahora',
+    giveAria: 'Dona ahora — abre el pago seguro de Stripe en una pestaña nueva',
+    potNote:
+      'Todos los donativos se suman a un solo fondo — nada está preasignado. El equipo despliega el fondo cada día según lo que el campo necesita ahora mismo.',
+    success: {
+      confirmingTitle: 'Confirmando tu donativo con Stripe…',
+      confirmingBody:
+        'Un momento — Stripe nos está avisando que tu donativo llegó. Suele tardar unos segundos; no cierres esta pestaña.',
+      confirmedTitle: 'Tu donativo ya está en el fondo.',
+      confirmedBody:
+        'Gracias. Tu donativo se sumó a un fondo común — el equipo lo despliega según lo que el campo necesita hoy. Este código es tu ventana a todo eso:',
+      yourCode: 'Tu código de donante',
+      codeHint:
+        'Guárdalo bien — abre tu página personal de impacto. Nunca te pediremos una contraseña.',
+      copyCode: 'Copiar código',
+      seeMyImpact: 'Ver mi impacto',
+      watchFeed: 'Ver el registro en vivo',
+      timeoutTitle: 'Aún confirmando…',
+      timeoutBody:
+        'Stripe está tardando más de lo normal en confirmar tu donativo. Si tu pago se procesó, tu código está en camino — contáctanos y lo resolvemos.',
+      contactNote: 'Escríbenos a la misión mencionando la hora de tu donativo.',
+      unavailableTitle: 'El seguimiento de donativos está desconectado ahora.',
+      unavailableBody:
+        'Esta compilación no está conectada a la confirmación de pagos en vivo. En la app real, tu código de donante aparece aquí segundos después del pago.',
+      backHome: 'Volver al inicio',
+      loadingAria: 'Confirmando tu donativo',
     },
   },
 };

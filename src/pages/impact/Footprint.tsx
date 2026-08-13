@@ -1,5 +1,5 @@
 /**
- * Impact Section 3 — "What your giving funded" (dashboard.md §3).
+ * Impact Section 3 — "What the pot deployed — your share" (dashboard.md §3).
  * A horizontal (desktop) / vertical (mobile) timeline of impact chips
  * derived from field-update metrics, connected by a 2px dashed line that
  * draws itself on scroll-into-view. Empty → Sprout EmptyState.

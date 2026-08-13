@@ -1,0 +1,32 @@
+{
+  "name": "functions",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Firebase Cloud Functions — Stripe donation pipeline for LAPA Mission Colombia",
+  "main": "lib/index.js",
+  "engines": {
+    "node": "20"
+  },
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^6.1.0",
+    "nanoid": "^3.3.7",
+    "stripe": "^17.3.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
+    "eslint": "^9.15.0",
+    "typescript": "~5.9.3"
+  }
+}

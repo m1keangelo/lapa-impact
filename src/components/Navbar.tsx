@@ -10,9 +10,10 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Menu } from 'lucide-react';
+import { Menu, HandCoins } from 'lucide-react';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { STRIPE_PAYMENT_LINK } from '@/lib/donate';
 import { formatMoneyShort } from '@/lib/format';
 import { getDonorCode } from '@/lib/session';
 import { cn } from '@/lib/utils';
@@ -46,6 +47,11 @@ export default function Navbar() {
   }, []);
 
   const closeSheet = () => setSheetOpen(false);
+
+  const amberBtn =
+    'rounded-[10px] bg-amber px-4 py-2 text-sm font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]';
+  const secondaryBtn =
+    'rounded-[10px] border border-border-strong px-4 py-2 text-sm font-semibold text-text transition-all duration-150 ease-calm hover:bg-surface-2/60 active:scale-[0.98]';
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
@@ -109,18 +115,31 @@ export default function Navbar() {
           {donorCode ? (
             <Link
               to="/impact"
-              className="ml-2 rounded-[10px] bg-amber px-4 py-2 text-sm font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
+              className={cn('ml-2', STRIPE_PAYMENT_LINK ? secondaryBtn : amberBtn)}
             >
               {t.nav.myImpact}
             </Link>
           ) : (
             <Link
               to="/login"
-              className="ml-2 rounded-[10px] bg-amber px-4 py-2 text-sm font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
+              className={cn('ml-2', STRIPE_PAYMENT_LINK ? secondaryBtn : amberBtn)}
             >
               {t.nav.enterCode}
             </Link>
           )}
+
+          {STRIPE_PAYMENT_LINK ? (
+            <a
+              href={STRIPE_PAYMENT_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t.donate.giveAria}
+              className={cn(amberBtn, 'ml-2 inline-flex items-center gap-1.5')}
+            >
+              <HandCoins className="h-4 w-4" />
+              {t.donate.button}
+            </a>
+          ) : null}
         </nav>
 
         {/* Mobile: language + theme toggles + hamburger sheet */}
@@ -174,20 +193,51 @@ export default function Navbar() {
                           </NavLink>
                         </motion.div>
                       ))}
+                      {STRIPE_PAYMENT_LINK ? (
+                        <motion.div
+                          initial={{ opacity: 0, x: 24 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{
+                            delay: 0.06 * (donorCode ? 4 : 3),
+                            duration: 0.35,
+                            ease: [0.22, 1, 0.36, 1],
+                          }}
+                          className="mt-6"
+                        >
+                          <a
+                            href={STRIPE_PAYMENT_LINK}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={closeSheet}
+                            aria-label={t.donate.giveAria}
+                            className="flex items-center justify-center gap-2 rounded-[10px] bg-amber px-4 py-3.5 text-center text-base font-semibold text-[#1A130B] transition-all active:scale-[0.98]"
+                          >
+                            <HandCoins className="h-5 w-5" />
+                            {t.donate.button}
+                          </a>
+                        </motion.div>
+                      ) : null}
                       <motion.div
                         initial={{ opacity: 0, x: 24 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{
-                          delay: 0.06 * (donorCode ? 4 : 3),
+                          delay:
+                            0.06 *
+                            ((donorCode ? 4 : 3) + (STRIPE_PAYMENT_LINK ? 1 : 0)),
                           duration: 0.35,
                           ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="mt-6"
+                        className={STRIPE_PAYMENT_LINK ? 'mt-3' : 'mt-6'}
                       >
                         <Link
                           to={donorCode ? '/impact' : '/login'}
                           onClick={closeSheet}
-                          className="block rounded-[10px] bg-amber px-4 py-3.5 text-center text-base font-semibold text-[#1A130B] transition-all active:scale-[0.98]"
+                          className={cn(
+                            'block rounded-[10px] px-4 py-3.5 text-center text-base font-semibold transition-all active:scale-[0.98]',
+                            STRIPE_PAYMENT_LINK
+                              ? 'border border-border-strong text-text'
+                              : 'bg-amber text-[#1A130B]',
+                          )}
                         >
                           {donorCode ? t.nav.openMyImpact : t.nav.enterYourDonorCode}
                         </Link>
@@ -196,7 +246,9 @@ export default function Navbar() {
                         initial={{ opacity: 0, x: 24 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{
-                          delay: 0.06 * (donorCode ? 5 : 4),
+                          delay:
+                            0.06 *
+                            ((donorCode ? 5 : 4) + (STRIPE_PAYMENT_LINK ? 1 : 0)),
                           duration: 0.35,
                           ease: [0.22, 1, 0.36, 1],
                         }}

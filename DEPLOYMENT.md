@@ -44,7 +44,7 @@ deployed to Vercel. Total expected cost: **$0** (see step 6).
 
 ```bash
 npm install
-cp .env.example .env      # then fill in all 8 values
+cp .env.example .env      # then fill in all 10 values
 npm run dev
 ```
 
@@ -67,7 +67,7 @@ vercel --prod     # production deploy
 ```
 
 Then set the environment variables: Vercel dashboard → your project →
-**Settings → Environment Variables** → add all 8 `VITE_*` vars
+**Settings → Environment Variables** → add all 10 `VITE_*` vars
 (Production + Preview). **Redeploy** after adding them
 (`vercel --prod` again, or Deployments → ⋯ → Redeploy) — Vite bakes env vars
 into the bundle at build time.
@@ -76,13 +76,76 @@ into the bundle at build time.
 > dashboard variables are the only source on the platform. Verify `.env`
 > stays untracked before your first push (`git status` should not list it).
 
-## 5. SPA rewrite
+## 5. Donations (Stripe)
+
+Donations are processed by **Stripe Payment Links**. All gifts pool into ONE
+fund — the team deploys it dynamically against daily field needs (nothing is
+earmarked per donor). After checkout, Stripe redirects the donor back to
+`/donate/success`, which picks up their freshly generated donor code.
+
+> **Entity requirement:** Stripe does **not** onboard Colombia-registered
+> merchants — you need a US (or other supported-country) legal entity and
+> bank account. If the mission only has a Colombian entity, use
+> [Wompi](https://wompi.com) as plan B (Bancolombia's processor) and adapt
+> `functions/src/stripeWebhook.ts` to Wompi's event format.
+>
+> **Nonprofit rate:** registered US 501(c)(3) organizations can apply for
+> Stripe's discounted nonprofit processing rate of **2.2% + $0.30** per
+> transaction (Stripe support → "nonprofit discount").
+
+1. **Create the Payment Link:** Stripe Dashboard → **Payment Links** →
+   **+ New** → pick your donation product/price (enable "Let customers
+   adjust quantity" or custom amounts if desired). Under
+   **After payment → Confirmation page**, choose **Redirect to your
+   website** and set:
+   ```
+   https://YOURAPP/donate/success?session_id={CHECKOUT_SESSION_ID}
+   ```
+   (Stripe substitutes `{CHECKOUT_SESSION_ID}` literally — keep it as-is.)
+   Copy the link URL (`https://buy.stripe.com/…`) → `VITE_STRIPE_PAYMENT_LINK`.
+2. **Deploy the functions** (repo includes `functions/` + `firebase.json` +
+   `.firebaserc` — set your project id in `.firebaserc` first):
+   ```bash
+   cd functions && npm install && cd ..
+   firebase functions:secrets:set STRIPE_SECRET_KEY      # sk_live_… or sk_test_…
+   firebase functions:secrets:set STRIPE_WEBHOOK_SECRET  # set after step 3; redeploy after
+   firebase deploy --only functions
+   ```
+   Note the two function URLs in the deploy output, e.g.
+   `https://us-central1-<project>.cloudfunctions.net/stripeWebhook` and
+   `…/lookupDonation`. The base (`https://us-central1-<project>.cloudfunctions.net`)
+   goes into `VITE_FUNCTIONS_BASE_URL`.
+3. **Create the webhook:** Stripe Dashboard → **Developers → Webhooks** →
+   **Add endpoint** → URL = the `stripeWebhook` function URL → listen to
+   **`checkout.session.completed`** only. Copy the endpoint's
+   **Signing secret** (`whsec_…`) and set it:
+   ```bash
+   firebase functions:secrets:set STRIPE_WEBHOOK_SECRET
+   firebase deploy --only functions   # pick up the new secret value
+   ```
+4. **Verify end-to-end in test mode:**
+   ```bash
+   stripe listen --forward-to https://us-central1-<project>.cloudfunctions.net/stripeWebhook
+   stripe trigger checkout.session.completed
+   ```
+   Then open a test Payment Link, pay with `4242 4242 4242 4242`, and confirm
+   the success page shows a donor code and the feed updates live. Check
+   `firebase functions:log` if the success page stays in "Confirming…".
+
+How it works: `stripeWebhook` verifies the signature, writes the donation +
+donor (12-char Base58 code) + `stats/global.totalIn` increment +
+`stripeSessions/{sessionId}` marker in one batch (idempotent on session id);
+`lookupDonation` is a public read-only endpoint that returns just
+`{status, code}` — never email or PII. The `stripeSessions` collection is
+fully closed in `firestore.rules` (Admin SDK bypasses rules).
+
+## 6. SPA rewrite
 
 `vercel.json` is already included in this repo and rewrites every route to
 `index.html`, so deep links like `/admin`, `/feed` and `/impact` work on
 hard refresh. Nothing to configure.
 
-## 6. Firebase Blaze plan note
+## 7. Firebase Blaze plan note
 
 Firestore security rules that reference `request.auth` and Auth itself work
 on the free **Spark** plan — but the project's Firestore usage may prompt an

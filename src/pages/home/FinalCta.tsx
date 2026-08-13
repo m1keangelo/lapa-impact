@@ -8,8 +8,9 @@
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight, HandCoins, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { STRIPE_PAYMENT_LINK } from '@/lib/donate';
 import {
   DONOR_CODE_LENGTH,
   isPlausibleDonorCode,
@@ -198,7 +199,24 @@ export default function FinalCta() {
           </button>
         </motion.div>
 
-        <motion.div {...stagger(0.4)} className="mt-6">
+        <motion.div {...stagger(0.4)} className="mt-6 flex flex-col items-center gap-4">
+          {STRIPE_PAYMENT_LINK ? (
+            <a
+              href={STRIPE_PAYMENT_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t.donate.giveAria}
+              className="inline-flex items-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
+            >
+              <HandCoins className="h-4 w-4" />
+              {t.donate.giveNow}
+            </a>
+          ) : null}
+          {STRIPE_PAYMENT_LINK ? (
+            <p className="max-w-[46ch] text-[12px] font-medium leading-[1.45] tracking-[0.01em] text-text-faint">
+              {t.donate.potNote}
+            </p>
+          ) : null}
           <Link
             to="/feed"
             className="text-sm font-semibold text-amber transition-colors hover:text-amber-soft"
