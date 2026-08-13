@@ -1,7 +1,8 @@
 /**
  * Realistic demo data so every surface renders fully before Firebase is
- * connected (firebaseReady === false). Photos reuse the generated assets
- * in /public as Cloudinary placeholders (design.md §11).
+ * connected (firebaseReady === false). Photos are real imagery from the
+ * 10 Aug 2026 M7.4 Chocó earthquake response (see public/PHOTO_CREDITS.md),
+ * served from /public as Cloudinary placeholders (design.md §11).
  */
 import type {
   Donation,
@@ -144,49 +145,49 @@ export const demoUpdates: ImpactUpdate[] = [
 export const demoMedia: MediaItem[] = [
   {
     id: 'demo-med-1',
-    cloudinaryUrl: '/how-step-3.jpg',
-    thumbnailUrl: '/how-step-3.jpg',
-    caption: 'Loading the supply truck in the valley before dawn.',
+    cloudinaryUrl: '/quake-1.jpg',
+    thumbnailUrl: '/quake-1.jpg',
+    caption: 'Rescue teams clearing rubble of a collapsed building in Pereira, 12 Aug 2026.',
     timestamp: now - 6 * HOUR,
     updateId: 'demo-upd-3',
   },
   {
     id: 'demo-med-2',
-    cloudinaryUrl: '/how-step-4.jpg',
-    thumbnailUrl: '/how-step-4.jpg',
-    caption: 'The Palacios family receiving their supply basket at the door.',
+    cloudinaryUrl: '/quake-2.jpg',
+    thumbnailUrl: '/quake-2.jpg',
+    caption: 'Search and rescue underway in the rubble, Pereira.',
     timestamp: now - 7 * HOUR,
     donationId: 'demo-don-1',
     updateId: 'demo-upd-1',
   },
   {
     id: 'demo-med-3',
-    cloudinaryUrl: '/how-step-2.jpg',
-    thumbnailUrl: '/how-step-2.jpg',
-    caption: 'The field ledger — every gift recorded the minute it lands.',
+    cloudinaryUrl: '/quake-3.jpg',
+    thumbnailUrl: '/quake-3.jpg',
+    caption: 'Building damage in Manizales after the M7.4 quake.',
     timestamp: now - 12 * HOUR,
   },
   {
     id: 'demo-med-4',
-    cloudinaryUrl: '/hero-andes.jpg',
-    thumbnailUrl: '/hero-andes.jpg',
-    caption: 'Golden hour over the foothills above the village.',
+    cloudinaryUrl: '/quake-map.jpg',
+    thumbnailUrl: '/quake-map.jpg',
+    caption: 'USGS ShakeMap: MMI VIII near the epicenter at San José del Palmar, Chocó.',
     timestamp: now - 26 * HOUR,
     updateId: 'demo-upd-3',
   },
   {
     id: 'demo-med-5',
-    cloudinaryUrl: '/how-step-1.jpg',
-    thumbnailUrl: '/how-step-1.jpg',
-    caption: 'A gift from Ohio, logged the same minute it was given.',
+    cloudinaryUrl: '/quake-4.jpg',
+    thumbnailUrl: '/quake-4.jpg',
+    caption: 'Debris from a collapsed building after the 2026 Colombia earthquake.',
     timestamp: now - 2 * DAY,
     donationId: 'demo-don-5',
   },
   {
     id: 'demo-med-6',
-    cloudinaryUrl: '/how-step-4.jpg',
-    thumbnailUrl: '/how-step-4.jpg',
-    caption: 'Kitchen kits for three families in La Cumbre.',
+    cloudinaryUrl: '/quake-5.jpg',
+    thumbnailUrl: '/quake-5.jpg',
+    caption: 'Seismogram of the M7.4 mainshock recorded on 10 Aug 2026.',
     timestamp: now - 3 * DAY,
     updateId: 'demo-upd-3',
   },
