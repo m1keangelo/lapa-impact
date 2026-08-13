@@ -9,6 +9,7 @@ import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Loader2 } from 'lucide-react';
+import { useLanguage } from '@/i18n/LanguageContext';
 import {
   DONOR_CODE_LENGTH,
   isPlausibleDonorCode,
@@ -22,6 +23,7 @@ const BASE58 = /^[1-9A-HJ-NP-Za-km-z]$/;
 export default function FinalCta() {
   const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [chars, setChars] = useState<string[]>(Array(DONOR_CODE_LENGTH).fill(''));
   const [submitting, setSubmitting] = useState(false);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
@@ -109,7 +111,7 @@ export default function FinalCta() {
       >
         <motion.p {...stagger(0)} className="eyebrow flex items-center gap-3">
           <span className="inline-block h-px w-4 bg-amber" aria-hidden />
-          Have a code?
+          {t.home.finalCta.eyebrow}
           <span className="inline-block h-px w-4 bg-amber" aria-hidden />
         </motion.p>
 
@@ -117,19 +119,19 @@ export default function FinalCta() {
           {...stagger(0.1)}
           className="mt-4 font-display text-[32px] font-medium leading-[1.1] tracking-[-0.015em] text-text md:text-5xl"
         >
-          Your impact is waiting.
+          {t.home.finalCta.title}
         </motion.h2>
 
         <motion.p
           {...stagger(0.2)}
           className="mt-3 text-[13px] font-medium leading-[1.4] tracking-[0.01em] text-text-muted"
         >
-          Enter the 12-character code from your giving receipt.
+          {t.home.finalCta.body}
         </motion.p>
 
         {/* Segmented code boxes + arrow button */}
         <motion.div {...stagger(0.3)} className="mt-8 flex items-center gap-3">
-          <div className="flex items-center gap-1.5 sm:gap-2" role="group" aria-label="Donor code">
+          <div className="flex items-center gap-1.5 sm:gap-2" role="group" aria-label={t.home.finalCta.groupAria}>
             {chars.map((ch, i) => (
               <div key={i} className="flex items-center gap-1.5 sm:gap-2">
                 {i === 6 ? <span className="mx-0.5 h-px w-3 bg-border-strong" aria-hidden /> : null}
@@ -167,7 +169,7 @@ export default function FinalCta() {
                     autoCapitalize="characters"
                     spellCheck={false}
                     maxLength={DONOR_CODE_LENGTH}
-                    aria-label={`Code character ${i + 1}`}
+                    aria-label={t.home.finalCta.charAria(i)}
                     className="h-11 w-7 bg-transparent text-center font-mono text-lg tracking-[0.08em] text-text caret-amber outline-none sm:h-12 sm:w-9"
                     style={{ fontVariantNumeric: 'tabular-nums' }}
                   />
@@ -180,7 +182,7 @@ export default function FinalCta() {
             type="button"
             onClick={submit}
             disabled={!complete || submitting}
-            aria-label="Open my impact"
+            aria-label={t.home.finalCta.submitAria}
             className={cn(
               'flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] transition-all duration-150 ease-calm active:scale-[0.98]',
               complete
@@ -201,7 +203,7 @@ export default function FinalCta() {
             to="/feed"
             className="text-sm font-semibold text-amber transition-colors hover:text-amber-soft"
           >
-            Don't have a code? See the public feed →
+            {t.home.finalCta.noCode}
           </Link>
         </motion.div>
       </div>

@@ -16,6 +16,7 @@ import { Camera, CircleAlert, HandCoins, Newspaper, Send } from 'lucide-react';
 import { Toaster } from 'sonner';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { firebaseReady } from '@/lib/firebase';
+import { useLanguage, type LanguageContextValue } from '@/i18n/LanguageContext';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { cn } from '@/lib/utils';
@@ -30,14 +31,16 @@ import RecentActivity from './admin/RecentActivity';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-const TABS = [
-  { id: 'gift', label: 'Gift', icon: HandCoins },
-  { id: 'transfer', label: 'Transfer', icon: Send },
-  { id: 'update', label: 'Update', icon: Newspaper },
-  { id: 'photos', label: 'Photos', icon: Camera },
-] as const;
+function buildTabs(t: LanguageContextValue['t']) {
+  return [
+    { id: 'gift', label: t.admin.tabs.gift, icon: HandCoins },
+    { id: 'transfer', label: t.admin.tabs.transfer, icon: Send },
+    { id: 'update', label: t.admin.tabs.update, icon: Newspaper },
+    { id: 'photos', label: t.admin.tabs.photos, icon: Camera },
+  ] as const;
+}
 
-type TabId = (typeof TABS)[number]['id'];
+type TabId = 'gift' | 'transfer' | 'update' | 'photos';
 
 function useOnlineStatus(): boolean {
   const [online, setOnline] = useState(() => navigator.onLine);
@@ -56,23 +59,24 @@ function useOnlineStatus(): boolean {
 
 /** Shown when VITE_FIREBASE_* env vars are missing — no broken form. */
 function FirebaseNotice() {
+  const { t } = useLanguage();
   return (
     <div className="flex min-h-[60dvh] items-center justify-center px-5 py-16">
       <div className="w-full max-w-[520px] rounded-card border border-danger/50 bg-surface p-8 text-center">
         <CircleAlert className="mx-auto h-10 w-10 text-danger" strokeWidth={1.5} />
         <h1 className="mt-4 font-display text-[28px] font-medium text-text">
-          Firebase not configured
+          {t.admin.noticeTitle}
         </h1>
         <p className="mt-3 text-[14px] leading-[1.6] text-text-muted">
-          The admin panel needs live credentials. Set the{' '}
+          {t.admin.noticeA}
           <code className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[12px] text-amber">
             VITE_FIREBASE_*
-          </code>{' '}
-          env vars (see{' '}
+          </code>
+          {t.admin.noticeB}
           <code className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[12px] text-amber">
             .env.example
           </code>
-          ), restart the dev server, and reload.
+          {t.admin.noticeC}
         </p>
       </div>
     </div>
@@ -90,6 +94,8 @@ function AdminPanel({
   const [saveTick, setSaveTick] = useState(0);
   const online = useOnlineStatus();
   const { stats } = useGlobalStats();
+  const { t } = useLanguage();
+  const TABS = buildTabs(t);
   const onSaved = () => setSaveTick((t) => t + 1);
   const balanceCents = stats.totalIn - stats.totalOut;
 
@@ -103,17 +109,17 @@ function AdminPanel({
 
       {!online && (
         <div className="border-b border-amber/40 bg-amber-glow px-5 py-2.5 text-center text-[13px] font-medium text-amber">
-          You're offline — writes will fail until reconnected.
+          {t.admin.offlineBanner}
         </div>
       )}
 
       <div className="mx-auto w-full max-w-[760px] px-5 pb-20 pt-8 md:px-8">
         {/* Command header */}
         <h1 className="font-display text-[24px] font-medium tracking-[-0.01em] text-text md:text-[32px]">
-          Log the work.
+          {t.admin.title}
         </h1>
         <p className="mt-1.5 text-[13px] font-medium tracking-[0.01em] text-text-muted">
-          Everything you save appears live on the public ledger within a second.
+          {t.admin.sub}
         </p>
         <HealthChips saveTick={saveTick} />
 
@@ -124,7 +130,7 @@ function AdminPanel({
           className="mt-8 rounded-card border border-border bg-surface"
         >
           {/* Custom tab bar: amber underline animates via layoutId */}
-          <div className="flex border-b border-border px-2" role="tablist" aria-label="Admin workbench">
+          <div className="flex border-b border-border px-2" role="tablist" aria-label={t.admin.tabAria}>
             {TABS.map((t) => {
               const Icon = t.icon;
               const active = tab === t.id;

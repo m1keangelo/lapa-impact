@@ -22,6 +22,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { Toaster, toast } from 'sonner';
 import CodeInput, { type CodeInputStatus } from '@/components/CodeInput';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { db, firebaseReady } from '@/lib/firebase';
 import { demoDonations } from '@/lib/demoData';
 import {
@@ -46,6 +47,7 @@ interface LocationState {
 export default function Login() {
   const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
@@ -62,7 +64,7 @@ export default function Login() {
   // Gentle toast when redirected here from /impact without a session.
   useEffect(() => {
     if (state.from === 'impact') {
-      toast('Enter your code to see your impact.', {
+      toast(t.login.toastFromImpact, {
         icon: <ArrowRight className="h-4 w-4 text-amber" />,
       });
     }
@@ -101,15 +103,13 @@ export default function Login() {
         await new Promise((r) => setTimeout(r, 650)); // let "checking" breathe
         const gift = demoDonations.find((d) => d.donorCode === candidate);
         if (gift) {
-          const name = gift.donorName ?? 'friend';
+          const name = gift.donorName ?? t.login.friend;
           setFirstName(name.split(' ')[0] ?? name);
           setPhase('found');
           setDonorCode(candidate);
           after(1000, () => navigate('/impact'));
         } else {
-          fail(
-            "We couldn't find that code. Check for typos — or contact the mission if it should work.",
-          );
+          fail(t.login.errNotFound);
         }
         return;
       }
@@ -117,22 +117,20 @@ export default function Login() {
       try {
         const snap = await getDoc(doc(db, 'donors', candidate));
         if (snap.exists()) {
-          const name = (snap.data().name as string | undefined) ?? 'friend';
-          setFirstName(name.trim().split(/\s+/)[0] ?? 'friend');
+          const name = (snap.data().name as string | undefined) ?? t.login.friend;
+          setFirstName(name.trim().split(/\s+/)[0] ?? t.login.friend);
           setPhase('found');
           setDonorCode(candidate);
           after(1000, () => navigate('/impact'));
         } else {
-          fail(
-            "We couldn't find that code. Check for typos — or contact the mission if it should work.",
-          );
+          fail(t.login.errNotFound);
         }
       } catch (err) {
         console.error('[login] donor lookup failed:', err);
-        fail('We had trouble reaching the field ledger. Check your connection and try again.');
+        fail(t.login.errConnection);
       }
     },
-    [phase, fail, navigate],
+    [phase, fail, navigate, t],
   );
 
   // Prefilled code (from home CTA or ?code=): ripple-fill then auto-validate after 400ms.
@@ -200,7 +198,7 @@ export default function Login() {
             className="inline-flex items-center gap-1.5 text-[13px] font-medium tracking-[0.01em] text-text-muted transition-colors hover:text-text"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            Back to home
+            {t.login.back}
           </Link>
         </div>
 
@@ -217,15 +215,14 @@ export default function Login() {
           {...introStagger(1)}
           className="mt-5 text-center font-display text-2xl font-medium leading-[1.2] tracking-[-0.01em] text-text md:text-[32px]"
         >
-          Welcome back, neighbor.
+          {t.login.title}
         </motion.h1>
         {!kbOpen && (
           <motion.p
             {...introStagger(3)}
             className="mt-3 max-w-[40ch] text-center text-[13px] font-medium leading-[1.4] tracking-[0.01em] text-text-muted"
           >
-            Enter the 12-character code from your giving receipt or welcome
-            letter. It's yours alone — keep it private.
+            {t.login.intro}
           </motion.p>
         )}
 
@@ -251,7 +248,7 @@ export default function Login() {
             onSubmitCode={(c) => void submit(c)}
           />
           <p className="mt-3 text-center text-[12px] font-medium tracking-[0.01em] text-text-faint">
-            Letters and numbers — no 0, O, I, or l.
+            {t.login.codeHint}
           </p>
 
           {/* Inline error, slides down */}
@@ -292,15 +289,15 @@ export default function Login() {
             {phase === 'checking' ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Finding your ledger…
+                {t.login.checking}
               </>
             ) : phase === 'found' ? (
               <>
-                Welcome, {firstName}
+                {t.login.welcome(firstName)}
                 <ArrowRight className="h-4 w-4" />
               </>
             ) : (
-              'See my impact'
+              t.login.seeMyImpact
             )}
           </motion.button>
 
@@ -313,7 +310,7 @@ export default function Login() {
               }}
               className="mt-4 font-mono text-[12px] tracking-[0.01em] text-text-faint transition-colors hover:text-amber"
             >
-              Preview mode — tap to try demo code {DEMO_HINT_CODE}
+              {t.login.demoHint(DEMO_HINT_CODE)}
             </button>
           ) : null}
         </motion.div>
@@ -326,15 +323,15 @@ export default function Login() {
           className="mt-12 flex flex-col items-center gap-2.5 text-center text-[13px] font-medium tracking-[0.01em] text-text-muted"
         >
           <p>
-            Just visiting? →{' '}
+            {t.login.visiting}{' '}
             <Link to="/feed" className="text-amber transition-colors hover:text-amber-soft">
-              Watch the public feed
+              {t.login.watchFeed}
             </Link>
           </p>
           <p className="text-text-faint">
-            Field team? →{' '}
+            {t.login.fieldTeam}{' '}
             <Link to="/admin" className="transition-colors hover:text-text-muted">
-              Admin sign in
+              {t.login.adminSignIn}
             </Link>
           </p>
         </motion.div>

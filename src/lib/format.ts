@@ -1,8 +1,14 @@
 /**
  * Display formatting helpers (design.md §8).
  * Money is always integer cents; timestamps normalize to epoch millis.
+ * Locale-dependent helpers accept an optional 'en' | 'es' language
+ * (default 'en') — callers pass the value from useLanguage().
  */
 import type { TimestampLike } from './types';
+
+export type DisplayLang = 'en' | 'es';
+
+const LOCALES: Record<DisplayLang, string> = { en: 'en-US', es: 'es-CO' };
 
 /** Normalize any timestamp representation to epoch millis. */
 export function toMillis(ts: TimestampLike | null | undefined): number {
@@ -46,27 +52,28 @@ export function formatCount(n: number): string {
 }
 
 /**
- * Relative under 48h ("just now", "20m ago", "2h ago"),
- * absolute after ("Mar 4"). Mono + caption size is applied by callers.
+ * Relative under 48h ("just now", "20m ago", "2h ago" / "justo ahora",
+ * "hace 20m", "hace 2h"), absolute after ("Mar 4" / "4 mar").
+ * Mono + caption size is applied by callers.
  */
-export function formatRelativeTime(ts: TimestampLike): string {
+export function formatRelativeTime(ts: TimestampLike, lang: DisplayLang = 'en'): string {
   const ms = toMillis(ts);
   if (!ms) return '';
   const diff = Date.now() - ms;
   const abs = new Date(ms);
   const HOURS = 60 * 60 * 1000;
 
-  if (diff < 60 * 1000) return 'just now';
+  if (diff < 60 * 1000) return lang === 'es' ? 'justo ahora' : 'just now';
   if (diff < HOURS) {
     const m = Math.floor(diff / 60000);
-    return `${m}m ago`;
+    return lang === 'es' ? `hace ${m}m` : `${m}m ago`;
   }
   if (diff < 48 * HOURS) {
     const h = Math.floor(diff / HOURS);
-    return `${h}h ago`;
+    return lang === 'es' ? `hace ${h}h` : `${h}h ago`;
   }
   const sameYear = abs.getFullYear() === new Date().getFullYear();
-  return abs.toLocaleDateString('en-US', {
+  return abs.toLocaleDateString(LOCALES[lang], {
     month: 'short',
     day: 'numeric',
     ...(sameYear ? {} : { year: 'numeric' }),
@@ -77,10 +84,14 @@ export function formatRelativeTime(ts: TimestampLike): string {
  * Donor privacy display name (design.md §8): first name + last initial.
  * "Maria García" → "Maria G."  ·  "Priya" → "Priya"
  */
-export function privacyName(fullName: string | null | undefined): string {
-  if (!fullName) return 'Anonymous';
+export function privacyName(
+  fullName: string | null | undefined,
+  lang: DisplayLang = 'en',
+): string {
+  const fallback = lang === 'es' ? 'Anónimo' : 'Anonymous';
+  if (!fullName) return fallback;
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return 'Anonymous';
+  if (parts.length === 0) return fallback;
   if (parts.length === 1) return parts[0];
   const lastInitial = parts[parts.length - 1].charAt(0).toUpperCase();
   return `${parts[0]} ${lastInitial}.`;

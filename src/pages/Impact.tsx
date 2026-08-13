@@ -14,6 +14,7 @@ import { AlertTriangle, HandCoins, RefreshCw } from 'lucide-react';
 import { Toaster, toast } from 'sonner';
 import StatCard from '@/components/StatCard';
 import LiveBadge from '@/components/LiveBadge';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { useDonor, donorFirstName } from '@/hooks/useDonor';
 import { useDonorDonations } from '@/hooks/useDonorDonations';
 import { useDonorPhotos } from '@/hooks/useDonorPhotos';
@@ -41,6 +42,7 @@ function StatSkeleton() {
 export default function Impact() {
   const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
+  const { t, lang } = useLanguage();
   const code = getDonorCode();
   const [retryKey, setRetryKey] = useState(0);
   const [online, setOnline] = useState(() => navigator.onLine);
@@ -70,7 +72,7 @@ export default function Impact() {
   // Live-insert toast: a genuinely new gift arrived in this donor's ledger.
   useEffect(() => {
     if (revision > 0) {
-      toast('Your gift was recorded — thank you.', {
+      toast(t.impact.toastGift, {
         icon: <HandCoins className="h-4 w-4 text-amber" />,
       });
     }
@@ -81,7 +83,7 @@ export default function Impact() {
   const hasError =
     donorStatus === 'error' || donationsStatus === 'error' || photosStatus === 'error';
 
-  const firstName = donorFirstName(donor);
+  const firstName = donor?.name ? donorFirstName(donor) : t.login.friend;
   const totalGiven = donor?.totalGiven ?? donations.reduce((s, d) => s + d.amount, 0);
 
   // Pro-rata share of mission transfers ("sent to the field") and families.
@@ -94,8 +96,8 @@ export default function Impact() {
   const firstGift = useMemo(() => {
     if (giftCount === 0) return '';
     const first = Math.min(...donations.map((d) => toMillis(d.timestamp)));
-    return new Date(first).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  }, [donations, giftCount]);
+    return new Date(first).toLocaleDateString(lang === 'es' ? 'es-CO' : 'en-US', { month: 'short', year: 'numeric' });
+  }, [donations, giftCount, lang]);
 
   // Cumulative giving sparkline (oldest → newest, ≤8 samples).
   const sparkline = useMemo(() => {
@@ -144,7 +146,7 @@ export default function Impact() {
       >
         <p className="flex h-10 items-center justify-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-amber">
           <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-          Reconnecting to the field…
+          {t.impact.reconnectingBanner}
         </p>
       </div>
 
@@ -158,21 +160,21 @@ export default function Impact() {
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1">
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-amber" />
                 <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber">
-                  Reconnecting
+                  {t.common.reconnecting}
                 </span>
               </span>
             ) : isDemo ? (
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1">
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-amber" />
                 <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber">
-                  Demo data
+                  {t.common.demoData}
                 </span>
               </span>
             ) : (
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1">
                 <span className="relative inline-flex h-2 w-2 animate-pulse rounded-full bg-text-faint" />
                 <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-faint">
-                  Connecting
+                  {t.common.connecting}
                 </span>
               </span>
             )}
@@ -180,7 +182,7 @@ export default function Impact() {
               className="font-mono text-[12px] tracking-[0.01em] text-text-faint"
               style={{ fontVariantNumeric: 'tabular-nums' }}
             >
-              Signed in as code •••• {code.slice(-4)}
+              {t.impact.signedInAs(code.slice(-4))}
             </p>
           </div>
 
@@ -188,13 +190,13 @@ export default function Impact() {
             {...rise(0.05)}
             className="mt-6 font-display text-[32px] font-medium leading-[1.1] tracking-[-0.015em] text-text md:text-5xl"
           >
-            Hola, <span className="italic text-amber">{firstName}</span>.
+            {t.impact.greetingWord} <span className="italic text-amber">{firstName}</span>.
           </motion.h1>
           <motion.p
             {...rise(0.25)}
             className="mt-3 max-w-[52ch] text-[15px] leading-[1.55] text-text-muted"
           >
-            Here's everything your generosity has done — updated live from the field.
+            {t.impact.intro}
           </motion.p>
         </header>
 
@@ -202,11 +204,10 @@ export default function Impact() {
           <div className="mt-10 flex flex-col items-center gap-4 rounded-card border border-border bg-surface px-6 py-14 text-center">
             <AlertTriangle className="h-10 w-10 text-danger" strokeWidth={1.5} />
             <p className="font-display text-xl font-medium text-text">
-              We can't find a ledger for this code.
+              {t.impact.notFoundTitle}
             </p>
             <p className="max-w-[44ch] text-[13px] font-medium leading-[1.4] tracking-[0.01em] text-text-muted">
-              It may have been typed with a typo, or the mission may have
-              retired it. Sign out and try entering it again.
+              {t.impact.notFoundBody}
             </p>
             <button
               type="button"
@@ -216,13 +217,13 @@ export default function Impact() {
               }}
               className="rounded-[10px] bg-amber px-4 py-2 text-sm font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
             >
-              Re-enter my code
+              {t.impact.reenter}
             </button>
           </div>
         ) : (
           <>
         {/* ── Section 2 · Personal stat trio ──────────────────────── */}
-        <section aria-label="Your giving totals" className="mt-10">
+        <section aria-label={t.impact.givingTotalsAria} className="mt-10">
           {loading ? (
             <div className="grid gap-4 md:grid-cols-3">
               <StatSkeleton />
@@ -233,10 +234,10 @@ export default function Impact() {
             <div className="flex flex-col items-center gap-4 rounded-card border border-border bg-surface px-6 py-12 text-center">
               <AlertTriangle className="h-10 w-10 text-danger" strokeWidth={1.5} />
               <p className="font-display text-xl font-medium text-text">
-                We lost the thread to the field.
+                {t.impact.errorTitle}
               </p>
               <p className="max-w-[44ch] text-[13px] font-medium leading-[1.4] tracking-[0.01em] text-text-muted">
-                Your ledger couldn't be loaded. Check your connection and try again.
+                {t.impact.errorBody}
               </p>
               <button
                 type="button"
@@ -244,7 +245,7 @@ export default function Impact() {
                 className="inline-flex items-center gap-2 rounded-[10px] bg-amber px-4 py-2 text-sm font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
               >
                 <RefreshCw className="h-4 w-4" />
-                Retry
+                {t.common.retry}
               </button>
             </div>
           ) : (
@@ -262,30 +263,30 @@ export default function Impact() {
                 >
                   {i === 0 ? (
                     <StatCard
-                      label="You've given"
+                      label={t.impact.stat1Label}
                       value={totalGiven}
                       variant="in"
                       delta={
                         giftCount > 0
-                          ? `${giftCount} ${giftCount === 1 ? 'gift' : 'gifts'} · first gift ${firstGift}`
-                          : 'no gifts recorded yet'
+                          ? t.impact.deltaGifts(giftCount, firstGift)
+                          : t.impact.deltaNoGifts
                       }
                       sparkline={sparkline.length > 1 ? sparkline : undefined}
                     />
                   ) : i === 1 ? (
                     <StatCard
-                      label="Sent to the field"
+                      label={t.impact.stat2Label}
                       value={sentToField}
                       variant="out"
-                      delta={`your share of the ${formatMoneyShort(global.totalOut)} transferred`}
+                      delta={t.impact.stat2Delta(formatMoneyShort(global.totalOut))}
                     />
                   ) : (
                     <StatCard
-                      label="Families reached"
+                      label={t.impact.stat3Label}
                       value={families}
                       variant="impact"
                       format="count"
-                      delta="through the work your gifts funded"
+                      delta={t.impact.stat3Delta}
                     />
                   )}
                 </motion.div>
@@ -322,17 +323,17 @@ export default function Impact() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ amount: 0.8, once: true }}
           transition={{ duration: reduceMotion ? 0 : 0.3, ease: EASE }}
-          aria-label="Mission-wide totals"
+          aria-label={t.impact.missionTotalsAria}
           className="mt-12 rounded-card border border-border bg-surface px-6 py-6"
         >
           <p className="text-center font-display text-lg font-medium text-text">
-            You're part of something bigger.
+            {t.impact.biggerTitle}
           </p>
           <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-10">
             {[
-              { color: 'var(--amber)', value: formatMoneyShort(global.totalIn), label: 'in from all donors' },
-              { color: 'var(--terra)', value: formatMoneyShort(global.totalOut), label: 'out to the field' },
-              { color: 'var(--sage)', value: String(global.familiesHelped), label: 'families helped' },
+              { color: 'var(--amber)', value: formatMoneyShort(global.totalIn), label: t.impact.biggerIn },
+              { color: 'var(--terra)', value: formatMoneyShort(global.totalOut), label: t.impact.biggerOut },
+              { color: 'var(--sage)', value: String(global.familiesHelped), label: t.impact.biggerFamilies },
             ].map((s) => (
               <p key={s.label} className="flex items-center gap-2 text-[13px] font-medium tracking-[0.01em] text-text-muted">
                 <span className="h-2 w-2 rounded-full" style={{ backgroundColor: s.color }} aria-hidden />
@@ -353,7 +354,7 @@ export default function Impact() {
         {/* ── Section 6 · Sign-out note ────────────────────────────── */}
         <footer className="mt-14 text-center">
           <p className="text-[12px] font-medium tracking-[0.01em] text-text-faint">
-            Your code is your key — bookmark it. We never ask for a password.
+            {t.impact.footerNote}
           </p>
           <button
             type="button"
@@ -363,7 +364,7 @@ export default function Impact() {
             }}
             className="mt-2 text-[13px] font-semibold text-text-muted transition-colors hover:text-danger"
           >
-            Sign out
+            {t.common.signOut}
           </button>
         </footer>
       </div>

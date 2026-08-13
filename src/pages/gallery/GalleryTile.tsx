@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link2 } from 'lucide-react';
 import { cloudinaryUrl } from '@/lib/cloudinary';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { formatRelativeTime } from '@/lib/format';
 import type { MediaItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -20,12 +21,13 @@ interface GalleryTileProps {
 
 export default function GalleryTile({ media, matched, onOpen }: GalleryTileProps) {
   const [loaded, setLoaded] = useState(false);
+  const { t, lang } = useLanguage();
 
   return (
     <motion.button
       type="button"
       onClick={onOpen}
-      aria-label={media.caption ? `Open photo: ${media.caption}` : 'Open photo'}
+      aria-label={media.caption ? t.common.openPhotoCaption(media.caption) : t.common.openPhoto}
       className={cn(
         'group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-[12px] border border-border text-left',
         'cursor-zoom-in transition-colors duration-200 ease-calm hover:border-border-strong',
@@ -48,7 +50,7 @@ export default function GalleryTile({ media, matched, onOpen }: GalleryTileProps
 
       <img
         src={cloudinaryUrl(media.thumbnailUrl || media.cloudinaryUrl, { width: 500, crop: 'limit' })}
-        alt={media.caption || 'Field photo'}
+        alt={media.caption || t.common.fieldPhoto}
         loading="lazy"
         onLoad={() => setLoaded(true)}
         className={cn(
@@ -62,7 +64,7 @@ export default function GalleryTile({ media, matched, onOpen }: GalleryTileProps
       {matched ? (
         <span className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border border-sage/50 bg-bg/80 px-2 py-0.5 text-[10px] font-semibold text-sage backdrop-blur-sm">
           <Link2 className="h-2.5 w-2.5" />
-          gift-matched
+          {t.gallery.giftMatched}
         </span>
       ) : null}
 
@@ -79,7 +81,7 @@ export default function GalleryTile({ media, matched, onOpen }: GalleryTileProps
           className="font-mono text-[11px] tracking-[0.01em] text-text-muted"
           style={{ fontVariantNumeric: 'tabular-nums' }}
         >
-          {formatRelativeTime(media.timestamp)}
+          {formatRelativeTime(media.timestamp, lang)}
         </span>
       </span>
     </motion.button>

@@ -11,6 +11,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, use
 import { AlertTriangle, Camera, HandCoins, Inbox, Newspaper, Search, Send, X } from 'lucide-react';
 import EmptyState from '@/components/EmptyState';
 import LiveBadge from '@/components/LiveBadge';
+import { useLanguage, type LanguageContextValue } from '@/i18n/LanguageContext';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { usePublicFeed } from '@/hooks/usePublicFeed';
 import { formatCount, formatMoney } from '@/lib/format';
@@ -24,23 +25,25 @@ const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 type FilterKind = 'all' | 'donation' | 'transfer' | 'update' | 'photo';
 
-const FILTERS: { id: FilterKind; label: string; dot: string | null }[] = [
-  { id: 'all', label: 'All', dot: null },
-  { id: 'donation', label: 'Gifts', dot: 'var(--amber)' },
-  { id: 'transfer', label: 'Transfers', dot: 'var(--terra)' },
-  { id: 'update', label: 'Updates', dot: 'var(--sage)' },
-  { id: 'photo', label: 'Photos', dot: 'var(--text)' },
-];
+function buildFilters(t: LanguageContextValue['t']): { id: FilterKind; label: string; dot: string | null }[] {
+  return [
+    { id: 'all', label: t.feed.filters.all, dot: null },
+    { id: 'donation', label: t.feed.filters.gifts, dot: 'var(--amber)' },
+    { id: 'transfer', label: t.feed.filters.transfers, dot: 'var(--terra)' },
+    { id: 'update', label: t.feed.filters.updates, dot: 'var(--sage)' },
+    { id: 'photo', label: t.feed.filters.photos, dot: 'var(--text)' },
+  ];
+}
 
-/** Day-group label: TODAY / YESTERDAY / "MAR 12, 2025". */
-function dayLabel(ts: number): string {
+/** Day-group label: TODAY / YESTERDAY / "MAR 12, 2025" (localized). */
+function dayLabel(ts: number, t: LanguageContextValue['t'], lang: 'en' | 'es'): string {
   const d = new Date(ts);
-  const dayStart = (t: Date) => new Date(t.getFullYear(), t.getMonth(), t.getDate()).getTime();
+  const dayStart = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
   const diffDays = Math.round((dayStart(new Date()) - dayStart(d)) / 86400000);
-  if (diffDays <= 0) return 'TODAY';
-  if (diffDays === 1) return 'YESTERDAY';
+  if (diffDays <= 0) return t.feed.today;
+  if (diffDays === 1) return t.feed.yesterday;
   return d
-    .toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    .toLocaleDateString(lang === 'es' ? 'es-CO' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     .toUpperCase();
 }
 
@@ -81,8 +84,9 @@ function entryMatchesSearch(entry: FeedEntry, q: string): boolean {
 }
 
 function FeedSkeleton() {
+  const { t } = useLanguage();
   return (
-    <div className="space-y-3" aria-label="Loading the ledger">
+    <div className="space-y-3" aria-label={t.feed.loadingAria}>
       {[0, 1, 2, 3].map((i) => (
         <div key={i} className="flex animate-pulse items-center gap-3 rounded-card border border-border bg-surface px-4 py-3">
           <div className="h-10 w-10 rounded-full bg-surface-2" />
@@ -101,6 +105,8 @@ export default function Feed() {
   const { stats } = useGlobalStats();
   const feed = usePublicFeed();
   const location = useLocation();
+  const { t, lang } = useLanguage();
+  const FILTERS = buildFilters(t);
 
   const [filter, setFilter] = useState<FilterKind>('all');
   const [search, setSearch] = useState('');
@@ -122,13 +128,13 @@ export default function Feed() {
   const groups = useMemo(() => {
     const out: { label: string; entries: FeedEntry[] }[] = [];
     for (const e of visibleEntries) {
-      const label = dayLabel(e.ts);
+      const label = dayLabel(e.ts, t, lang);
       const last = out[out.length - 1];
       if (last && last.label === label) last.entries.push(e);
       else out.push({ label, entries: [e] });
     }
     return out;
-  }, [visibleEntries]);
+  }, [visibleEntries, t, lang]);
 
   // Honor /feed#entry-<id> (lightbox attribution chips link here).
   const [flashedId, setFlashedId] = useState<string | null>(null);
@@ -171,7 +177,10 @@ export default function Feed() {
   };
 
   const status = feed.status;
-  const filterLabel = FILTERS.find((f) => f.id === filter)?.label ?? 'entries';
+  const filterLabel =
+    filter === 'all'
+      ? t.feed.filters.entries
+      : (FILTERS.find((f) => f.id === filter)?.label ?? t.feed.filters.entries).toLowerCase();
 
   return (
     <div className="mx-auto w-full max-w-container px-5 md:px-8">
@@ -185,7 +194,7 @@ export default function Feed() {
             transition={{ duration: 0.5, ease: EASE }}
           >
             <span className="inline-block h-px w-4 bg-amber" aria-hidden />
-            The public ledger
+            {t.feed.eyebrow}
           </motion.p>
           <LiveBadge />
         </div>
@@ -195,7 +204,7 @@ export default function Feed() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.07 }}
         >
-          Everything. As it happens.
+          {t.feed.title}
         </motion.h1>
         <motion.p
           className="mt-3 max-w-[56ch] text-[15px] leading-[1.55] text-text-muted"
@@ -203,8 +212,7 @@ export default function Feed() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.14 }}
         >
-          Every gift, every transfer to Colombia, every photo from the field —
-          recorded in the open. Donors appear as first name and last initial only.
+          {t.feed.sub}
         </motion.p>
         <motion.p
           className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] tracking-[0.01em] text-text-muted"
@@ -212,14 +220,14 @@ export default function Feed() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}
         >
-          <InlineStat value={stats.totalIn} format={(n) => `${formatMoney(n)} in`} color="var(--amber)" />
+          <InlineStat value={stats.totalIn} format={(n) => t.feed.moneyIn(formatMoney(n))} color="var(--amber)" />
           <span aria-hidden>·</span>
-          <InlineStat value={stats.totalOut} format={(n) => `${formatMoney(n)} out`} color="var(--terra)" />
+          <InlineStat value={stats.totalOut} format={(n) => t.feed.moneyOut(formatMoney(n))} color="var(--terra)" />
           <span aria-hidden>·</span>
-          <InlineStat value={stats.familiesHelped} format={(n) => `${formatCount(n)} families`} color="var(--sage)" />
+          <InlineStat value={stats.familiesHelped} format={(n) => t.feed.familiesCount(formatCount(n))} color="var(--sage)" />
           <span aria-hidden>·</span>
           <span className="font-mono" style={{ fontVariantNumeric: 'tabular-nums' }}>
-            {formatCount(feed.totalLoaded)} ledger entries
+            {t.feed.entriesCount(formatCount(feed.totalLoaded))}
           </span>
         </motion.p>
       </section>
@@ -227,7 +235,7 @@ export default function Feed() {
       {/* ——— Section 2: sticky filter bar ——— */}
       <div className="sticky top-[60px] z-40 -mx-5 mt-8 border-b border-border bg-bg/90 px-5 backdrop-blur-md md:-mx-8 md:px-8">
         <div className="flex min-h-[56px] flex-wrap items-center justify-between gap-2 py-2">
-          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar" role="tablist" aria-label="Filter the ledger">
+          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar" role="tablist" aria-label={t.feed.filterAria}>
             {FILTERS.map((f, i) => {
               const active = filter === f.id;
               return (
@@ -276,14 +284,14 @@ export default function Feed() {
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search the ledger"
-              aria-label="Search the ledger"
+              placeholder={t.feed.searchPlaceholder}
+              aria-label={t.feed.searchPlaceholder}
               className="h-9 w-[200px] rounded-full border border-border bg-surface pl-9 pr-3 text-[13px] text-text placeholder:text-text-faint focus:border-border-strong focus:outline-none"
             />
           </div>
           <button
             type="button"
-            aria-label="Search the ledger"
+            aria-label={t.feed.searchPlaceholder}
             onClick={() => setSearchOpen((o) => !o)}
             className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-text-muted transition-colors hover:text-text md:hidden"
           >
@@ -307,8 +315,8 @@ export default function Feed() {
                   autoFocus
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search the ledger"
-                  aria-label="Search the ledger"
+                  placeholder={t.feed.searchPlaceholder}
+                  aria-label={t.feed.searchPlaceholder}
                   className="h-10 w-full rounded-full border border-border bg-surface pl-9 pr-3 text-sm text-text placeholder:text-text-faint focus:border-border-strong focus:outline-none"
                 />
               </div>
@@ -325,16 +333,16 @@ export default function Feed() {
           {status === 'error' ? (
             <div className="flex flex-col items-center gap-3 rounded-card border border-danger/40 bg-surface px-6 py-14 text-center">
               <AlertTriangle className="h-12 w-12 text-danger" strokeWidth={1.25} />
-              <h3 className="font-display text-xl font-medium text-text">Couldn't reach the ledger.</h3>
+              <h3 className="font-display text-xl font-medium text-text">{t.feed.errorTitle}</h3>
               <p className="max-w-[40ch] text-[13px] font-medium text-text-muted">
-                The live connection dropped. Check your connection and try again.
+                {t.feed.errorBody}
               </p>
               <button
                 type="button"
                 onClick={feed.retry}
                 className="mt-2 rounded-[10px] border border-amber px-4 py-2 text-sm font-semibold text-amber transition-colors duration-150 hover:bg-amber/10"
               >
-                Retry
+                {t.common.retry}
               </button>
             </div>
           ) : null}
@@ -343,11 +351,11 @@ export default function Feed() {
             visibleEntries.length === 0 ? (
               <EmptyState
                 icon={filter === 'photo' ? Camera : filter === 'donation' ? HandCoins : filter === 'transfer' ? Send : filter === 'update' ? Newspaper : Inbox}
-                title="Nothing here yet."
+                title={t.feed.emptyTitle}
                 body={
                   search
-                    ? `No ledger entries match “${search}”.`
-                    : `New ${filterLabel.toLowerCase()} will appear live.`
+                    ? t.feed.emptySearch(search)
+                    : t.feed.emptyFilter(filterLabel)
                 }
               />
             ) : (
@@ -413,7 +421,7 @@ export default function Feed() {
                         onClick={feed.loadMore}
                         className="w-full rounded-card border border-border bg-transparent py-3 font-mono text-[13px] tracking-[0.01em] text-text-muted transition-colors duration-200 ease-calm hover:border-border-strong hover:bg-surface hover:text-text"
                       >
-                        Load earlier entries
+                        {t.feed.loadMore}
                       </button>
                     )}
                   </div>

@@ -8,6 +8,7 @@ import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, Loader2 } from 'lucide-react';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { cn } from '@/lib/utils';
 import { inputCls } from './formUtils';
 
@@ -22,6 +23,7 @@ export default function AuthGate({
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
+  const { t } = useLanguage();
   const [shakeKey, setShakeKey] = useState(0);
 
   const onSubmit = async (e: FormEvent) => {
@@ -57,10 +59,10 @@ export default function AuthGate({
         <motion.div {...fieldAnim(0)} className="flex flex-col items-center text-center">
           <img src="/logo.svg" alt="" className="h-10 w-10" />
           <h1 className="mt-4 font-display text-[32px] font-medium tracking-[-0.01em] text-text">
-            Field desk.
+            {t.admin.authGate.title}
           </h1>
           <p className="mt-2 text-[13px] font-medium leading-[1.5] tracking-[0.01em] text-text-muted">
-            Mission team only. Donors use their code on the main site.
+            {t.admin.authGate.sub}
           </p>
         </motion.div>
 
@@ -70,7 +72,7 @@ export default function AuthGate({
               type="email"
               required
               autoComplete="email"
-              placeholder="Email"
+              placeholder={t.admin.authGate.emailPh}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={inputCls}
@@ -81,7 +83,7 @@ export default function AuthGate({
               type="password"
               required
               autoComplete="current-password"
-              placeholder="Password"
+              placeholder={t.admin.authGate.passwordPh}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={inputCls}
@@ -97,7 +99,7 @@ export default function AuthGate({
                 transition={{ duration: 0.25, ease: EASE }}
                 className="overflow-hidden text-center text-[13px] font-medium text-danger"
               >
-                Wrong email or password.
+                {t.admin.authGate.error}
               </motion.p>
             )}
           </AnimatePresence>
@@ -117,10 +119,10 @@ export default function AuthGate({
             >
               {busy ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Signing in…
+                  <Loader2 className="h-4 w-4 animate-spin" /> {t.admin.authGate.signingIn}
                 </>
               ) : (
-                'Sign in'
+                t.admin.authGate.signIn
               )}
             </motion.button>
           </motion.div>
@@ -131,7 +133,7 @@ export default function AuthGate({
             to="/"
             className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-muted transition-colors hover:text-text"
           >
-            <ArrowLeft className="h-3.5 w-3.5" /> Back to the public site
+            <ArrowLeft className="h-3.5 w-3.5" /> {t.admin.authGate.back}
           </Link>
         </motion.div>
       </motion.div>

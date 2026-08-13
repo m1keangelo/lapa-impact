@@ -2,6 +2,7 @@
  * LiveBadge (design.md §7.6) — sage pulsing dot + caption, shown wherever
  * an onSnapshot listener is active.
  */
+import { useLanguage } from '@/i18n/LanguageContext';
 import { cn } from '@/lib/utils';
 
 interface LiveBadgeProps {
@@ -9,7 +10,9 @@ interface LiveBadgeProps {
   className?: string;
 }
 
-export default function LiveBadge({ label = 'LIVE', className }: LiveBadgeProps) {
+export default function LiveBadge({ label, className }: LiveBadgeProps) {
+  const { t } = useLanguage();
+  const text = label ?? t.common.live;
   return (
     <span
       className={cn(
@@ -22,7 +25,7 @@ export default function LiveBadge({ label = 'LIVE', className }: LiveBadgeProps)
         <span className="relative inline-flex h-2 w-2 rounded-full bg-sage" />
       </span>
       <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sage">
-        {label}
+        {text}
       </span>
     </span>
   );

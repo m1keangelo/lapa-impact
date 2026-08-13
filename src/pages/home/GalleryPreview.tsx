@@ -7,6 +7,7 @@
 import { Link, useNavigate } from 'react-router';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useFeed } from '@/hooks/useFeed';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { firebaseReady } from '@/lib/firebase';
 import { demoMedia } from '@/lib/demoData';
 import { formatRelativeTime, toMillis } from '@/lib/format';
@@ -17,6 +18,7 @@ const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 export default function GalleryPreview() {
   const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
+  const { t, lang } = useLanguage();
   const mediaQuery = useFeed<MediaItem>('media', { limit: 5 });
 
   const photos: MediaItem[] = firebaseReady
@@ -32,17 +34,17 @@ export default function GalleryPreview() {
           <div>
             <p className="eyebrow flex items-center gap-3">
               <span className="inline-block h-px w-4 bg-amber" aria-hidden />
-              Proof, not promises
+              {t.home.galleryPreview.eyebrow}
             </p>
             <h2 className="mt-3 font-display text-2xl font-medium leading-[1.2] tracking-[-0.01em] text-text md:text-[32px]">
-              From the field.
+              {t.home.galleryPreview.title}
             </h2>
           </div>
           <Link
             to="/gallery"
             className="text-sm font-semibold text-amber transition-colors hover:text-amber-soft"
           >
-            Full gallery →
+            {t.home.galleryPreview.full}
           </Link>
         </div>
       </div>
@@ -95,7 +97,7 @@ export default function GalleryPreview() {
                   className="mt-1 font-mono text-[12px] tracking-[0.01em] text-[#B0A18C]"
                   style={{ fontVariantNumeric: 'tabular-nums' }}
                 >
-                  {formatRelativeTime(p.timestamp)}
+                  {formatRelativeTime(p.timestamp, lang)}
                 </p>
               </div>
             </motion.button>

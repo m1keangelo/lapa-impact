@@ -5,6 +5,7 @@
  */
 import { LogOut } from 'lucide-react';
 import LiveBadge from '@/components/LiveBadge';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { cn } from '@/lib/utils';
 
 export default function AdminBar({
@@ -16,12 +17,13 @@ export default function AdminBar({
   online: boolean;
   onSignOut: () => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="sticky top-[60px] z-40 border-b border-border bg-surface">
       <div className="mx-auto flex h-14 w-full max-w-container items-center gap-3 px-5 md:px-8">
         <img src="/logo.svg" alt="" className="h-5 w-5" />
         <span className="font-display text-[18px] font-medium tracking-[-0.01em] text-text">
-          Mission Ledger <span className="text-amber">— Admin</span>
+          {t.admin.barTitleA} <span className="text-amber">{t.admin.barTitleB}</span>
         </span>
 
         <div className="ml-auto flex items-center gap-3">
@@ -34,7 +36,7 @@ export default function AdminBar({
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-amber" />
               </span>
               <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber">
-                Offline
+                {t.common.offline}
               </span>
             </span>
           )}
@@ -50,7 +52,7 @@ export default function AdminBar({
             )}
           >
             <LogOut className="h-4 w-4" />
-            <span className="hidden min-[480px]:inline">Sign out</span>
+            <span className="hidden min-[480px]:inline">{t.common.signOut}</span>
           </button>
         </div>
       </div>

@@ -20,6 +20,7 @@ import {
 import { ChevronDown } from 'lucide-react';
 import LiveBadge from '@/components/LiveBadge';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { formatCount, formatMoneyShort } from '@/lib/format';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -63,7 +64,13 @@ function CountUp({
 }
 
 /* ---------- perpetual scroll cue, isolated + memoized ---------- */
-const ScrollCue = memo(function ScrollCue({ opacity }: { opacity: MotionValue<number> }) {
+const ScrollCue = memo(function ScrollCue({
+  opacity,
+  label,
+}: {
+  opacity: MotionValue<number>;
+  label: string;
+}) {
   return (
     <motion.div
       style={{ opacity }}
@@ -71,7 +78,7 @@ const ScrollCue = memo(function ScrollCue({ opacity }: { opacity: MotionValue<nu
       aria-hidden
     >
       <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
-        scroll
+        {label}
       </span>
       <motion.span
         animate={{ y: [0, 8, 0] }}
@@ -83,20 +90,10 @@ const ScrollCue = memo(function ScrollCue({ opacity }: { opacity: MotionValue<nu
   );
 });
 
-/* ---------- headline word stagger ---------- */
-const HEADLINE: { word: string; accent?: boolean }[] = [
-  { word: 'Every' },
-  { word: 'dollar' },
-  { word: 'you' },
-  { word: 'give,' },
-  { word: 'you' },
-  { word: 'can' },
-  { word: 'watch', accent: true },
-  { word: 'arrive.', accent: true },
-];
-
 export default function Hero() {
   const { stats, revision } = useGlobalStats();
+  const { t } = useLanguage();
+  const HEADLINE = t.home.hero.headline;
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const flash = useAnimationControls();
@@ -157,7 +154,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.5, ease: EASE }}
         >
-          <LiveBadge label="Live from the field" />
+          <LiveBadge label={t.home.hero.liveBadge} />
         </motion.div>
 
         <motion.p
@@ -200,9 +197,7 @@ export default function Hero() {
           }}
           className="mt-6 max-w-[52ch] text-[17px] leading-[1.6] text-[#B0A18C] md:text-[18px]"
         >
-          Earthquake relief in Colombia's mountain villages — tracked in
-          public, in real time. Donations in. Transfers out. Photos from the
-          field. No black box.
+          {t.home.hero.sub}
         </motion.p>
 
         {/* Live stat cluster */}
@@ -221,9 +216,9 @@ export default function Hero() {
             className="flex flex-col items-stretch divide-y divide-border rounded-card border border-border bg-bg/40 backdrop-blur-sm md:flex-row md:items-center md:divide-x md:divide-y-0"
           >
           {[
-            { label: 'Given by donors', value: stats.totalIn, color: 'var(--amber)', delay: 1.2, money: true },
-            { label: 'Sent to the field', value: stats.totalOut, color: 'var(--terra)', delay: 1.35, money: true },
-            { label: 'Families helped', value: stats.familiesHelped, color: 'var(--sage)', delay: 1.5, money: false },
+            { label: t.home.hero.givenByDonors, value: stats.totalIn, color: 'var(--amber)', delay: 1.2, money: true },
+            { label: t.home.hero.sentToField, value: stats.totalOut, color: 'var(--terra)', delay: 1.35, money: true },
+            { label: t.home.hero.familiesHelped, value: stats.familiesHelped, color: 'var(--sage)', delay: 1.5, money: false },
           ].map((s) => (
             <div key={s.label} className="flex flex-col items-center px-8 py-5 md:py-6">
               <CountUp
@@ -258,18 +253,18 @@ export default function Hero() {
             to="/login"
             className="rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
           >
-            Enter your donor code
+            {t.home.hero.enterCode}
           </Link>
           <a
             href="#feed-preview"
             className="rounded-[10px] border border-border-strong px-6 py-3.5 text-[15px] font-semibold text-[#F3EAD9] transition-all duration-150 ease-calm hover:bg-surface-2/60 active:scale-[0.98]"
           >
-            Watch the live feed ↓
+            {t.home.hero.watchFeed}
           </a>
         </motion.div>
       </div>
 
-      <ScrollCue opacity={cueOpacity} />
+      <ScrollCue opacity={cueOpacity} label={t.home.hero.scroll} />
     </section>
   );
 }

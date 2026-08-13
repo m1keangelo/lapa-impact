@@ -6,6 +6,7 @@
  */
 import type { ReactNode } from 'react';
 import { CheckCircle2, CircleAlert, Loader2 } from 'lucide-react';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { formatMoney, privacyName } from '@/lib/format';
 import { DONOR_CODE_LENGTH } from '@/lib/session';
 import { cn } from '@/lib/utils';
@@ -46,15 +47,16 @@ export function Field({
 export function AmountField({
   value,
   onChange,
-  label = 'Amount',
+  label,
 }: {
   value: string;
   onChange: (v: string) => void;
   label?: string;
 }) {
+  const { t } = useLanguage();
   const cents = dollarsToCents(value);
   return (
-    <Field label={label}>
+    <Field label={label ?? t.admin.fields.amount}>
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
           <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-mono text-[15px] text-text-muted">
@@ -74,7 +76,7 @@ export function AmountField({
           className="hidden shrink-0 font-mono text-[12px] text-text-faint min-[480px]:inline"
           style={{ fontVariantNumeric: 'tabular-nums' }}
         >
-          → {cents.toLocaleString('en-US')} cents
+          {t.admin.fields.cents(cents.toLocaleString('en-US'))}
         </span>
       </div>
     </Field>
@@ -83,10 +85,11 @@ export function AmountField({
 
 /** Inline status line under a donor-code input. */
 export function DonorLookupLine({ lookup }: { lookup: DonorLookup }) {
+  const { t, lang } = useLanguage();
   if (lookup.state === 'checking') {
     return (
       <p className="mt-1.5 flex items-center gap-1.5 text-[12px] font-medium text-text-muted">
-        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Looking up code…
+        <Loader2 className="h-3.5 w-3.5 animate-spin" /> {t.admin.fields.lookingUp}
       </p>
     );
   }
@@ -94,21 +97,21 @@ export function DonorLookupLine({ lookup }: { lookup: DonorLookup }) {
     return (
       <p className="mt-1.5 flex items-center gap-1.5 text-[12px] font-medium text-sage">
         <CheckCircle2 className="h-3.5 w-3.5" />
-        {privacyName(lookup.donor.name)} · {formatMoney(lookup.donor.totalGiven)} given to date
+        {t.admin.fields.foundLine(privacyName(lookup.donor.name, lang), formatMoney(lookup.donor.totalGiven))}
       </p>
     );
   }
   if (lookup.state === 'notfound') {
     return (
       <p className="mt-1.5 flex items-center gap-1.5 text-[12px] font-medium text-danger">
-        <CircleAlert className="h-3.5 w-3.5" /> No donor with this code yet.
+        <CircleAlert className="h-3.5 w-3.5" /> {t.admin.fields.noDonor}
       </p>
     );
   }
   if (lookup.state === 'invalid') {
     return (
       <p className="mt-1.5 flex items-center gap-1.5 text-[12px] font-medium text-danger">
-        <CircleAlert className="h-3.5 w-3.5" /> Codes are 12 Base58 characters (no 0, O, I, l).
+        <CircleAlert className="h-3.5 w-3.5" /> {t.admin.fields.invalid}
       </p>
     );
   }
@@ -118,21 +121,22 @@ export function DonorLookupLine({ lookup }: { lookup: DonorLookup }) {
 export function DonorCodeField({
   value,
   onChange,
-  label = 'Donor code',
+  label,
 }: {
   value: string;
   onChange: (v: string) => void;
   label?: string;
 }) {
+  const { t } = useLanguage();
   const lookup = useDonorLookup(value);
   return (
-    <Field label={label}>
+    <Field label={label ?? t.admin.fields.donorCode}>
       <input
         type="text"
         autoComplete="off"
         spellCheck={false}
         maxLength={DONOR_CODE_LENGTH}
-        placeholder="12-character code"
+        placeholder={t.admin.fields.codePh}
         value={value}
         onChange={(e) => onChange(e.target.value.trim())}
         className={cn(inputCls, 'font-mono tracking-[0.08em]')}
@@ -145,7 +149,7 @@ export function DonorCodeField({
 export function SubmitButton({
   state,
   label,
-  savedLabel = 'Recorded · live now',
+  savedLabel,
   color = 'amber',
   disabled,
 }: {
@@ -155,6 +159,8 @@ export function SubmitButton({
   color?: 'amber' | 'terra' | 'sage';
   disabled?: boolean;
 }) {
+  const { t } = useLanguage();
+  const saved = savedLabel ?? t.admin.fields.savedLive;
   const palette = {
     amber: 'bg-amber hover:bg-amber-soft text-[#1A130B]',
     terra: 'bg-terra hover:brightness-110 text-[#1A130B]',
@@ -172,11 +178,11 @@ export function SubmitButton({
     >
       {state === 'saving' ? (
         <>
-          <Loader2 className="h-4 w-4 animate-spin" /> Saving…
+          <Loader2 className="h-4 w-4 animate-spin" /> {t.common.saving}
         </>
       ) : state === 'saved' ? (
         <>
-          <CheckCircle2 className="h-4 w-4" /> {savedLabel}
+          <CheckCircle2 className="h-4 w-4" /> {saved}
         </>
       ) : (
         label

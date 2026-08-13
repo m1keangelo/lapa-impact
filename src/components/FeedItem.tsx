@@ -14,6 +14,7 @@ import {
   Newspaper,
   type LucideIcon,
 } from 'lucide-react';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { formatMoney, formatRelativeTime } from '@/lib/format';
 import type { TimestampLike } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -49,6 +50,7 @@ export default function FeedItem({
   className,
 }: FeedItemProps) {
   const [open, setOpen] = useState(false);
+  const { lang } = useLanguage();
   const { icon: Icon, color } = VARIANT_META[variant];
   const expandable = Boolean(detail);
 
@@ -101,7 +103,7 @@ export default function FeedItem({
             className="font-mono text-[12px] tracking-[0.01em] text-text-muted"
             style={{ fontVariantNumeric: 'tabular-nums' }}
           >
-            {formatRelativeTime(timestamp)}
+            {formatRelativeTime(timestamp, lang)}
           </span>
         </span>
 

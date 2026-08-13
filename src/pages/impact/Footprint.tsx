@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import EmptyState from '@/components/EmptyState';
+import { useLanguage, type LanguageContextValue } from '@/i18n/LanguageContext';
 import { useFeed } from '@/hooks/useFeed';
 import { demoUpdates } from '@/lib/demoData';
 import { formatRelativeTime } from '@/lib/format';
@@ -42,25 +43,25 @@ function iconFor(metricKey: string): LucideIcon {
   return Sprout;
 }
 
-function labelFor(metricKey: string): string {
+function labelFor(metricKey: string, t: LanguageContextValue['t']): string {
   const k = metricKey.toLowerCase();
-  if (/water|filter/.test(k)) return 'Clean water';
-  if (/roof|home|house|repair/.test(k)) return 'Roof repairs';
-  if (/meal|food|rice|kitchen/.test(k)) return 'Meals delivered';
-  if (/famil|people/.test(k)) return 'Families reached';
-  if (/vereda|km|village|run/.test(k)) return 'Villages reached';
-  if (/basket|kit|suppl|blanket|mattress/.test(k)) return 'Supplies delivered';
-  return 'Field impact';
+  if (/water|filter/.test(k)) return t.footprint.cleanWater;
+  if (/roof|home|house|repair/.test(k)) return t.footprint.roofRepairs;
+  if (/meal|food|rice|kitchen/.test(k)) return t.footprint.meals;
+  if (/famil|people/.test(k)) return t.footprint.families;
+  if (/vereda|km|village|run/.test(k)) return t.footprint.villages;
+  if (/basket|kit|suppl|blanket|mattress/.test(k)) return t.footprint.supplies;
+  return t.footprint.fallback;
 }
 
-function chipsFromUpdates(updates: ImpactUpdate[]): Chip[] {
+function chipsFromUpdates(updates: ImpactUpdate[], t: LanguageContextValue['t']): Chip[] {
   const chips: Chip[] = [];
   for (const u of updates) {
     for (const [key, value] of Object.entries(u.metrics ?? {})) {
       chips.push({
         id: `${u.id}:${key}`,
         icon: iconFor(key),
-        label: labelFor(key),
+        label: labelFor(key, t),
         metric: `${value} ${key}`,
         ts: u.timestamp,
       });
@@ -70,9 +71,10 @@ function chipsFromUpdates(updates: ImpactUpdate[]): Chip[] {
 }
 
 export default function Footprint({ reducedMotion }: { reducedMotion: boolean }) {
+  const { t, lang } = useLanguage();
   const feed = useFeed<ImpactUpdate>('updates', { limit: 6 });
   const updates = feed.isDemo ? demoUpdates : feed.items;
-  const chips = chipsFromUpdates(updates);
+  const chips = chipsFromUpdates(updates, t);
 
   return (
     <motion.section
@@ -80,16 +82,16 @@ export default function Footprint({ reducedMotion }: { reducedMotion: boolean })
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ amount: 0.2, once: true }}
       transition={{ duration: reducedMotion ? 0 : 0.5, ease: EASE }}
-      aria-label="What your giving funded"
+      aria-label={t.footprint.sectionAria}
       className="mt-12 rounded-card border border-border bg-surface p-6"
     >
       <p className="eyebrow flex items-center gap-3">
         <span className="inline-block h-px w-4 bg-amber" aria-hidden />
-        Your footprint
+        {t.footprint.eyebrow}
       </p>
 
       {feed.status === 'loading' ? (
-        <div className="mt-6 flex flex-col gap-6 md:flex-row md:gap-4" aria-label="Loading your footprint">
+        <div className="mt-6 flex flex-col gap-6 md:flex-row md:gap-4" aria-label={t.footprint.loadingAria}>
           {[0, 1, 2, 3].map((i) => (
             <div key={i} className="flex items-center gap-3 md:flex-1">
               <div className="h-9 w-9 shrink-0 animate-pulse rounded-full bg-surface-2" />
@@ -103,8 +105,8 @@ export default function Footprint({ reducedMotion }: { reducedMotion: boolean })
       ) : chips.length === 0 ? (
         <EmptyState
           icon={Sprout}
-          title="Your impact is on its way."
-          body="The next field update will appear here the moment it's posted."
+          title={t.footprint.emptyTitle}
+          body={t.footprint.emptyBody}
           className="mt-5 border-none px-0 py-10"
         />
       ) : (
@@ -159,7 +161,7 @@ export default function Footprint({ reducedMotion }: { reducedMotion: boolean })
                       className="mt-0.5 block font-mono text-[12px] tracking-[0.01em] text-text-faint"
                       style={{ fontVariantNumeric: 'tabular-nums' }}
                     >
-                      {formatRelativeTime(chip.ts)}
+                      {formatRelativeTime(chip.ts, lang)}
                     </span>
                   </span>
                 </motion.li>

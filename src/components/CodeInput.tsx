@@ -14,6 +14,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useAnimationControls, useReducedMotion } from 'framer-motion';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { DONOR_CODE_LENGTH } from '@/lib/session';
 import { cn } from '@/lib/utils';
 
@@ -51,6 +52,7 @@ export default function CodeInput({
   onSubmitCode,
 }: CodeInputProps) {
   const reduceMotion = useReducedMotion();
+  const { t } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
   const [focused, setFocused] = useState(false);
   const [pop, setPop] = useState<Pop | null>(null);
@@ -180,7 +182,7 @@ export default function CodeInput({
     >
       <div
         role="group"
-        aria-label="Donor code, 12 characters"
+        aria-label={t.login.groupAria}
         className="flex items-center gap-1.5 md:gap-2"
       >
         {slots}
@@ -207,7 +209,7 @@ export default function CodeInput({
         autoCorrect="off"
         autoCapitalize="off"
         spellCheck={false}
-        aria-label="Enter your 12-character donor code"
+        aria-label={t.login.codeAria}
         style={{ fontSize: 16 }} /* ≥16px prevents iOS focus zoom */
         className="absolute inset-0 h-full w-full cursor-text opacity-0 disabled:cursor-default"
       />

@@ -5,6 +5,7 @@
  * as a keyed overlay that remounts and fades out (no state, no effect).
  */
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { formatCount, formatMoneyShort } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -18,30 +19,31 @@ interface Chip {
 
 export default function HealthChips({ saveTick }: { saveTick: number }) {
   const { stats, revision } = useGlobalStats();
+  const { t } = useLanguage();
   const flashKey = revision + saveTick;
 
   const balance = stats.totalIn - stats.totalOut;
   const chips: Chip[] = [
     {
-      label: 'in',
+      label: t.admin.health.in,
       value: formatMoneyShort(stats.totalIn),
       colorClass: 'text-amber',
       flashClass: 'bg-amber/25',
     },
     {
-      label: 'out',
+      label: t.admin.health.out,
       value: formatMoneyShort(stats.totalOut),
       colorClass: 'text-terra',
       flashClass: 'bg-terra/25',
     },
     {
-      label: 'families',
+      label: t.admin.health.families,
       value: formatCount(stats.familiesHelped),
       colorClass: 'text-sage',
       flashClass: 'bg-sage/25',
     },
     {
-      label: 'balance',
+      label: t.admin.health.balance,
       value: formatMoneyShort(balance),
       colorClass: 'text-text',
       flashClass: 'bg-text/15',

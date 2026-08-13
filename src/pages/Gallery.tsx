@@ -9,6 +9,7 @@ import { Link, useSearchParams } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, ArrowRight } from 'lucide-react';
 import LiveBadge from '@/components/LiveBadge';
+import { useLanguage, type LanguageContextValue } from '@/i18n/LanguageContext';
 import { useMedia } from '@/hooks/useMedia';
 import { formatCount, formatRelativeTime, toMillis } from '@/lib/format';
 import type { MediaItem } from '@/lib/types';
@@ -20,11 +21,13 @@ const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 type GalleryFilter = 'all' | 'matched' | 'updates';
 
-const FILTERS: { id: GalleryFilter; label: string; dot: string | null }[] = [
-  { id: 'all', label: 'All', dot: null },
-  { id: 'matched', label: 'Matched to gifts', dot: 'var(--sage)' },
-  { id: 'updates', label: 'Field updates', dot: 'var(--amber)' },
-];
+function buildFilters(t: LanguageContextValue['t']): { id: GalleryFilter; label: string; dot: string | null }[] {
+  return [
+    { id: 'all', label: t.gallery.filters.all, dot: null },
+    { id: 'matched', label: t.gallery.filters.matched, dot: 'var(--sage)' },
+    { id: 'updates', label: t.gallery.filters.updates, dot: 'var(--amber)' },
+  ];
+}
 
 function matchesFilter(m: MediaItem, filter: GalleryFilter): boolean {
   if (filter === 'matched') return Boolean(m.donationId);
@@ -33,10 +36,11 @@ function matchesFilter(m: MediaItem, filter: GalleryFilter): boolean {
 }
 
 function GallerySkeleton() {
+  const { t } = useLanguage();
   // Deterministic mixed ratios so the skeleton wall reads like masonry.
   const ratios = ['aspect-[4/3]', 'aspect-[3/4]', 'aspect-square', 'aspect-[4/3]', 'aspect-[3/2]', 'aspect-[3/4]', 'aspect-[4/3]', 'aspect-square'];
   return (
-    <div className="columns-2 gap-3 md:columns-3 xl:columns-4" aria-label="Loading photos">
+    <div className="columns-2 gap-3 md:columns-3 xl:columns-4" aria-label={t.gallery.loadingAria}>
       {ratios.map((r, i) => (
         <div key={i} className={cn('mb-3 w-full animate-pulse break-inside-avoid rounded-[12px] border border-border bg-surface-2', r)} />
       ))}
@@ -48,6 +52,8 @@ export default function Gallery() {
   const media = useMedia();
   const [searchParams, setSearchParams] = useSearchParams();
   const [filter, setFilter] = useState<GalleryFilter>('all');
+  const { t, lang } = useLanguage();
+  const FILTERS = buildFilters(t);
 
   const visibleItems = useMemo(
     () => media.items.filter((m) => matchesFilter(m, filter)),
@@ -123,13 +129,13 @@ export default function Gallery() {
             transition={{ duration: 0.5, ease: EASE }}
           >
             <span className="inline-block h-px w-4 bg-amber" aria-hidden />
-            From the field
+            {t.gallery.eyebrow}
           </motion.p>
           <LiveBadge />
         </div>
 
         <h1 className="mt-3 font-display text-[32px] font-medium leading-[1.1] tracking-[-0.015em] text-text md:text-5xl">
-          {['Proof,', 'not', 'promises.'].map((word, i) => (
+          {t.gallery.titleWords.map((word, i) => (
             <span key={word} className="inline-block overflow-hidden pb-1 align-top">
               <motion.span
                 className="inline-block"
@@ -150,9 +156,7 @@ export default function Gallery() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}
         >
-          Photos come back from the mountain villages as relief arrives. When a
-          photo is tied to a specific gift, you'll see it — that's the point of
-          all this.
+          {t.gallery.sub}
         </motion.p>
 
         <motion.p
@@ -162,13 +166,13 @@ export default function Gallery() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.26 }}
         >
-          {formatCount(visibleItems.length)} photos
-          {latestTs ? ` · latest ${formatRelativeTime(latestTs)}` : ''}
+          {t.gallery.photosCount(formatCount(visibleItems.length))}
+          {latestTs ? `${t.gallery.latestPrefix}${formatRelativeTime(latestTs, lang)}` : ''}
         </motion.p>
       </section>
 
       {/* ——— Section 2: filter row ——— */}
-      <div className="mt-8 flex items-center gap-1 overflow-x-auto no-scrollbar" role="tablist" aria-label="Filter photos">
+      <div className="mt-8 flex items-center gap-1 overflow-x-auto no-scrollbar" role="tablist" aria-label={t.gallery.filterAria}>
         {FILTERS.map((f, i) => {
           const active = filter === f.id;
           return (
@@ -209,16 +213,16 @@ export default function Gallery() {
         {media.status === 'error' ? (
           <div className="flex flex-col items-center gap-3 rounded-card border border-danger/40 bg-surface px-6 py-14 text-center">
             <AlertTriangle className="h-12 w-12 text-danger" strokeWidth={1.25} />
-            <h3 className="font-display text-xl font-medium text-text">Couldn't load the photos.</h3>
+            <h3 className="font-display text-xl font-medium text-text">{t.gallery.errorTitle}</h3>
             <p className="max-w-[40ch] text-[13px] font-medium text-text-muted">
-              The live connection dropped. Check your connection and try again.
+              {t.gallery.errorBody}
             </p>
             <button
               type="button"
               onClick={media.retry}
               className="mt-2 rounded-[10px] border border-amber px-4 py-2 text-sm font-semibold text-amber transition-colors duration-150 hover:bg-amber/10"
             >
-              Retry
+              {t.common.retry}
             </button>
           </div>
         ) : null}
@@ -227,15 +231,15 @@ export default function Gallery() {
           visibleItems.length === 0 ? (
             <div className="flex flex-col items-center gap-4 px-6 py-16 text-center">
               <img src="/empty-photos.svg" alt="" className="w-[240px] max-w-full" />
-              <h3 className="font-display text-xl font-medium text-text">Photos are on their way.</h3>
+              <h3 className="font-display text-xl font-medium text-text">{t.gallery.emptyTitle}</h3>
               <p className="max-w-[40ch] text-[13px] font-medium leading-[1.4] tracking-[0.01em] text-text-muted">
-                Field photos appear here the moment the team uploads them.
+                {t.gallery.emptyBody}
               </p>
               <Link
                 to="/feed"
                 className="mt-2 inline-flex items-center gap-1.5 rounded-[10px] border border-border px-4 py-2 font-mono text-[13px] text-text-muted transition-colors duration-200 hover:border-border-strong hover:bg-surface hover:text-text"
               >
-                Watch the feed
+                {t.gallery.watchFeed}
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
@@ -268,7 +272,7 @@ export default function Gallery() {
                       onClick={media.loadMore}
                       className="w-full rounded-card border border-border bg-transparent py-3 font-mono text-[13px] tracking-[0.01em] text-text-muted transition-colors duration-200 ease-calm hover:border-border-strong hover:bg-surface hover:text-text"
                     >
-                      Load more photos
+                      {t.gallery.loadMore}
                     </button>
                   )}
                 </div>

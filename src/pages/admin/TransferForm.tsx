@@ -11,6 +11,7 @@ import imageCompression from 'browser-image-compression';
 import { collection, doc, increment, writeBatch } from 'firebase/firestore';
 import { ImagePlus, Loader2, TriangleAlert, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { cloudinaryReady, uploadToCloudinary } from '@/lib/cloudinary';
 import { db } from '@/lib/firebase';
 import { formatMoney } from '@/lib/format';
@@ -34,6 +35,7 @@ export default function TransferForm({
   balanceCents: number;
   onSaved: () => void;
 }) {
+  const { t } = useLanguage();
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
   const [purpose, setPurpose] = useState('');
@@ -55,7 +57,7 @@ export default function TransferForm({
     if (!cloudinaryReady) {
       setProof({
         status: 'error',
-        message: 'Cloudinary not configured — set the VITE_CLOUDINARY_* env vars.',
+        message: t.admin.transferForm.cloudinaryMissing,
       });
       return;
     }
@@ -74,7 +76,7 @@ export default function TransferForm({
       URL.revokeObjectURL(previewUrl);
       setProof({
         status: 'error',
-        message: err instanceof Error ? err.message : 'Upload failed.',
+        message: err instanceof Error ? err.message : t.admin.transferForm.uploadFailed,
       });
     }
   };
@@ -100,7 +102,7 @@ export default function TransferForm({
       );
       await batch.commit();
 
-      toast.success('Transfer recorded — live on the ledger now.');
+      toast.success(t.admin.transferForm.saved);
       onSaved();
       setSaveState('saved');
       setTimeout(() => {
@@ -113,7 +115,7 @@ export default function TransferForm({
       }, 2000);
     } catch (err) {
       console.error('[TransferForm] write failed:', err);
-      toast.error("Couldn't save — check connection, nothing was recorded.");
+      toast.error(t.common.saveFailed);
       setSaveState('idle');
     }
   };
@@ -121,8 +123,8 @@ export default function TransferForm({
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-5">
       <div className="grid gap-5 min-[480px]:grid-cols-2">
-        <AmountField value={amount} onChange={setAmount} label="Amount (USD)" />
-        <Field label="Date / time">
+        <AmountField value={amount} onChange={setAmount} label={t.admin.fields.amountUsd} />
+        <Field label={t.admin.fields.dateTime}>
           <input
             type="datetime-local"
             value={when}
@@ -143,13 +145,13 @@ export default function TransferForm({
             className="flex items-center gap-2 overflow-hidden rounded-[10px] border border-danger/60 px-3.5 py-2.5 text-[13px] font-medium text-danger"
           >
             <TriangleAlert className="h-4 w-4 shrink-0" />
-            Exceeds recorded balance by {formatMoney(cents - balanceCents)}.
+            {t.admin.transferForm.overdrawn(formatMoney(cents - balanceCents))}
           </motion.p>
         )}
       </AnimatePresence>
 
       <div className="grid gap-5 min-[480px]:grid-cols-2">
-        <Field label="Recipient">
+        <Field label={t.admin.transferForm.recipient}>
           <input
             type="text"
             required
@@ -159,11 +161,11 @@ export default function TransferForm({
             className={inputCls}
           />
         </Field>
-        <Field label="Purpose">
+        <Field label={t.admin.transferForm.purpose}>
           <input
             type="text"
             required
-            placeholder="Water filters for 14 families"
+            placeholder={t.admin.transferForm.purposePh}
             value={purpose}
             onChange={(e) => setPurpose(e.target.value)}
             className={inputCls}
@@ -172,7 +174,7 @@ export default function TransferForm({
       </div>
 
       {/* Optional proof photo (single-file uploader) */}
-      <Field label="Proof photo (optional)">
+      <Field label={t.admin.transferForm.proofLabel}>
         <input
           ref={fileInput}
           type="file"
@@ -189,25 +191,25 @@ export default function TransferForm({
             onClick={() => fileInput.current?.click()}
             className="flex h-12 w-full items-center justify-center gap-2 rounded-[10px] border border-dashed border-border-strong text-[13px] font-medium text-text-muted transition-colors hover:border-amber hover:text-amber"
           >
-            <ImagePlus className="h-4 w-4" /> Attach a receipt or field photo
+            <ImagePlus className="h-4 w-4" /> {t.admin.transferForm.attach}
           </button>
         )}
         {proof.status === 'busy' && (
           <div className="flex h-12 items-center gap-3 rounded-[10px] border border-border bg-surface-2 px-3.5">
             <img src={proof.previewUrl} alt="" className="h-9 w-9 rounded-[8px] object-cover" />
             <Loader2 className="h-4 w-4 animate-spin text-amber" />
-            <span className="text-[13px] text-text-muted">Compressing & uploading…</span>
+            <span className="text-[13px] text-text-muted">{t.admin.transferForm.uploading}</span>
           </div>
         )}
         {proof.status === 'done' && (
           <div className="flex h-12 items-center gap-3 rounded-[10px] border border-sage/50 bg-surface-2 px-3.5">
             <img src={proof.url} alt="" className="h-9 w-9 rounded-[8px] object-cover" />
-            <span className="text-[13px] font-medium text-sage">Proof attached</span>
+            <span className="text-[13px] font-medium text-sage">{t.admin.transferForm.proofAttached}</span>
             <button
               type="button"
               onClick={() => setProof({ status: 'idle' })}
               className="ml-auto rounded-[8px] p-1.5 text-text-muted transition-colors hover:text-text"
-              aria-label="Remove proof photo"
+              aria-label={t.admin.transferForm.removeProof}
             >
               <X className="h-4 w-4" />
             </button>
@@ -222,7 +224,7 @@ export default function TransferForm({
               onClick={() => setProof({ status: 'idle' })}
               className="ml-auto shrink-0 text-[13px] font-medium text-text-muted hover:text-text"
             >
-              Dismiss
+              {t.common.dismiss}
             </button>
           </div>
         )}
@@ -230,7 +232,7 @@ export default function TransferForm({
 
       <SubmitButton
         state={saveState}
-        label="Record transfer"
+        label={t.admin.transferForm.recordTransfer}
         color="terra"
         disabled={!canSubmit}
       />

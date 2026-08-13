@@ -30,6 +30,7 @@ import {
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { cloudinaryReady, cloudinaryThumb, cloudinaryUrl } from '@/lib/cloudinary';
 import { db } from '@/lib/firebase';
 import { formatMoney, toMillis } from '@/lib/format';
@@ -55,6 +56,7 @@ function PhotoLinkField({
   onCodeChange: (v: string) => void;
   onResolved: (code: string, donationId: string) => void;
 }) {
+  const { t } = useLanguage();
   const code = item.linkCode.trim();
   const eligible = isPlausibleDonorCode(code);
   const [result, setResult] = useState<{
@@ -99,7 +101,10 @@ function PhotoLinkField({
         setResult({
           code,
           status: 'linked',
-          label: `${latest.donorName ?? 'donor'} · ${formatMoney(latest.amount)} gift`,
+          label: t.admin.photosForm.linkLabel(
+            latest.donorName ?? t.admin.photosForm.donorFallback,
+            formatMoney(latest.amount),
+          ),
         });
       } catch (err) {
         console.error('[PhotoLinkField] lookup failed:', err);
@@ -130,7 +135,7 @@ function PhotoLinkField({
         <input
           type="text"
           maxLength={DONOR_CODE_LENGTH}
-          placeholder="Link to a gift — donor code (optional)"
+          placeholder={t.admin.photosForm.linkPh}
           value={item.linkCode}
           onChange={(e) => onCodeChange(e.target.value.trim())}
           spellCheck={false}
@@ -139,17 +144,17 @@ function PhotoLinkField({
       </div>
       {status === 'checking' && (
         <p className="mt-1 flex items-center gap-1.5 text-[12px] text-text-muted">
-          <Loader2 className="h-3 w-3 animate-spin" /> Finding the gift…
+          <Loader2 className="h-3 w-3 animate-spin" /> {t.admin.photosForm.finding}
         </p>
       )}
       {status === 'linked' && (
         <p className="mt-1 flex items-center gap-1.5 text-[12px] font-medium text-sage">
-          <CheckCircle2 className="h-3 w-3" /> Linked to {label}
+          <CheckCircle2 className="h-3 w-3" /> {t.admin.photosForm.linkedTo(label)}
         </p>
       )}
       {status === 'none' && (
         <p className="mt-1 flex items-center gap-1.5 text-[12px] text-danger">
-          <CircleAlert className="h-3 w-3" /> No gift found for this code.
+          <CircleAlert className="h-3 w-3" /> {t.admin.photosForm.noGift}
         </p>
       )}
     </div>
@@ -171,6 +176,7 @@ function PhotoTile({
   onRetry: () => void;
   onPatch: (p: Partial<QueuedPhoto>) => void;
 }) {
+  const { t } = useLanguage();
   const thumb = item.result ? cloudinaryThumb(item.result.secureUrl, 200) : item.previewUrl;
   return (
     <motion.div
@@ -205,7 +211,7 @@ function PhotoTile({
         {(item.status === 'compressing' || item.status === 'uploading') && (
           <span className="flex shrink-0 items-center gap-1.5 text-[11px] text-text-muted">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            {item.status === 'compressing' ? 'Compressing' : 'Uploading'}
+            {item.status === 'compressing' ? t.admin.photosForm.compressing : t.admin.photosForm.uploading}
           </span>
         )}
         {item.status === 'error' && (
@@ -214,13 +220,13 @@ function PhotoTile({
             onClick={onRetry}
             className="flex shrink-0 items-center gap-1.5 rounded-[8px] border border-danger/60 px-2.5 py-1.5 text-[12px] font-medium text-danger transition-colors hover:bg-danger/10"
           >
-            <RotateCcw className="h-3.5 w-3.5" /> Retry
+            <RotateCcw className="h-3.5 w-3.5" /> {t.common.retry}
           </button>
         )}
         <button
           type="button"
           onClick={onRemove}
-          aria-label="Remove photo"
+          aria-label={t.admin.photosForm.removePhoto}
           className="shrink-0 rounded-[8px] p-1.5 text-text-faint transition-colors hover:text-danger"
         >
           <X className="h-4 w-4" />
@@ -239,7 +245,7 @@ function PhotoTile({
         >
           <input
             type="text"
-            placeholder="Add a caption…"
+            placeholder={t.admin.photosForm.captionPh}
             value={item.caption}
             onChange={(e) => onPatch({ caption: e.target.value })}
             className={cn(inputCls, 'mt-2 h-10 text-[13px]')}
@@ -262,6 +268,7 @@ function PhotoTile({
 /* ------------------------------------------------------------------ */
 
 export default function PhotosForm({ onSaved }: { onSaved: () => void }) {
+  const { t } = useLanguage();
   const { items, addFiles, remove, retry, patch, clearDone } = usePhotoQueue();
   const [dragOver, setDragOver] = useState(false);
   const [publishing, setPublishing] = useState(false);
@@ -297,14 +304,12 @@ export default function PhotosForm({ onSaved }: { onSaved: () => void }) {
         });
       }
       await batch.commit();
-      toast.success(
-        `${doneItems.length} photo${doneItems.length === 1 ? '' : 's'} published — live now.`,
-      );
+      toast.success(t.admin.photosForm.published(doneItems.length));
       onSaved();
       clearDone(doneItems.map((it) => it.id));
     } catch (err) {
       console.error('[PhotosForm] publish failed:', err);
-      toast.error("Couldn't save — check connection, nothing was recorded.");
+      toast.error(t.common.saveFailed);
     } finally {
       setPublishing(false);
     }
@@ -315,8 +320,7 @@ export default function PhotosForm({ onSaved }: { onSaved: () => void }) {
       {!cloudinaryReady && (
         <p className="flex items-center gap-2 rounded-[10px] border border-danger/60 px-3.5 py-2.5 text-[13px] font-medium text-danger">
           <CircleAlert className="h-4 w-4 shrink-0" />
-          Cloudinary is not configured — set VITE_CLOUDINARY_CLOUD_NAME and
-          VITE_CLOUDINARY_UPLOAD_PRESET to enable uploads.
+          {t.admin.photosForm.cloudinaryNotice}
         </p>
       )}
 
@@ -324,7 +328,7 @@ export default function PhotosForm({ onSaved }: { onSaved: () => void }) {
       <div
         role="button"
         tabIndex={0}
-        aria-label="Add photos"
+        aria-label={t.admin.photosForm.addPhotosAria}
         onClick={() => browseInput.current?.click()}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') browseInput.current?.click();
@@ -349,10 +353,10 @@ export default function PhotosForm({ onSaved }: { onSaved: () => void }) {
           />
         </motion.span>
         <p className="text-[14px] font-medium text-text-muted">
-          Drop field photos here or tap to browse
+          {t.admin.photosForm.dropText}
         </p>
         <p className="max-w-[46ch] text-[12px] text-text-faint">
-          Compressed in your browser before upload — originals stay on your device.
+          {t.admin.photosForm.dropSub}
         </p>
         <button
           type="button"
@@ -362,7 +366,7 @@ export default function PhotosForm({ onSaved }: { onSaved: () => void }) {
           }}
           className="mt-1 flex items-center gap-2 rounded-[10px] border border-border px-3.5 py-2 text-[13px] font-medium text-text-muted transition-colors hover:border-amber hover:text-amber"
         >
-          <Camera className="h-4 w-4" /> Take photo
+          <Camera className="h-4 w-4" /> {t.admin.photosForm.takePhoto}
         </button>
       </div>
 
@@ -412,7 +416,7 @@ export default function PhotosForm({ onSaved }: { onSaved: () => void }) {
       >
         <SubmitButton
           state={publishing ? 'saving' : 'idle'}
-          label={`Publish ${doneItems.length} photo${doneItems.length === 1 ? '' : 's'}`}
+          label={t.admin.photosForm.publish(doneItems.length)}
           color="amber"
           disabled={doneItems.length === 0}
         />

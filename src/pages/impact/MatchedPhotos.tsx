@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useLanguage } from '@/i18n/LanguageContext';
 import type { LiveStatus, MediaItem } from '@/lib/types';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -26,6 +27,7 @@ export default function MatchedPhotos({
   reducedMotion,
 }: MatchedPhotosProps) {
   const [active, setActive] = useState<MediaItem | null>(null);
+  const { t } = useLanguage();
   const shown = photos.slice(0, 4);
 
   // Escape closes; body scroll locked while the lightbox is open.
@@ -47,22 +49,22 @@ export default function MatchedPhotos({
     Boolean(m.donationId && donationIds.includes(m.donationId));
 
   return (
-    <section aria-label="Photos from the field">
+    <section aria-label={t.matchedPhotos.sectionAria}>
       <div className="flex items-baseline justify-between gap-3">
         <h2 className="font-display text-2xl font-medium leading-[1.2] tracking-[-0.01em] text-text md:text-[32px]">
-          From the field
+          {t.matchedPhotos.title}
         </h2>
         <Link
           to="/gallery"
           className="shrink-0 text-sm font-semibold text-amber transition-colors hover:text-amber-soft"
         >
-          All photos →
+          {t.matchedPhotos.all}
         </Link>
       </div>
 
       <div className="mt-5">
         {status === 'loading' ? (
-          <div className="grid grid-cols-2 gap-3" aria-label="Loading matched photos">
+          <div className="grid grid-cols-2 gap-3" aria-label={t.matchedPhotos.loadingAria}>
             {[0, 1, 2, 3].map((i) => (
               <div key={i} className="aspect-[4/3] animate-pulse rounded-xl bg-surface-2" />
             ))}
@@ -70,10 +72,9 @@ export default function MatchedPhotos({
         ) : shown.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 rounded-card border border-dashed border-border px-6 py-12 text-center">
             <img src="/empty-photos.svg" alt="" className="h-20 w-auto opacity-80" />
-            <h3 className="font-display text-xl font-medium text-text">No photos matched yet.</h3>
+            <h3 className="font-display text-xl font-medium text-text">{t.matchedPhotos.emptyTitle}</h3>
             <p className="max-w-[36ch] text-[13px] font-medium leading-[1.4] tracking-[0.01em] text-text-muted">
-              When the field team uploads photos funded by your gifts, they'll
-              appear here.
+              {t.matchedPhotos.emptyBody}
             </p>
           </div>
         ) : (
@@ -95,7 +96,7 @@ export default function MatchedPhotos({
                   duration: reducedMotion ? 0.2 : 0.5,
                   ease: EASE,
                 }}
-                aria-label={`Open photo: ${m.caption}`}
+                aria-label={t.common.openPhotoCaption(m.caption)}
                 className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface-2"
               >
                 <img
@@ -147,7 +148,7 @@ export default function MatchedPhotos({
                 <button
                   type="button"
                   onClick={() => setActive(null)}
-                  aria-label="Close photo"
+                  aria-label={t.matchedPhotos.closePhoto}
                   className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-[#F3EAD9] transition-colors hover:bg-black/80"
                 >
                   <X className="h-4 w-4" />
@@ -159,7 +160,7 @@ export default function MatchedPhotos({
                 </p>
                 {fundedByYou(active) ? (
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-sage/40 bg-sage/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-sage">
-                    Funded in part by your gift
+                    {t.matchedPhotos.funded}
                   </span>
                 ) : null}
               </figcaption>

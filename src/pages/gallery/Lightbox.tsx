@@ -10,6 +10,7 @@ import { Link } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Link2, Newspaper, X } from 'lucide-react';
 import { cloudinaryUrl } from '@/lib/cloudinary';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { formatMoney, formatRelativeTime, privacyName } from '@/lib/format';
 import type { Donation, ImpactUpdate, MediaItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -32,6 +33,7 @@ const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 const SWIPE_THRESHOLD = 80;
 
 export default function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) {
+  const { t, lang } = useLanguage();
   const open = index != null && index >= 0 && index < photos.length;
   const current = open ? photos[index] : null;
   const [dir, setDir] = useState<1 | -1>(1);
@@ -81,13 +83,13 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
           onClick={onClose}
           role="dialog"
           aria-modal="true"
-          aria-label={current.media.caption || 'Field photo'}
+          aria-label={current.media.caption || t.common.fieldPhoto}
         >
           {/* Close */}
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close photo viewer"
+            aria-label={t.lightbox.closeAria}
             className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-text-muted transition-colors duration-150 hover:border-border-strong hover:text-text"
           >
             <X className="h-5 w-5" />
@@ -98,7 +100,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
             <>
               <button
                 type="button"
-                aria-label="Previous photo"
+                aria-label={t.lightbox.prevAria}
                 disabled={index === 0}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -112,7 +114,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
               </button>
               <button
                 type="button"
-                aria-label="Next photo"
+                aria-label={t.lightbox.nextAria}
                 disabled={index === photos.length - 1}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -135,7 +137,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
                 <motion.img
                   key={current.media.id}
                   src={cloudinaryUrl(current.media.cloudinaryUrl, { width: 1600, crop: 'limit' })}
-                  alt={current.media.caption || 'Field photo'}
+                  alt={current.media.caption || t.common.fieldPhoto}
                   className="mx-auto max-h-[78vh] w-auto max-w-full rounded-card border border-border object-contain"
                   custom={dir}
                   initial={{ opacity: 0, x: 48 * dir, scale: 0.98 }}
@@ -171,7 +173,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
                 className="font-mono text-[12px] tracking-[0.01em] text-text-muted"
                 style={{ fontVariantNumeric: 'tabular-nums' }}
               >
-                {formatRelativeTime(current.media.timestamp)}
+                {formatRelativeTime(current.media.timestamp, lang)}
               </p>
               <div className="flex flex-wrap items-center justify-center gap-2">
                 {current.donation ? (
@@ -181,7 +183,9 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
                     className="inline-flex items-center gap-1.5 rounded-full border border-sage/50 bg-sage/10 px-3 py-1 text-[12px] font-medium text-sage transition-colors duration-150 hover:bg-sage/20"
                   >
                     <Link2 className="h-3 w-3" />
-                    Funded by {privacyName(current.donation.donorName)}&rsquo;s gift ·{' '}
+                    {t.lightbox.fundedA}
+                    {privacyName(current.donation.donorName, lang)}
+                    {t.lightbox.fundedB} ·{' '}
                     <span className="font-mono" style={{ fontVariantNumeric: 'tabular-nums' }}>
                       {formatMoney(current.donation.amount)}
                     </span>
@@ -190,7 +194,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
                 {current.update ? (
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-amber/50 bg-amber/10 px-3 py-1 text-[12px] font-medium text-amber">
                     <Newspaper className="h-3 w-3" />
-                    From update: {current.update.title}
+                    {t.lightbox.fromUpdate(current.update.title)}
                   </span>
                 ) : null}
               </div>

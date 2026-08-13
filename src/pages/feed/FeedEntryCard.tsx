@@ -18,6 +18,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { cloudinaryUrl } from '@/lib/cloudinary';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { formatMoney, formatRelativeTime, privacyName } from '@/lib/format';
 import type { FeedEntry, MediaItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -49,6 +50,7 @@ export default function FeedEntryCard({
   onOpenProof,
 }: FeedEntryCardProps) {
   const [open, setOpen] = useState(false);
+  const { t, lang } = useLanguage();
   const { icon: Icon, color } = VARIANT_ICON[entry.kind];
 
   let title: ReactNode = null;
@@ -62,7 +64,7 @@ export default function FeedEntryCard({
     amount = d.amount;
     title = (
       <>
-        {privacyName(d.donorName)} gave{' '}
+        {t.feedEntry.gave(privacyName(d.donorName, lang))}{' '}
         <span className="font-mono font-medium text-amber" style={{ fontVariantNumeric: 'tabular-nums' }}>
           {formatMoney(d.amount)}
         </span>
@@ -70,24 +72,24 @@ export default function FeedEntryCard({
     );
     meta = d.note ?? null;
   } else if (entry.kind === 'transfer') {
-    const t = entry.transfer;
-    amount = t.amount;
+    const tr = entry.transfer;
+    amount = tr.amount;
     title = (
       <>
         <span className="font-mono font-medium text-terra" style={{ fontVariantNumeric: 'tabular-nums' }}>
-          {formatMoney(t.amount)}
+          {formatMoney(tr.amount)}
         </span>{' '}
-        sent to the field
+        {t.feedEntry.sentToField}
       </>
     );
-    meta = `Recipient: ${t.recipient} · Purpose: ${t.purpose}`;
+    meta = t.feedEntry.transferMeta(tr.recipient, tr.purpose);
     expandable = true;
   } else if (entry.kind === 'update') {
     title = entry.update.title;
     meta = null;
     expandable = true;
   } else {
-    title = entry.media.caption || 'New photo from the field';
+    title = entry.media.caption || t.feedEntry.newPhoto;
   }
 
   return (
@@ -178,14 +180,14 @@ export default function FeedEntryCard({
                     onOpenPhoto?.(entry.media);
                   }}
                   className="relative block w-full cursor-zoom-in overflow-hidden rounded-[12px] border border-border"
-                  aria-label="Open photo"
+                  aria-label={t.common.openPhoto}
                 >
                   <img
                     src={cloudinaryUrl(entry.media.thumbnailUrl || entry.media.cloudinaryUrl, {
                       width: 640,
                       crop: 'limit',
                     })}
-                    alt={entry.media.caption || 'Field photo'}
+                    alt={entry.media.caption || t.common.fieldPhoto}
                     loading="lazy"
                     className="aspect-video w-full object-cover transition-transform duration-500 ease-calm hover:scale-[1.03]"
                   />
@@ -193,7 +195,7 @@ export default function FeedEntryCard({
                 {matched ? (
                   <span className="mt-2 inline-flex items-center gap-1 rounded-full border border-sage/40 px-2 py-0.5 text-[11px] font-semibold text-sage">
                     <Link2 className="h-3 w-3" />
-                    matched
+                    {t.feedEntry.matched}
                   </span>
                 ) : null}
               </span>
@@ -205,12 +207,12 @@ export default function FeedEntryCard({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onOpenProof?.(entry.transfer.proofUrl!, `Proof · ${entry.transfer.purpose}`);
+                  onOpenProof?.(entry.transfer.proofUrl!, t.feedEntry.proofCaption(entry.transfer.purpose));
                 }}
                 className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-sage/50 bg-sage/10 px-2.5 py-1 text-[11px] font-semibold text-sage transition-colors duration-150 hover:bg-sage/20"
               >
                 <FileCheck className="h-3 w-3" />
-                Proof
+                {t.feedEntry.proof}
               </button>
             ) : null}
           </span>
@@ -229,7 +231,7 @@ export default function FeedEntryCard({
               className="font-mono text-[12px] tracking-[0.01em] text-text-muted"
               style={{ fontVariantNumeric: 'tabular-nums' }}
             >
-              {formatRelativeTime(ts)}
+              {formatRelativeTime(ts, lang)}
             </span>
             {expandable ? (
               <ChevronDown
@@ -257,11 +259,11 @@ export default function FeedEntryCard({
                 {entry.kind === 'transfer' ? (
                   <dl className="space-y-1.5 text-sm leading-[1.55]">
                     <div>
-                      <dt className="eyebrow inline">Recipient · </dt>
+                      <dt className="eyebrow inline">{t.feedEntry.recipient} · </dt>
                       <dd className="inline text-text-muted">{entry.transfer.recipient}</dd>
                     </div>
                     <div>
-                      <dt className="eyebrow inline">Purpose · </dt>
+                      <dt className="eyebrow inline">{t.feedEntry.purpose} · </dt>
                       <dd className="inline text-text-muted">{entry.transfer.purpose}</dd>
                     </div>
                   </dl>

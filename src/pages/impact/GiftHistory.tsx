@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { HandHeart } from 'lucide-react';
 import EmptyState from '@/components/EmptyState';
 import FeedItem from '@/components/FeedItem';
+import { useLanguage } from '@/i18n/LanguageContext';
 import type { Donation, LiveStatus } from '@/lib/types';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -19,11 +20,12 @@ interface GiftHistoryProps {
 }
 
 export default function GiftHistory({ donations, status, reducedMotion }: GiftHistoryProps) {
+  const { t } = useLanguage();
   return (
-    <section aria-label="Your gifts">
+    <section aria-label={t.giftHistory.sectionAria}>
       <div className="flex items-center gap-3">
         <h2 className="font-display text-2xl font-medium leading-[1.2] tracking-[-0.01em] text-text md:text-[32px]">
-          Your gifts
+          {t.giftHistory.title}
         </h2>
         {status !== 'loading' && donations.length > 0 ? (
           <span
@@ -37,7 +39,7 @@ export default function GiftHistory({ donations, status, reducedMotion }: GiftHi
 
       <div className="mt-5">
         {status === 'loading' ? (
-          <div className="space-y-3" aria-label="Loading your gifts">
+          <div className="space-y-3" aria-label={t.giftHistory.loadingAria}>
             {[0, 1, 2].map((i) => (
               <div key={i} className="flex items-center gap-3 rounded-card border border-border bg-surface px-4 py-3">
                 <div className="h-10 w-10 shrink-0 animate-pulse rounded-full bg-surface-2" />
@@ -52,8 +54,8 @@ export default function GiftHistory({ donations, status, reducedMotion }: GiftHi
         ) : donations.length === 0 ? (
           <EmptyState
             icon={HandHeart}
-            title="No gifts recorded yet."
-            body="When your next gift lands, it will appear here within seconds."
+            title={t.giftHistory.emptyTitle}
+            body={t.giftHistory.emptyBody}
           />
         ) : (
           <motion.ul layout="position" className="space-y-3">
@@ -68,7 +70,7 @@ export default function GiftHistory({ donations, status, reducedMotion }: GiftHi
                 >
                   <FeedItem
                     variant="donation"
-                    title="Gift to LAPA Mission"
+                    title={t.giftHistory.giftTitle}
                     meta={d.note}
                     amount={d.amount}
                     timestamp={d.timestamp}

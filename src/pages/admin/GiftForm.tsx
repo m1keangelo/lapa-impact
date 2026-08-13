@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { collection, doc, increment, writeBatch } from 'firebase/firestore';
 import { Check, Copy, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { db } from '@/lib/firebase';
 import { privacyName } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -38,6 +39,7 @@ import {
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 export default function GiftForm({ onSaved }: { onSaved: () => void }) {
+  const { t } = useLanguage();
   const [code, setCode] = useState('');
   const lookup = useDonorLookup(code);
   const [createMode, setCreateMode] = useState(false);
@@ -67,7 +69,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      toast.error('Copy failed — select the code manually.');
+      toast.error(t.admin.giftForm.copyFailed);
     }
   };
 
@@ -122,7 +124,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
       await batch.commit();
 
       if (createMode) setCreatedCode(donorCode);
-      toast.success('Gift recorded — live on the ledger now.');
+      toast.success(t.admin.giftForm.saved);
       onSaved();
       setSaveState('saved');
       setTimeout(() => {
@@ -131,7 +133,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
       }, 2000);
     } catch (err) {
       console.error('[GiftForm] write failed:', err);
-      toast.error("Couldn't save — check connection, nothing was recorded.");
+      toast.error(t.common.saveFailed);
       setSaveState('idle');
     }
   };
@@ -143,7 +145,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
         <div className="rounded-card border border-amber/40 bg-amber-glow/40 p-4">
           <div className="flex items-center justify-between gap-3">
             <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-amber">
-              New donor code
+              {t.admin.giftForm.newDonorCode}
             </p>
             <button
               type="button"
@@ -151,7 +153,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
               className="flex items-center gap-1.5 rounded-[8px] border border-border px-2.5 py-1 text-[12px] font-medium text-text-muted transition-colors hover:text-text"
             >
               {copied ? <Check className="h-3.5 w-3.5 text-sage" /> : <Copy className="h-3.5 w-3.5" />}
-              {copied ? 'Copied' : 'Copy'}
+              {copied ? t.common.copied : t.common.copy}
             </button>
           </div>
           <p
@@ -161,10 +163,10 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
             {newCode}
           </p>
           <p className="mt-1 text-[12px] text-text-muted">
-            Share this code with the donor — it opens their personal impact page.
+            {t.admin.giftForm.shareNote}
           </p>
           <div className="mt-4 grid gap-4 min-[480px]:grid-cols-2">
-            <Field label="Donor name">
+            <Field label={t.admin.giftForm.donorName}>
               <input
                 type="text"
                 required
@@ -174,7 +176,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
                 className={inputCls}
               />
             </Field>
-            <Field label="Email (optional)">
+            <Field label={t.admin.giftForm.emailOptional}>
               <input
                 type="email"
                 placeholder="maria@example.org"
@@ -189,7 +191,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
             onClick={() => setCreateMode(false)}
             className="mt-3 text-[12px] font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
           >
-            ← Use an existing code instead
+            {t.admin.giftForm.useExisting}
           </button>
         </div>
       ) : (
@@ -209,7 +211,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
                   'px-3.5 py-2.5 text-[13px] font-medium text-text-muted transition-colors hover:border-amber hover:text-amber',
                 )}
               >
-                <UserPlus className="h-4 w-4" /> Create a new donor with a fresh code
+                <UserPlus className="h-4 w-4" /> {t.admin.giftForm.createNew}
               </motion.button>
             )}
           </AnimatePresence>
@@ -217,8 +219,8 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
       )}
 
       <div className="grid gap-5 min-[480px]:grid-cols-2">
-        <AmountField value={amount} onChange={setAmount} label="Amount (USD)" />
-        <Field label="Date / time">
+        <AmountField value={amount} onChange={setAmount} label={t.admin.fields.amountUsd} />
+        <Field label={t.admin.fields.dateTime}>
           <input
             type="datetime-local"
             value={when}
@@ -228,10 +230,10 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
         </Field>
       </div>
 
-      <Field label="Note (optional)">
+      <Field label={t.admin.giftForm.noteOptional}>
         <textarea
           rows={2}
-          placeholder="For the river families…"
+          placeholder={t.admin.giftForm.notePh}
           value={note}
           onChange={(e) => setNote(e.target.value)}
           className={textareaCls}
@@ -240,7 +242,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
 
       <SubmitButton
         state={saveState}
-        label="Record gift"
+        label={t.admin.giftForm.recordGift}
         color="amber"
         disabled={!canSubmit}
       />
@@ -256,7 +258,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
             className="rounded-card border border-sage/50 bg-sage/10 p-4"
           >
             <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-sage">
-              Donor created — share this code
+              {t.admin.giftForm.donorCreated}
             </p>
             <div className="mt-2 flex items-center justify-between gap-3">
               <p className="font-mono text-[20px] tracking-[0.12em] text-text">{createdCode}</p>
@@ -266,7 +268,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
                 className="flex items-center gap-1.5 rounded-[8px] border border-border px-2.5 py-1 text-[12px] font-medium text-text-muted transition-colors hover:text-text"
               >
                 {copied ? <Check className="h-3.5 w-3.5 text-sage" /> : <Copy className="h-3.5 w-3.5" />}
-                {copied ? 'Copied' : 'Copy'}
+                {copied ? t.common.copied : t.common.copy}
               </button>
             </div>
             <button
@@ -274,7 +276,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
               onClick={() => setCreatedCode(null)}
               className="mt-2 text-[12px] font-medium text-text-muted hover:text-text"
             >
-              Dismiss
+              {t.common.dismiss}
             </button>
           </motion.div>
         )}

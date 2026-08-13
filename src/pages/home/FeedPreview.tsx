@@ -17,6 +17,7 @@ import FeedItem from '@/components/FeedItem';
 import LiveBadge from '@/components/LiveBadge';
 import EmptyState from '@/components/EmptyState';
 import { useCombinedFeed, useFeed } from '@/hooks/useFeed';
+import { useLanguage, type LanguageContextValue } from '@/i18n/LanguageContext';
 import { firebaseReady } from '@/lib/firebase';
 import { demoMedia } from '@/lib/demoData';
 import { formatRelativeTime, toMillis } from '@/lib/format';
@@ -24,7 +25,7 @@ import type { FeedEntry, MediaItem } from '@/lib/types';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-function entryToProps(entry: FeedEntry): {
+function entryToProps(entry: FeedEntry, t: LanguageContextValue['t']): {
   variant: 'donation' | 'transfer' | 'update' | 'photo';
   title: string;
   meta?: string;
@@ -35,14 +36,14 @@ function entryToProps(entry: FeedEntry): {
     case 'donation':
       return {
         variant: 'donation',
-        title: `${entry.donation.donorName ?? 'A donor'} gave`,
+        title: t.home.feedPreview.donationTitle(entry.donation.donorName ?? t.common.aDonor),
         meta: entry.donation.note,
         amount: entry.donation.amount,
       };
     case 'transfer':
       return {
         variant: 'transfer',
-        title: `Sent to ${entry.transfer.recipient}`,
+        title: t.home.feedPreview.transferTitle(entry.transfer.recipient),
         meta: entry.transfer.purpose,
         amount: entry.transfer.amount,
       };
@@ -59,15 +60,16 @@ function entryToProps(entry: FeedEntry): {
     case 'photo':
       return {
         variant: 'photo',
-        title: 'Photo from the field',
+        title: t.home.feedPreview.photoTitle,
         meta: entry.media.caption,
       };
   }
 }
 
 function FeedSkeleton() {
+  const { t } = useLanguage();
   return (
-    <div className="flex flex-col gap-3" aria-label="Loading the live ledger">
+    <div className="flex flex-col gap-3" aria-label={t.home.feedPreview.loadingAria}>
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
@@ -81,6 +83,7 @@ function FeedSkeleton() {
 export default function FeedPreview() {
   const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
+  const { t, lang } = useLanguage();
   const { items, status } = useCombinedFeed(6);
   const mediaQuery = useFeed<MediaItem>('media', { limit: 1 });
 
@@ -103,14 +106,13 @@ export default function FeedPreview() {
           <div>
             <p className="eyebrow flex items-center gap-3">
               <span className="inline-block h-px w-4 bg-amber" aria-hidden />
-              Happening now
+              {t.home.feedPreview.eyebrow}
             </p>
             <h2 className="mt-3 font-display text-2xl font-medium leading-[1.2] tracking-[-0.01em] text-text md:text-[32px]">
-              The ledger, live.
+              {t.home.feedPreview.title}
             </h2>
             <p className="mt-2 max-w-[52ch] text-[13px] font-medium leading-[1.4] tracking-[0.01em] text-text-muted">
-              Everything below just happened — or is about to. This stream
-              updates without a reload.
+              {t.home.feedPreview.body}
             </p>
           </div>
           <LiveBadge />
@@ -125,15 +127,15 @@ export default function FeedPreview() {
             ) : status === 'error' ? (
               <EmptyState
                 icon={AlertTriangle}
-                title="The ledger hiccuped."
-                body="We couldn't reach the live stream. Check your connection and try again."
-                actionLabel="Retry"
+                title={t.home.feedPreview.errorTitle}
+                body={t.home.feedPreview.errorBody}
+                actionLabel={t.common.retry}
                 onAction={() => window.location.reload()}
               />
             ) : items.length === 0 ? (
               <EmptyState
-                title="Nothing yet — the day is young."
-                body="The next gift, transfer or field photo will land right here, live."
+                title={t.home.feedPreview.emptyTitle}
+                body={t.home.feedPreview.emptyBody}
               />
             ) : (
               <motion.div
@@ -146,7 +148,7 @@ export default function FeedPreview() {
                   {items.map((entry) => {
                     const key = `${entry.kind}:${entry.id}`;
                     const isNew = entry.ts > mountedAt + 1000;
-                    const p = entryToProps(entry);
+                    const p = entryToProps(entry, t);
                     return (
                       <motion.div
                         key={key}
@@ -189,7 +191,7 @@ export default function FeedPreview() {
               to="/feed"
               className="mt-6 inline-block text-sm font-semibold text-amber transition-colors hover:text-amber-soft"
             >
-              See the full feed →
+              {t.home.feedPreview.seeFull}
             </Link>
           </div>
 
@@ -225,14 +227,14 @@ export default function FeedPreview() {
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     {featured.donationId ? (
                       <span className="rounded-full border border-border bg-surface-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-amber">
-                        Matched to a donor's gift
+                        {t.home.feedPreview.matchedChip}
                       </span>
                     ) : null}
                     <span
                       className="font-mono text-[12px] tracking-[0.01em] text-text-muted"
                       style={{ fontVariantNumeric: 'tabular-nums' }}
                     >
-                      {formatRelativeTime(featured.timestamp)}
+                      {formatRelativeTime(featured.timestamp, lang)}
                     </span>
                   </div>
                 </figcaption>

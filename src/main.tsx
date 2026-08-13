@@ -3,12 +3,15 @@ import { BrowserRouter } from 'react-router'
 import './index.css'
 import App from './App.tsx'
 import { bootstrapTheme } from './hooks/useTheme'
+import { LanguageProvider } from './i18n/LanguageContext'
 
 // Apply persisted theme before first paint; no StrictMode (react-dev.md).
 bootstrapTheme()
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
-    <App />
+    <LanguageProvider>
+      <App />
+    </LanguageProvider>
   </BrowserRouter>,
 )

@@ -4,11 +4,9 @@
  * logo mark drawn in (stroke-dashoffset), attribution after.
  */
 import { motion, useReducedMotion } from 'framer-motion';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-
-const QUOTE =
-  "For the first time, I didn't wonder what happened to my donation. I watched it happen.";
 
 // Words grouped 8 at a time (home.md animation spec).
 function groupWords(text: string, size = 8): string[][] {
@@ -20,7 +18,8 @@ function groupWords(text: string, size = 8): string[][] {
 
 export default function QuoteBand() {
   const reduceMotion = useReducedMotion();
-  const groups = groupWords(QUOTE);
+  const { t } = useLanguage();
+  const groups = groupWords(t.home.quote.text);
 
   return (
     <section className="border-y border-border bg-surface py-20 md:py-28">
@@ -92,7 +91,7 @@ export default function QuoteBand() {
           transition={{ delay: reduceMotion ? 0 : 0.9, duration: reduceMotion ? 0 : 0.3, ease: EASE }}
           className="mt-6 text-[13px] font-medium tracking-[0.01em] text-text-muted"
         >
-          — Maria G., donor since 2024
+          {t.home.quote.attribution}
         </motion.p>
       </div>
     </section>

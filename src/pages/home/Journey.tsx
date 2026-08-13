@@ -12,36 +12,25 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { cn } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const STEPS = [
-  {
-    n: '01',
-    title: 'You give.',
-    body: 'A donor in Ohio gives $50 from her phone. It lands in the ledger the same minute — amount, time, name. No batching, no delay.',
-    img: '/how-step-1.jpg',
-  },
-  {
-    n: '02',
-    title: "It's tracked.",
-    body: 'Every dollar is recorded in a public ledger you can open right now. Totals update live — the numbers on this page are this minute\u2019s numbers.',
-    img: '/how-step-2.jpg',
-  },
-  {
-    n: '03',
-    title: 'It crosses.',
-    body: 'Funds transfer to our field coordinator in Colombia. Each transfer is logged with recipient, purpose, and proof.',
-    img: '/how-step-3.jpg',
-  },
-  {
-    n: '04',
-    title: 'It arrives.',
-    body: 'Supplies reach mountain villages. Photos come back from the field and appear here — matched to the gifts that paid for them.',
-    img: '/how-step-4.jpg',
-  },
+/** Numbers + imagery are language-independent; copy comes from the i18n dict. */
+const STEP_MEDIA = [
+  { n: '01', img: '/how-step-1.jpg' },
+  { n: '02', img: '/how-step-2.jpg' },
+  { n: '03', img: '/how-step-3.jpg' },
+  { n: '04', img: '/how-step-4.jpg' },
 ];
+
+interface JourneyStep {
+  n: string;
+  title: string;
+  body: string;
+  img: string;
+}
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(
@@ -57,10 +46,10 @@ function useReducedMotion() {
 }
 
 /** Static stacked variant — mobile, and reduced-motion everywhere. */
-function StackedSteps() {
+function StackedSteps({ steps }: { steps: JourneyStep[] }) {
   return (
     <div className="mx-auto grid w-full max-w-container gap-6 px-5 md:px-8">
-      {STEPS.map((s) => (
+      {steps.map((s) => (
         <article
           key={s.n}
           className="overflow-hidden rounded-card border border-border bg-surface"
@@ -93,6 +82,14 @@ export default function Journey() {
   const fillRef = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState(0);
   const mounted = useRef(false);
+  const { t } = useLanguage();
+
+  // Merge language-independent media with the localized step copy.
+  const steps: JourneyStep[] = STEP_MEDIA.map((m, i) => ({
+    ...m,
+    title: t.home.journey.steps[i]?.title ?? '',
+    body: t.home.journey.steps[i]?.body ?? '',
+  }));
 
   // Step text swap animation (y-shift crossfade) when the scrub changes step.
   useEffect(() => {
@@ -127,7 +124,7 @@ export default function Journey() {
             pin: true,
             anticipatePin: 1,
             onUpdate: (self) => {
-              const s = Math.min(STEPS.length - 1, Math.floor(self.progress * STEPS.length));
+              const s = Math.min(steps.length - 1, Math.floor(self.progress * steps.length));
               setStep((prev) => (prev === s ? prev : s));
             },
           },
@@ -137,7 +134,7 @@ export default function Journey() {
         tl.fromTo(fillRef.current, { scaleY: 0 }, { scaleY: 1, duration: 4 }, 0);
 
         // Photo crossfades at each step boundary.
-        for (let i = 1; i < STEPS.length; i++) {
+        for (let i = 1; i < steps.length; i++) {
           tl.to(photos[i - 1], { opacity: 0, scale: 0.97, duration: 0.5 }, i - 0.25).to(
             photos[i],
             { opacity: 1, scale: 1, y: 0, duration: 0.5 },
@@ -150,24 +147,24 @@ export default function Journey() {
     { scope: sectionRef, dependencies: [reducedMotion] },
   );
 
-  const current = STEPS[step];
+  const current = steps[step];
 
   return (
-    <section aria-label="How a dollar travels" className="py-20 md:py-0">
+    <section aria-label={t.home.journey.aria} className="py-20 md:py-0">
       {/* Section heading (outside the pin) */}
       <div className="mx-auto w-full max-w-container px-5 pb-10 md:px-8 md:pb-0 md:pt-24">
         <p className="eyebrow flex items-center gap-3">
           <span className="inline-block h-px w-4 bg-amber" aria-hidden />
-          The journey
+          {t.home.journey.eyebrow}
         </p>
         <h2 className="mt-3 font-display text-2xl font-medium leading-[1.2] tracking-[-0.01em] text-text md:text-[32px]">
-          How a dollar travels.
+          {t.home.journey.title}
         </h2>
       </div>
 
       {reducedMotion ? (
         <div className="mt-8 md:mt-0 md:pb-24">
-          <StackedSteps />
+          <StackedSteps steps={steps} />
         </div>
       ) : (
         <>
@@ -187,7 +184,7 @@ export default function Journey() {
                     style={{ transform: 'scaleY(0)' }}
                   />
                   <div className="absolute inset-y-0 left-1/2 flex -translate-x-1/2 flex-col justify-between py-1">
-                    {STEPS.map((s, i) => (
+                    {steps.map((s, i) => (
                       <span
                         key={s.n}
                         className={cn(
@@ -215,7 +212,7 @@ export default function Journey() {
               {/* Photo column (60%) */}
               <div className="col-span-3">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-card border border-border bg-surface">
-                  {STEPS.map((s) => (
+                  {steps.map((s) => (
                     <img
                       key={s.n}
                       src={s.img}
@@ -231,7 +228,7 @@ export default function Journey() {
 
           {/* Mobile stacked story */}
           <div className="md:hidden">
-            <StackedSteps />
+            <StackedSteps steps={steps} />
           </div>
         </>
       )}

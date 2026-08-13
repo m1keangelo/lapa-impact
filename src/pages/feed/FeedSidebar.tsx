@@ -6,6 +6,7 @@
  */
 import { useMemo, useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { formatCount, formatMoney, privacyName, toMillis } from '@/lib/format';
 import type { Donation, ImpactUpdate, Transfer } from '@/lib/types';
 
@@ -69,6 +70,7 @@ interface FeedSidebarProps {
 }
 
 export default function FeedSidebar({ donations, transfers, updates }: FeedSidebarProps) {
+  const { t, lang } = useLanguage();
   const week = useMemo(() => {
     const gifts = weekBuckets(donations, (d) => toMillis(d.timestamp), (d) => d.amount);
     const out = weekBuckets(transfers, (t) => toMillis(t.timestamp), (t) => t.amount);
@@ -93,18 +95,18 @@ export default function FeedSidebar({ donations, transfers, updates }: FeedSideb
   const topSupporters = useMemo(() => {
     const byDonor = new Map<string, number>();
     for (const d of donations) {
-      const name = privacyName(d.donorName);
+      const name = privacyName(d.donorName, lang);
       byDonor.set(name, (byDonor.get(name) ?? 0) + d.amount);
     }
     return [...byDonor.entries()]
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3);
-  }, [donations]);
+  }, [donations, lang]);
 
   const rows = [
-    { label: 'Gifts in', value: formatMoney(week.giftsTotal), data: week.gifts, color: 'var(--amber)' },
-    { label: 'Transferred', value: formatMoney(week.outTotal), data: week.out, color: 'var(--terra)' },
-    { label: 'Families', value: formatCount(week.familiesTotal), data: week.families, color: 'var(--sage)' },
+    { label: t.feedSidebar.giftsIn, value: formatMoney(week.giftsTotal), data: week.gifts, color: 'var(--amber)' },
+    { label: t.feedSidebar.transferred, value: formatMoney(week.outTotal), data: week.out, color: 'var(--terra)' },
+    { label: t.feedSidebar.families, value: formatCount(week.familiesTotal), data: week.families, color: 'var(--sage)' },
   ];
 
   return (
@@ -116,9 +118,9 @@ export default function FeedSidebar({ donations, transfers, updates }: FeedSideb
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.5, ease: EASE }}
-        aria-label="This week"
+        aria-label={t.feedSidebar.thisWeek}
       >
-        <p className="eyebrow">This week</p>
+        <p className="eyebrow">{t.feedSidebar.thisWeek}</p>
         <div className="mt-4 space-y-4">
           {rows.map((r) => (
             <div key={r.label} className="flex items-center justify-between gap-3">
@@ -146,9 +148,9 @@ export default function FeedSidebar({ donations, transfers, updates }: FeedSideb
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.5, ease: EASE, delay: 0.12 }}
-        aria-label="Top supporters"
+        aria-label={t.feedSidebar.topSupporters}
       >
-        <p className="eyebrow">Top supporters</p>
+        <p className="eyebrow">{t.feedSidebar.topSupporters}</p>
         {topSupporters.length > 0 ? (
           <ol className="mt-4 space-y-3">
             {topSupporters.map(([name, amount], i) => (
@@ -170,10 +172,10 @@ export default function FeedSidebar({ donations, transfers, updates }: FeedSideb
             ))}
           </ol>
         ) : (
-          <p className="mt-4 text-[13px] text-text-muted">No gifts recorded yet.</p>
+          <p className="mt-4 text-[13px] text-text-muted">{t.feedSidebar.noGifts}</p>
         )}
         <p className="mt-4 border-t border-border pt-3 text-[12px] font-medium tracking-[0.01em] text-text-muted">
-          Thank you.
+          {t.feedSidebar.thankYou}
         </p>
       </motion.section>
 
@@ -186,8 +188,7 @@ export default function FeedSidebar({ donations, transfers, updates }: FeedSideb
         transition={{ duration: 0.5, ease: EASE, delay: 0.24 }}
       >
         <p className="text-[12px] font-medium leading-[1.5] tracking-[0.01em] text-text-muted">
-          This ledger is public by design. Amounts are exact; identities are
-          partial. Questions? Contact the mission.
+          {t.feedSidebar.transparency}
         </p>
       </motion.section>
     </aside>

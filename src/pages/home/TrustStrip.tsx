@@ -4,18 +4,14 @@
  */
 import { Fragment } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-const FACTS = [
-  '100% of donations go to the field',
-  'Every transfer has photo proof',
-  'Public, real-time ledger',
-  'Run by volunteers — $0 overhead claimed here',
-];
-
 export default function TrustStrip() {
   const reduceMotion = useReducedMotion();
+  const { t } = useLanguage();
+  const FACTS = t.home.trust.facts;
 
   return (
     <motion.section
@@ -24,7 +20,7 @@ export default function TrustStrip() {
       viewport={{ amount: 0.85, once: true }}
       transition={{ duration: reduceMotion ? 0 : 0.4, ease: EASE }}
       className="border-y border-border py-6"
-      aria-label="Why trust this ledger"
+      aria-label={t.home.trust.aria}
     >
       <div className="mx-auto flex w-full max-w-container flex-wrap items-center justify-center gap-x-3 gap-y-2 px-5 md:px-8">
         {FACTS.map((fact, i) => (

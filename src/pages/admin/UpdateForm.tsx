@@ -11,6 +11,7 @@ import { collection, doc, increment, writeBatch } from 'firebase/firestore';
 import { nanoid } from 'nanoid';
 import { Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { db } from '@/lib/firebase';
 import { useFeed } from '@/hooks/useFeed';
 import { cloudinaryThumb } from '@/lib/cloudinary';
@@ -30,6 +31,7 @@ interface MetricRow {
 }
 
 export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
+  const { t } = useLanguage();
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [rows, setRows] = useState<MetricRow[]>([]);
@@ -86,7 +88,7 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
       }
       await batch.commit();
 
-      toast.success('Update posted — live on the ledger now.');
+      toast.success(t.admin.updateForm.saved);
       onSaved();
       setSaveState('saved');
       setTimeout(() => {
@@ -99,7 +101,7 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
       }, 2000);
     } catch (err) {
       console.error('[UpdateForm] write failed:', err);
-      toast.error("Couldn't save — check connection, nothing was recorded.");
+      toast.error(t.common.saveFailed);
       setSaveState('idle');
     }
   };
@@ -107,17 +109,17 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-5">
       <div className="grid gap-5 min-[480px]:grid-cols-[1fr_auto]">
-        <Field label="Title">
+        <Field label={t.admin.updateForm.title}>
           <input
             type="text"
             required
-            placeholder="Water filters installed in Alto Bonito"
+            placeholder={t.admin.updateForm.titlePh}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className={inputCls}
           />
         </Field>
-        <Field label="Date / time" className="min-[480px]:w-[220px]">
+        <Field label={t.admin.fields.dateTime} className="min-[480px]:w-[220px]">
           <input
             type="datetime-local"
             value={when}
@@ -128,17 +130,17 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
       </div>
 
       <Field
-        label="Body"
+        label={t.admin.updateForm.body}
         hint={
           <span className="font-mono" style={{ fontVariantNumeric: 'tabular-nums' }}>
-            {body.length} chars
+            {t.admin.updateForm.chars(body.length)}
           </span>
         }
       >
         <textarea
           rows={5}
           required
-          placeholder="What happened, who it reached, what it cost…"
+          placeholder={t.admin.updateForm.bodyPh}
           value={body}
           onChange={(e) => setBody(e.target.value)}
           className={textareaCls}
@@ -148,7 +150,7 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
       {/* Metrics builder */}
       <div>
         <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-text-muted">
-          Metrics
+          {t.admin.updateForm.metrics}
         </p>
         <div className="mb-3 flex flex-wrap gap-2">
           {SUGGESTED_METRICS.map((key) => (
@@ -177,7 +179,7 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
-                    placeholder="families helped"
+                    placeholder={t.admin.updateForm.metricKeyPh}
                     value={row.key}
                     onChange={(e) => patchRow(row.id, { key: e.target.value })}
                     className={cn(inputCls, 'h-11 flex-1')}
@@ -193,7 +195,7 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
                   <button
                     type="button"
                     onClick={() => removeRow(row.id)}
-                    aria-label="Remove metric"
+                    aria-label={t.admin.updateForm.removeMetric}
                     className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] text-text-faint transition-colors hover:bg-surface-2 hover:text-danger"
                   >
                     <X className="h-4 w-4" />
@@ -208,7 +210,7 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
           onClick={() => addRow()}
           className="mt-2 flex items-center gap-1.5 rounded-[10px] border border-dashed border-border-strong px-3.5 py-2 text-[13px] font-medium text-text-muted transition-colors hover:border-amber hover:text-amber"
         >
-          <Plus className="h-4 w-4" /> Add metric
+          <Plus className="h-4 w-4" /> {t.admin.updateForm.addMetric}
         </button>
       </div>
 
@@ -216,17 +218,17 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
       <div>
         <div className="mb-2 flex items-center justify-between">
           <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-text-muted">
-            Attach photos
+            {t.admin.updateForm.attachPhotos}
           </p>
           {selectedMedia.length > 0 && (
             <span className="rounded-full bg-sage/15 px-2.5 py-0.5 text-[12px] font-semibold text-sage">
-              {selectedMedia.length} selected
+              {t.admin.updateForm.selected(selectedMedia.length)}
             </span>
           )}
         </div>
         {media.items.length === 0 ? (
           <p className="rounded-[10px] border border-dashed border-border px-4 py-3 text-[13px] text-text-faint">
-            No photos in the library yet — upload some in the Photos tab.
+            {t.admin.updateForm.noPhotos}
           </p>
         ) : (
           <div className="grid grid-cols-3 gap-2 min-[480px]:grid-cols-4 md:grid-cols-6">
@@ -238,7 +240,7 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
                   type="button"
                   onClick={() => toggleMedia(m.id)}
                   aria-pressed={selected}
-                  aria-label={m.caption || 'Media item'}
+                  aria-label={m.caption || t.admin.updateForm.mediaItem}
                   className={cn(
                     'relative aspect-square overflow-hidden rounded-[12px] border-2 transition-all duration-150 ease-calm',
                     selected
@@ -261,7 +263,7 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
 
       <SubmitButton
         state={saveState}
-        label="Post update"
+        label={t.admin.updateForm.postUpdate}
         color="sage"
         disabled={!canSubmit}
       />
