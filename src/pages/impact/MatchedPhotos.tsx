@@ -9,6 +9,7 @@ import { Link } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { pickLang } from '@/lib/format';
 import type { LiveStatus, MediaItem } from '@/lib/types';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -27,7 +28,7 @@ export default function MatchedPhotos({
   reducedMotion,
 }: MatchedPhotosProps) {
   const [active, setActive] = useState<MediaItem | null>(null);
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const shown = photos.slice(0, 4);
 
   // Escape closes; body scroll locked while the lightbox is open.
@@ -96,18 +97,18 @@ export default function MatchedPhotos({
                   duration: reducedMotion ? 0.2 : 0.5,
                   ease: EASE,
                 }}
-                aria-label={t.common.openPhotoCaption(m.caption)}
+                aria-label={t.common.openPhotoCaption(pickLang(m, 'caption', lang))}
                 className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface-2"
               >
                 <img
                   src={m.thumbnailUrl || m.cloudinaryUrl}
-                  alt={m.caption}
+                  alt={pickLang(m, 'caption', lang)}
                   loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-300 ease-calm group-hover:scale-[1.04]"
                 />
                 <span className="absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-black/75 to-transparent px-3 pb-2.5 pt-8 text-left opacity-0 transition-all duration-200 ease-calm group-hover:translate-y-0 group-hover:opacity-100">
                   <span className="line-clamp-2 text-[12px] font-medium leading-[1.35] text-[#F3EAD9]">
-                    {m.caption}
+                    {pickLang(m, 'caption', lang)}
                   </span>
                 </span>
               </motion.button>
@@ -129,7 +130,7 @@ export default function MatchedPhotos({
             onClick={() => setActive(null)}
             role="dialog"
             aria-modal="true"
-            aria-label={active.caption}
+            aria-label={pickLang(active, 'caption', lang)}
           >
             <motion.figure
               initial={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.92 }}
@@ -142,7 +143,7 @@ export default function MatchedPhotos({
               <div className="relative overflow-hidden rounded-card border border-border-strong bg-surface">
                 <img
                   src={active.cloudinaryUrl || active.thumbnailUrl}
-                  alt={active.caption}
+                  alt={pickLang(active, 'caption', lang)}
                   className="max-h-[72dvh] w-full object-contain"
                 />
                 <button
@@ -156,7 +157,7 @@ export default function MatchedPhotos({
               </div>
               <figcaption className="mt-3 flex flex-col items-start gap-2 px-1">
                 <p className="text-[14px] font-medium leading-[1.5] text-[#F3EAD9]">
-                  {active.caption}
+                  {pickLang(active, 'caption', lang)}
                 </p>
                 {fundedByYou(active) ? (
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-sage/40 bg-sage/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-sage">

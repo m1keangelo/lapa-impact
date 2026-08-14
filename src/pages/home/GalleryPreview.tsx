@@ -10,7 +10,7 @@ import { useFeed } from '@/hooks/useFeed';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { firebaseReady } from '@/lib/firebase';
 import { demoMedia } from '@/lib/demoData';
-import { formatRelativeTime, toMillis } from '@/lib/format';
+import { formatRelativeTime, pickLang, toMillis } from '@/lib/format';
 import type { MediaItem } from '@/lib/types';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -79,7 +79,7 @@ export default function GalleryPreview() {
               <div className="aspect-[3/4] w-full overflow-hidden">
                 <img
                   src={p.thumbnailUrl}
-                  alt={p.caption}
+                  alt={pickLang(p, 'caption', lang)}
                   loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-300 ease-calm group-hover:scale-[1.05]"
                 />
@@ -91,7 +91,7 @@ export default function GalleryPreview() {
               />
               <div className="absolute inset-x-0 bottom-0 p-4">
                 <p className="line-clamp-2 text-[13px] font-medium leading-snug text-[#F3EAD9]">
-                  {p.caption}
+                  {pickLang(p, 'caption', lang)}
                 </p>
                 <p
                   className="mt-1 font-mono text-[12px] tracking-[0.01em] text-[#B0A18C]"

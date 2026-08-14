@@ -28,6 +28,8 @@ export interface Donation {
   amount: number;
   timestamp: TimestampLike;
   note?: string;
+  /** Spanish translation of `note`, written by the translateContent function */
+  noteEs?: string;
   email?: string;
   /** denormalized privacy-safe display name, e.g. "Maria G." */
   donorName?: string;
@@ -40,7 +42,11 @@ export interface Transfer {
   amount: number;
   timestamp: TimestampLike;
   recipient: string;
+  /** Spanish translation of `recipient` (translateContent function) */
+  recipientEs?: string;
   purpose: string;
+  /** Spanish translation of `purpose` (translateContent function) */
+  purposeEs?: string;
   proofUrl?: string;
 }
 
@@ -48,9 +54,15 @@ export interface Transfer {
 export interface ImpactUpdate {
   id: string;
   title: string;
+  /** Spanish translation of `title` (translateContent function) */
+  titleEs?: string;
   body: string;
+  /** Spanish translation of `body` (translateContent function) */
+  bodyEs?: string;
   /** free-form ledger metrics, e.g. { "water filters": 40 } */
   metrics: Record<string, string | number>;
+  /** metrics with Spanish labels (translateContent function) */
+  metricsEs?: Record<string, string | number>;
   timestamp: TimestampLike;
   mediaIds?: string[];
 }
@@ -61,6 +73,8 @@ export interface MediaItem {
   cloudinaryUrl: string;
   thumbnailUrl: string;
   caption: string;
+  /** Spanish translation of `caption` (translateContent function) */
+  captionEs?: string;
   timestamp: TimestampLike;
   donationId?: string;
   updateId?: string;

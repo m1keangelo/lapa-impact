@@ -9,6 +9,7 @@ import { HandHeart } from 'lucide-react';
 import EmptyState from '@/components/EmptyState';
 import FeedItem from '@/components/FeedItem';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { pickLang } from '@/lib/format';
 import type { Donation, LiveStatus } from '@/lib/types';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -20,7 +21,7 @@ interface GiftHistoryProps {
 }
 
 export default function GiftHistory({ donations, status, reducedMotion }: GiftHistoryProps) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   return (
     <section aria-label={t.giftHistory.sectionAria}>
       <div className="flex items-center gap-3">
@@ -71,7 +72,7 @@ export default function GiftHistory({ donations, status, reducedMotion }: GiftHi
                   <FeedItem
                     variant="donation"
                     title={t.giftHistory.giftTitle}
-                    meta={d.note}
+                    meta={d.note ? pickLang(d, 'note', lang) : undefined}
                     amount={d.amount}
                     timestamp={d.timestamp}
                   />

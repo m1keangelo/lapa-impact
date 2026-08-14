@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { cloudinaryUrl } from '@/lib/cloudinary';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { formatMoney, formatRelativeTime, privacyName } from '@/lib/format';
+import { formatMoney, formatRelativeTime, pickLang, pickMetrics, privacyName } from '@/lib/format';
 import type { FeedEntry, MediaItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -70,7 +70,7 @@ export default function FeedEntryCard({
         </span>
       </>
     );
-    meta = d.note ?? null;
+    meta = d.note ? pickLang(d, 'note', lang) : null;
   } else if (entry.kind === 'transfer') {
     const tr = entry.transfer;
     amount = tr.amount;
@@ -82,14 +82,14 @@ export default function FeedEntryCard({
         {t.feedEntry.sentToField}
       </>
     );
-    meta = t.feedEntry.transferMeta(tr.recipient, tr.purpose);
+    meta = t.feedEntry.transferMeta(pickLang(tr, 'recipient', lang), pickLang(tr, 'purpose', lang));
     expandable = true;
   } else if (entry.kind === 'update') {
-    title = entry.update.title;
+    title = pickLang(entry.update, 'title', lang);
     meta = null;
     expandable = true;
   } else {
-    title = entry.media.caption || t.feedEntry.newPhoto;
+    title = pickLang(entry.media, 'caption', lang) || t.feedEntry.newPhoto;
   }
 
   return (
@@ -154,9 +154,9 @@ export default function FeedEntryCard({
                 <span className="mt-1 line-clamp-2 block text-[15px] leading-[1.55] text-text-muted">
                   {entry.update.body}
                 </span>
-                {Object.keys(entry.update.metrics ?? {}).length > 0 ? (
+                {Object.keys(pickMetrics(entry.update, lang)).length > 0 ? (
                   <span className="mt-2 flex flex-wrap gap-1.5">
-                    {Object.entries(entry.update.metrics).map(([k, v]) => (
+                    {Object.entries(pickMetrics(entry.update, lang)).map(([k, v]) => (
                       <span
                         key={k}
                         className="rounded-full border border-sage/40 px-2 py-0.5 font-mono text-[11px] text-sage"
@@ -187,7 +187,7 @@ export default function FeedEntryCard({
                       width: 640,
                       crop: 'limit',
                     })}
-                    alt={entry.media.caption || t.common.fieldPhoto}
+                    alt={pickLang(entry.media, 'caption', lang) || t.common.fieldPhoto}
                     loading="lazy"
                     className="aspect-video w-full object-cover transition-transform duration-500 ease-calm hover:scale-[1.03]"
                   />
@@ -207,7 +207,7 @@ export default function FeedEntryCard({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onOpenProof?.(entry.transfer.proofUrl!, t.feedEntry.proofCaption(entry.transfer.purpose));
+                  onOpenProof?.(entry.transfer.proofUrl!, t.feedEntry.proofCaption(pickLang(entry.transfer, 'purpose', lang)));
                 }}
                 className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-sage/50 bg-sage/10 px-2.5 py-1 text-[11px] font-semibold text-sage transition-colors duration-150 hover:bg-sage/20"
               >
@@ -260,16 +260,16 @@ export default function FeedEntryCard({
                   <dl className="space-y-1.5 text-sm leading-[1.55]">
                     <div>
                       <dt className="eyebrow inline">{t.feedEntry.recipient} · </dt>
-                      <dd className="inline text-text-muted">{entry.transfer.recipient}</dd>
+                      <dd className="inline text-text-muted">{pickLang(entry.transfer, 'recipient', lang)}</dd>
                     </div>
                     <div>
                       <dt className="eyebrow inline">{t.feedEntry.purpose} · </dt>
-                      <dd className="inline text-text-muted">{entry.transfer.purpose}</dd>
+                      <dd className="inline text-text-muted">{pickLang(entry.transfer, 'purpose', lang)}</dd>
                     </div>
                   </dl>
                 ) : null}
                 {entry.kind === 'update' ? (
-                  <p className="text-sm leading-[1.55] text-text-muted">{entry.update.body}</p>
+                  <p className="text-sm leading-[1.55] text-text-muted">{pickLang(entry.update, 'body', lang)}</p>
                 ) : null}
               </div>
             </motion.div>

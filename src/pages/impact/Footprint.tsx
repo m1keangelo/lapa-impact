@@ -19,7 +19,7 @@ import EmptyState from '@/components/EmptyState';
 import { useLanguage, type LanguageContextValue } from '@/i18n/LanguageContext';
 import { useFeed } from '@/hooks/useFeed';
 import { demoUpdates } from '@/lib/demoData';
-import { formatRelativeTime } from '@/lib/format';
+import { formatRelativeTime, pickMetrics } from '@/lib/format';
 import type { ImpactUpdate } from '@/lib/types';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -32,32 +32,37 @@ interface Chip {
   ts: ImpactUpdate['timestamp'];
 }
 
+/** Matches both English and Spanish metric labels (data can arrive in either). */
 function iconFor(metricKey: string): LucideIcon {
   const k = metricKey.toLowerCase();
-  if (/water|filter/.test(k)) return Droplets;
-  if (/roof|home|house|repair/.test(k)) return House;
-  if (/meal|food|rice|kitchen/.test(k)) return UtensilsCrossed;
-  if (/famil|people/.test(k)) return Users;
-  if (/vereda|km|village|run/.test(k)) return Mountain;
-  if (/basket|kit|suppl|blanket|mattress/.test(k)) return Package;
+  if (/water|filter|agua|filtro/.test(k)) return Droplets;
+  if (/roof|home|house|repair|techo|teja|vivienda|casa|reparad/.test(k)) return House;
+  if (/meal|food|rice|kitchen|comida|arroz|cocina|mercad/.test(k)) return UtensilsCrossed;
+  if (/famil|people|gente/.test(k)) return Users;
+  if (/vereda|km|village|run|pueblo|viaje|caballo/.test(k)) return Mountain;
+  if (/basket|kit|suppl|blanket|mattress|cobija|colchon|suministro/.test(k)) return Package;
   return Sprout;
 }
 
 function labelFor(metricKey: string, t: LanguageContextValue['t']): string {
   const k = metricKey.toLowerCase();
-  if (/water|filter/.test(k)) return t.footprint.cleanWater;
-  if (/roof|home|house|repair/.test(k)) return t.footprint.roofRepairs;
-  if (/meal|food|rice|kitchen/.test(k)) return t.footprint.meals;
-  if (/famil|people/.test(k)) return t.footprint.families;
-  if (/vereda|km|village|run/.test(k)) return t.footprint.villages;
-  if (/basket|kit|suppl|blanket|mattress/.test(k)) return t.footprint.supplies;
+  if (/water|filter|agua|filtro/.test(k)) return t.footprint.cleanWater;
+  if (/roof|home|house|repair|techo|teja|vivienda|casa|reparad/.test(k)) return t.footprint.roofRepairs;
+  if (/meal|food|rice|kitchen|comida|arroz|cocina|mercad/.test(k)) return t.footprint.meals;
+  if (/famil|people|gente/.test(k)) return t.footprint.families;
+  if (/vereda|km|village|run|pueblo|viaje|caballo/.test(k)) return t.footprint.villages;
+  if (/basket|kit|suppl|blanket|mattress|cobija|colchon|suministro/.test(k)) return t.footprint.supplies;
   return t.footprint.fallback;
 }
 
-function chipsFromUpdates(updates: ImpactUpdate[], t: LanguageContextValue['t']): Chip[] {
+function chipsFromUpdates(
+  updates: ImpactUpdate[],
+  t: LanguageContextValue['t'],
+  lang: LanguageContextValue['lang'],
+): Chip[] {
   const chips: Chip[] = [];
   for (const u of updates) {
-    for (const [key, value] of Object.entries(u.metrics ?? {})) {
+    for (const [key, value] of Object.entries(pickMetrics(u, lang))) {
       chips.push({
         id: `${u.id}:${key}`,
         icon: iconFor(key),
@@ -74,7 +79,7 @@ export default function Footprint({ reducedMotion }: { reducedMotion: boolean })
   const { t, lang } = useLanguage();
   const feed = useFeed<ImpactUpdate>('updates', { limit: 6 });
   const updates = feed.isDemo ? demoUpdates : feed.items;
-  const chips = chipsFromUpdates(updates, t);
+  const chips = chipsFromUpdates(updates, t, lang);
 
   return (
     <motion.section

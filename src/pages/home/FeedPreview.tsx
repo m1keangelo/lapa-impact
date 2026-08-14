@@ -20,12 +20,16 @@ import { useCombinedFeed, useFeed } from '@/hooks/useFeed';
 import { useLanguage, type LanguageContextValue } from '@/i18n/LanguageContext';
 import { firebaseReady } from '@/lib/firebase';
 import { demoMedia } from '@/lib/demoData';
-import { formatRelativeTime, toMillis } from '@/lib/format';
+import { formatRelativeTime, pickLang, pickMetrics, toMillis } from '@/lib/format';
 import type { FeedEntry, MediaItem } from '@/lib/types';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-function entryToProps(entry: FeedEntry, t: LanguageContextValue['t']): {
+function entryToProps(
+  entry: FeedEntry,
+  t: LanguageContextValue['t'],
+  lang: LanguageContextValue['lang'],
+): {
   variant: 'donation' | 'transfer' | 'update' | 'photo';
   title: string;
   meta?: string;
@@ -37,31 +41,31 @@ function entryToProps(entry: FeedEntry, t: LanguageContextValue['t']): {
       return {
         variant: 'donation',
         title: t.home.feedPreview.donationTitle(entry.donation.donorName ?? t.common.aDonor),
-        meta: entry.donation.note,
+        meta: entry.donation.note ? pickLang(entry.donation, 'note', lang) : undefined,
         amount: entry.donation.amount,
       };
     case 'transfer':
       return {
         variant: 'transfer',
-        title: t.home.feedPreview.transferTitle(entry.transfer.recipient),
-        meta: entry.transfer.purpose,
+        title: t.home.feedPreview.transferTitle(pickLang(entry.transfer, 'recipient', lang)),
+        meta: pickLang(entry.transfer, 'purpose', lang),
         amount: entry.transfer.amount,
       };
     case 'update':
       return {
         variant: 'update',
-        title: entry.update.title,
-        meta: Object.entries(entry.update.metrics)
+        title: pickLang(entry.update, 'title', lang),
+        meta: Object.entries(pickMetrics(entry.update, lang))
           .slice(0, 2)
           .map(([k, v]) => `${v} ${k}`)
           .join(' · '),
-        detail: entry.update.body,
+        detail: pickLang(entry.update, 'body', lang),
       };
     case 'photo':
       return {
         variant: 'photo',
         title: t.home.feedPreview.photoTitle,
-        meta: entry.media.caption,
+        meta: pickLang(entry.media, 'caption', lang),
       };
   }
 }
@@ -148,7 +152,7 @@ export default function FeedPreview() {
                   {items.map((entry) => {
                     const key = `${entry.kind}:${entry.id}`;
                     const isNew = entry.ts > mountedAt + 1000;
-                    const p = entryToProps(entry, t);
+                    const p = entryToProps(entry, t, lang);
                     return (
                       <motion.div
                         key={key}
@@ -215,14 +219,14 @@ export default function FeedPreview() {
                 <div className="aspect-[4/5] w-full overflow-hidden">
                   <img
                     src={featured.thumbnailUrl}
-                    alt={featured.caption}
+                    alt={pickLang(featured, 'caption', lang)}
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-300 ease-calm group-hover:scale-[1.03]"
                   />
                 </div>
                 <figcaption className="p-4">
                   <p className="text-[15px] font-medium leading-snug text-text">
-                    {featured.caption}
+                    {pickLang(featured, 'caption', lang)}
                   </p>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     {featured.donationId ? (

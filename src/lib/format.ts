@@ -81,6 +81,30 @@ export function formatRelativeTime(ts: TimestampLike, lang: DisplayLang = 'en'):
 }
 
 /**
+ * Picks the Spanish version of a Firestore text field when the visitor's
+ * language is Spanish and the translateContent function has stored a
+ * translation (`note` → `noteEs`, etc.). Falls back to the original.
+ */
+export function pickLang<T extends object>(
+  obj: T,
+  field: keyof T & string,
+  lang: DisplayLang,
+): string {
+  const rec = obj as Record<string, unknown>;
+  const esValue = lang === 'es' ? rec[`${field}Es`] : undefined;
+  const value = typeof esValue === 'string' && esValue.trim() ? esValue : rec[field];
+  return typeof value === 'string' ? value : '';
+}
+
+/** Same as pickLang but for the metrics record of an impact update. */
+export function pickMetrics<
+  T extends { metrics?: Record<string, string | number>; metricsEs?: Record<string, string | number> },
+>(obj: T, lang: DisplayLang): Record<string, string | number> {
+  const es = lang === 'es' ? obj.metricsEs : undefined;
+  return es && Object.keys(es).length > 0 ? es : (obj.metrics ?? {});
+}
+
+/**
  * Donor privacy display name (design.md §8): first name + last initial.
  * "Maria García" → "Maria G."  ·  "Priya" → "Priya"
  */

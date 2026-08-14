@@ -72,13 +72,23 @@ function entryMatchesSearch(entry: FeedEntry, q: string): boolean {
   if (!needle) return true;
   const hay: string[] = [];
   if (entry.kind === 'donation') {
-    hay.push(entry.donation.donorName ?? '', entry.donation.note ?? '');
+    hay.push(entry.donation.donorName ?? '', entry.donation.note ?? '', entry.donation.noteEs ?? '');
   } else if (entry.kind === 'transfer') {
-    hay.push(entry.transfer.recipient, entry.transfer.purpose);
+    hay.push(
+      entry.transfer.recipient,
+      entry.transfer.purpose,
+      entry.transfer.recipientEs ?? '',
+      entry.transfer.purposeEs ?? '',
+    );
   } else if (entry.kind === 'update') {
-    hay.push(entry.update.title, entry.update.body);
+    hay.push(
+      entry.update.title,
+      entry.update.body,
+      entry.update.titleEs ?? '',
+      entry.update.bodyEs ?? '',
+    );
   } else {
-    hay.push(entry.media.caption ?? '');
+    hay.push(entry.media.caption ?? '', entry.media.captionEs ?? '');
   }
   return hay.join(' ').toLowerCase().includes(needle);
 }

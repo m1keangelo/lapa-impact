@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { Link2 } from 'lucide-react';
 import { cloudinaryUrl } from '@/lib/cloudinary';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { formatRelativeTime } from '@/lib/format';
+import { formatRelativeTime, pickLang } from '@/lib/format';
 import type { MediaItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -50,7 +50,7 @@ export default function GalleryTile({ media, matched, onOpen }: GalleryTileProps
 
       <img
         src={cloudinaryUrl(media.thumbnailUrl || media.cloudinaryUrl, { width: 500, crop: 'limit' })}
-        alt={media.caption || t.common.fieldPhoto}
+        alt={pickLang(media, 'caption', lang) || t.common.fieldPhoto}
         loading="lazy"
         onLoad={() => setLoaded(true)}
         className={cn(
@@ -75,7 +75,7 @@ export default function GalleryTile({ media, matched, onOpen }: GalleryTileProps
       />
       <span className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 p-3 transition-transform duration-200 ease-calm group-hover:-translate-y-1">
         {media.caption ? (
-          <span className="line-clamp-1 text-[13px] font-medium text-text">{media.caption}</span>
+          <span className="line-clamp-1 text-[13px] font-medium text-text">{pickLang(media, 'caption', lang)}</span>
         ) : null}
         <span
           className="font-mono text-[11px] tracking-[0.01em] text-text-muted"

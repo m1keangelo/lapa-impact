@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Link2, Newspaper, X } from 'lucide-react';
 import { cloudinaryUrl } from '@/lib/cloudinary';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { formatMoney, formatRelativeTime, privacyName } from '@/lib/format';
+import { formatMoney, formatRelativeTime, pickLang, privacyName } from '@/lib/format';
 import type { Donation, ImpactUpdate, MediaItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -83,7 +83,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
           onClick={onClose}
           role="dialog"
           aria-modal="true"
-          aria-label={current.media.caption || t.common.fieldPhoto}
+          aria-label={pickLang(current.media, 'caption', lang) || t.common.fieldPhoto}
         >
           {/* Close */}
           <button
@@ -137,7 +137,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
                 <motion.img
                   key={current.media.id}
                   src={cloudinaryUrl(current.media.cloudinaryUrl, { width: 1600, crop: 'limit' })}
-                  alt={current.media.caption || t.common.fieldPhoto}
+                  alt={pickLang(current.media, 'caption', lang) || t.common.fieldPhoto}
                   className="mx-auto max-h-[78vh] w-auto max-w-full rounded-card border border-border object-contain"
                   custom={dir}
                   initial={{ opacity: 0, x: 48 * dir, scale: 0.98 }}
@@ -167,7 +167,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
               transition={{ duration: 0.25, ease: EASE, delay: 0.05 }}
             >
               {current.media.caption ? (
-                <p className="text-base leading-[1.55] text-text">{current.media.caption}</p>
+                <p className="text-base leading-[1.55] text-text">{pickLang(current.media, 'caption', lang)}</p>
               ) : null}
               <p
                 className="font-mono text-[12px] tracking-[0.01em] text-text-muted"
