@@ -22,6 +22,7 @@ import { ChevronDown, HandCoins } from 'lucide-react';
 import LiveBadge from '@/components/LiveBadge';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { campaignEyebrow } from '@/lib/campaign';
 import { CHECKOUT_AVAILABLE } from '@/lib/donate';
 import { formatCount, formatMoneyShort } from '@/lib/format';
 
@@ -79,14 +80,14 @@ const ScrollCue = memo(function ScrollCue({
       className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1"
       aria-hidden
     >
-      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#B0A18C]">
         {label}
       </span>
       <motion.span
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
       >
-        <ChevronDown className="h-4 w-4 text-text-muted" />
+        <ChevronDown className="h-4 w-4 text-[#B0A18C]" />
       </motion.span>
     </motion.div>
   );
@@ -94,7 +95,7 @@ const ScrollCue = memo(function ScrollCue({
 
 export default function Hero() {
   const { stats, revision } = useGlobalStats();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const HEADLINE = t.home.hero.headline;
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
@@ -115,9 +116,9 @@ export default function Hero() {
     if (revision > 0 && !reduceMotion) {
       flash.start({
         boxShadow: [
-          '0 0 0px 0px rgba(232,163,61,0)',
-          '0 0 90px 24px rgba(232,163,61,0.22)',
-          '0 0 0px 0px rgba(232,163,61,0)',
+          '0 0 0px 0px rgba(23,105,255,0)',
+          '0 0 90px 24px rgba(23,105,255,0.25)',
+          '0 0 0px 0px rgba(23,105,255,0)',
         ],
         transition: { duration: 0.4, ease: 'easeOut' },
       });
@@ -147,7 +148,7 @@ export default function Hero() {
         aria-hidden
       >
         <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(20,16,12,0.92),rgba(20,16,12,0.55)_50%,rgba(20,16,12,0.7))]" />
-        <div className="absolute inset-0 bg-[radial-gradient(700px_circle_at_50%_58%,rgba(232,163,61,0.2),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(700px_circle_at_50%_58%,rgba(23,105,255,0.18),transparent_70%)]" />
       </motion.div>
 
       {/* Content */}
@@ -166,27 +167,29 @@ export default function Hero() {
           transition={{ delay: reduceMotion ? 0 : 0.15, duration: 0.5 }}
           className="mt-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#F3EAD9]"
         >
-          {t.home.hero.brandLine}
+          LAPA.Help · {campaignEyebrow(lang)}
         </motion.p>
 
-        <h1 className="mt-4 font-display text-[40px] font-medium leading-[1.05] tracking-[-0.02em] text-[#F3EAD9] md:text-[72px]">
+        <h1 className="mt-4 font-display text-[36px] font-medium leading-[1.08] tracking-[-0.02em] text-[#F3EAD9] md:text-[64px]">
           {HEADLINE.map((w, i) => (
-            <motion.span
-              key={i}
-              className={
-                w.accent ? 'inline-block italic text-amber' : 'inline-block'
-              }
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                delay: reduceMotion ? 0 : 0.2 + i * 0.07,
-                duration: reduceMotion ? 0 : 0.6,
-                ease: EASE,
-              }}
-            >
-              {w.word}
-              {i < HEADLINE.length - 1 ? ' ' : ''}
-            </motion.span>
+            <span key={i}>
+              {w.br ? <br aria-hidden /> : null}
+              <motion.span
+                className={
+                  w.accent ? 'inline-block italic text-amber' : 'inline-block'
+                }
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: reduceMotion ? 0 : 0.2 + i * 0.07,
+                  duration: reduceMotion ? 0 : 0.6,
+                  ease: EASE,
+                }}
+              >
+                {w.word}
+                {i < HEADLINE.length - 1 && !HEADLINE[i + 1].br ? ' ' : ''}
+              </motion.span>
+            </span>
           ))}
         </h1>
 
@@ -218,32 +221,22 @@ export default function Hero() {
             <Link
               to="/donate"
               aria-label={t.donate.giveAria}
-              className="inline-flex items-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98] sm:w-auto"
             >
               <HandCoins className="h-4 w-4" />
               {t.donate.giveNow}
             </Link>
           ) : null}
-          <Link
-            to="/login"
-            className={
-              CHECKOUT_AVAILABLE
-                ? 'rounded-[10px] border border-border-strong px-6 py-3.5 text-[15px] font-semibold text-[#F3EAD9] transition-all duration-150 ease-calm hover:bg-surface-2/60 active:scale-[0.98]'
-                : 'rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]'
-            }
-          >
-            {t.home.hero.enterCode}
-          </Link>
           <a
             href="#feed-preview"
-            className="rounded-[10px] border border-border-strong px-6 py-3.5 text-[15px] font-semibold text-[#F3EAD9] transition-all duration-150 ease-calm hover:bg-surface-2/60 active:scale-[0.98]"
+            className="inline-flex w-full items-center justify-center rounded-[10px] border border-white/25 px-6 py-3.5 text-[15px] font-semibold text-[#F3EAD9] transition-all duration-150 ease-calm hover:bg-white/10 active:scale-[0.98] sm:w-auto"
           >
-            {t.home.hero.watchFeed}
+            {t.home.hero.seeImpact}
           </a>
         </motion.div>
 
         {/* Numbers on tap — transparency stays one touch away, but the
-            story leads. Full ledger lives on /transparency. */}
+            story leads. The full public ledger lives on /feed. */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

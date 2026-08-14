@@ -11,13 +11,11 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, HandCoins } from 'lucide-react';
-import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { CAMPAIGN } from '@/lib/campaign';
 import { CHECKOUT_AVAILABLE } from '@/lib/donate';
-import { formatMoneyShort } from '@/lib/format';
 import { getDonorCode } from '@/lib/session';
 import { cn } from '@/lib/utils';
-import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
 import {
   Sheet,
@@ -29,7 +27,6 @@ import {
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(() => window.scrollY > 24);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const { stats, status } = useGlobalStats();
   const { t } = useLanguage();
 
   const NAV_LINKS = [
@@ -49,7 +46,7 @@ export default function Navbar() {
   const closeSheet = () => setSheetOpen(false);
 
   const amberBtn =
-    'rounded-[10px] bg-amber px-4 py-2 text-sm font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]';
+    'rounded-[10px] bg-amber px-4 py-2 text-sm font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]';
   const secondaryBtn =
     'rounded-[10px] border border-border-strong px-4 py-2 text-sm font-semibold text-text transition-all duration-150 ease-calm hover:bg-surface-2/60 active:scale-[0.98]';
 
@@ -73,31 +70,18 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-2.5" aria-label={t.nav.brandHome}>
           <img src="/logo.svg" alt="" className="h-6 w-6" />
           <span className="font-display text-[17px] font-medium tracking-[-0.01em] text-text">
-            LAPA.Help <span className="text-amber">Colombia</span>
+            LAPA.Help
+          </span>
+          <span
+            className="rounded-full border border-border bg-surface px-2 py-0.5 text-[12px] leading-none"
+            title={CAMPAIGN.campaignName}
+          >
+            {CAMPAIGN.flag}
           </span>
         </Link>
 
         {/* Desktop right cluster */}
         <nav className="hidden items-center gap-1 md:flex" aria-label={t.nav.primaryAria}>
-          {/* Compact live stat chip */}
-          <span className="mr-2 hidden items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 lg:inline-flex">
-            <span className="relative flex h-1.5 w-1.5">
-              {status === 'live' ? (
-                <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-amber" />
-              ) : null}
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-amber" />
-            </span>
-            <span
-              className="font-mono text-xs font-medium text-text"
-              style={{ fontVariantNumeric: 'tabular-nums' }}
-            >
-              {formatMoneyShort(stats.totalIn)}
-            </span>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-text-muted">
-              {t.nav.raised}
-            </span>
-          </span>
-
           {NAV_LINKS.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass}>
               {l.label}
@@ -110,7 +94,6 @@ export default function Navbar() {
           ) : null}
 
           <LanguageToggle className="ml-1" />
-          <ThemeToggle className="ml-1" />
 
           {donorCode ? (
             <Link
@@ -140,10 +123,9 @@ export default function Navbar() {
           ) : null}
         </nav>
 
-        {/* Mobile: language + theme toggles + hamburger sheet */}
+        {/* Mobile: language toggle + hamburger sheet */}
         <div className="flex items-center gap-1 md:hidden">
           <LanguageToggle />
-          <ThemeToggle />
           <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
             <SheetTrigger asChild>
               <button
@@ -206,7 +188,7 @@ export default function Navbar() {
                             to="/donate"
                             onClick={closeSheet}
                             aria-label={t.donate.giveAria}
-                            className="flex items-center justify-center gap-2 rounded-[10px] bg-amber px-4 py-3.5 text-center text-base font-semibold text-[#1A130B] transition-all active:scale-[0.98]"
+                            className="flex items-center justify-center gap-2 rounded-[10px] bg-amber px-4 py-3.5 text-center text-base font-semibold text-white transition-all active:scale-[0.98]"
                           >
                             <HandCoins className="h-5 w-5" />
                             {t.donate.button}
@@ -232,7 +214,7 @@ export default function Navbar() {
                             'block rounded-[10px] px-4 py-3.5 text-center text-base font-semibold transition-all active:scale-[0.98]',
                             CHECKOUT_AVAILABLE
                               ? 'border border-border-strong text-text'
-                              : 'bg-amber text-[#1A130B]',
+                              : 'bg-amber text-white',
                           )}
                         >
                           {donorCode ? t.nav.openMyImpact : t.nav.enterYourDonorCode}

@@ -113,7 +113,7 @@ export default function AuthGate({
               transition={{ duration: 0.25 }}
               className={cn(
                 'flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-amber text-[15px]',
-                'font-semibold text-[#1A130B] transition-all duration-150 ease-calm',
+                'font-semibold text-white transition-all duration-150 ease-calm',
                 'hover:bg-amber-soft active:scale-[0.98] disabled:opacity-70',
               )}
             >

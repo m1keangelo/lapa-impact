@@ -183,7 +183,7 @@ export default function Login() {
           alt=""
           className="h-full w-full object-cover opacity-[0.15]"
         />
-        <div className="absolute inset-0 bg-[radial-gradient(520px_circle_at_50%_42%,rgba(232,163,61,0.12),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(520px_circle_at_50%_42%,rgba(23,105,255,0.08),transparent_70%)]" />
       </div>
 
       <div
@@ -280,8 +280,8 @@ export default function Login() {
             className={cn(
               'mt-6 flex h-12 w-full min-w-[280px] items-center justify-center gap-2 rounded-[10px] text-[15px] font-semibold transition-all duration-200 ease-calm active:scale-[0.98] md:min-w-[340px]',
               phase === 'found'
-                ? 'bg-sage text-[#14100C]'
-                : 'bg-amber text-[#1A130B] hover:bg-amber-soft',
+                ? 'bg-sage text-white'
+                : 'bg-amber text-white hover:bg-amber-soft',
               (!complete || busy) && phase !== 'found' && 'cursor-not-allowed opacity-50',
               phase === 'found' && 'cursor-default',
             )}

@@ -85,6 +85,19 @@ export function formatRelativeTime(ts: TimestampLike, lang: DisplayLang = 'en'):
   });
 }
 
+/** Short absolute date for feed meta lines: "Aug 14" / "14 ago". */
+export function formatShortDate(ts: TimestampLike, lang: DisplayLang = 'en'): string {
+  const ms = toMillis(ts);
+  if (!ms) return '';
+  const abs = new Date(ms);
+  const sameYear = abs.getFullYear() === new Date().getFullYear();
+  return abs.toLocaleDateString(LOCALES[lang], {
+    month: 'short',
+    day: 'numeric',
+    ...(sameYear ? {} : { year: 'numeric' }),
+  });
+}
+
 /**
  * Picks the Spanish version of a Firestore text field when the visitor's
  * language is Spanish and the translateContent function has stored a

@@ -19,7 +19,8 @@ import {
 } from 'lucide-react';
 import { cloudinaryUrl } from '@/lib/cloudinary';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { formatMoney, formatRelativeTime, pickLang, pickMetrics, privacyName } from '@/lib/format';
+import { CAMPAIGN } from '@/lib/campaign';
+import { formatMoney, formatShortDate, pickLang, pickMetrics, privacyName } from '@/lib/format';
 import type { FeedEntry, MediaItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -55,29 +56,30 @@ export default function FeedEntryCard({
 
   let title: ReactNode = null;
   let meta: string | null = null;
+  let note: string | null = null;
   let amount: number | null = null;
   const ts = entry.ts;
   let expandable = false;
 
+  // People + proof (one-pass master §15–16): human sentence → amount →
+  // "Donation · Aug 14" → details. Never a bank statement.
   if (entry.kind === 'donation') {
     const d = entry.donation;
     amount = d.amount;
-    // Human sentence first — "María gave $50". The amount is part of the
-    // sentence, not a bank-statement figure shouting in amber.
-    title = (
-      <>
-        {t.feedEntry.gave(privacyName(d.donorName, lang))}{' '}
-        <span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatMoney(d.amount)}</span>
-      </>
+    title = t.feedEntry.donationTitle(
+      privacyName(d.donorName, lang),
+      lang === 'es' ? CAMPAIGN.countryEs : CAMPAIGN.country,
     );
-    meta = d.note ? pickLang(d, 'note', lang) : null;
+    meta = t.feedEntry.metaDonation(formatShortDate(ts, lang));
+    note = d.note ? pickLang(d, 'note', lang) : null;
   } else if (entry.kind === 'transfer') {
     const tr = entry.transfer;
     amount = tr.amount;
-    // Recipient first: who received it and what for. Amount sits quietly
-    // in the side column; proof + detail stay one tap away.
-    title = t.feedEntry.transferMeta(pickLang(tr, 'recipient', lang), pickLang(tr, 'purpose', lang));
-    meta = null;
+    title = t.feedEntry.transferTitle(
+      pickLang(tr, 'recipient', lang),
+      pickLang(tr, 'purpose', lang),
+    );
+    meta = t.feedEntry.metaTransfer(formatShortDate(ts, lang));
     expandable = true;
   } else if (entry.kind === 'update') {
     title = pickLang(entry.update, 'title', lang);
@@ -136,10 +138,28 @@ export default function FeedEntryCard({
           </span>
 
           <span className="min-w-0 flex-1">
+            {fresh && entry.kind === 'donation' ? (
+              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] text-amber">
+                {t.feedEntry.justShowedUp}
+              </span>
+            ) : null}
             <span className="block text-[15px] font-medium leading-snug text-text">{title}</span>
+            {amount != null ? (
+              <span
+                className="mt-0.5 block text-[15px] font-semibold text-text"
+                style={{ fontVariantNumeric: 'tabular-nums' }}
+              >
+                {formatMoney(amount)}
+              </span>
+            ) : null}
             {meta ? (
-              <span className="mt-0.5 block truncate text-[12px] font-medium tracking-[0.01em] text-text-muted">
+              <span className="mt-0.5 block text-[12px] font-medium tracking-[0.01em] text-text-muted">
                 {meta}
+              </span>
+            ) : null}
+            {note ? (
+              <span className="mt-1 block text-[13px] italic leading-[1.5] text-text-muted">
+                “{note}”
               </span>
             ) : null}
 
@@ -210,32 +230,20 @@ export default function FeedEntryCard({
                 {t.feedEntry.proof}
               </button>
             ) : null}
-          </span>
 
-          <span className="flex shrink-0 flex-col items-end gap-0.5">
-            {amount != null ? (
-              <span
-                className="font-mono text-[13px] font-medium text-text-muted"
-                style={{ fontVariantNumeric: 'tabular-nums' }}
-              >
-                {formatMoney(amount)}
+            {expandable ? (
+              <span className="mt-1.5 inline-flex items-center gap-1 text-[13px] font-semibold text-amber">
+                {t.feedEntry.viewDetails}
+                <ChevronDown
+                  className={cn(
+                    'h-3.5 w-3.5 transition-transform duration-300 ease-calm',
+                    open && 'rotate-180',
+                  )}
+                />
               </span>
             ) : null}
-            <span
-              className="font-mono text-[12px] tracking-[0.01em] text-text-muted"
-              style={{ fontVariantNumeric: 'tabular-nums' }}
-            >
-              {formatRelativeTime(ts, lang)}
-            </span>
-            {expandable ? (
-              <ChevronDown
-                className={cn(
-                  'mt-1 h-4 w-4 text-text-faint transition-transform duration-300 ease-calm',
-                  open && 'rotate-180',
-                )}
-              />
-            ) : null}
           </span>
+
         </div>
 
         {/* Expanded detail */}

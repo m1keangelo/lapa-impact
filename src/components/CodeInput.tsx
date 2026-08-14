@@ -112,7 +112,7 @@ export default function CodeInput({
     if (char) borderColor = 'var(--border-strong)';
     if (isActive) {
       borderColor = 'var(--amber)';
-      boxShadow = '0 0 0 3px rgba(232,163,61,0.16)';
+      boxShadow = '0 0 0 3px rgba(23,105,255,0.16)';
     }
     if (status === 'checking') {
       borderColor = 'var(--amber)';

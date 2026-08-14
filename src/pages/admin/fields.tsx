@@ -162,9 +162,9 @@ export function SubmitButton({
   const { t } = useLanguage();
   const saved = savedLabel ?? t.admin.fields.savedLive;
   const palette = {
-    amber: 'bg-amber hover:bg-amber-soft text-[#1A130B]',
-    terra: 'bg-terra hover:brightness-110 text-[#1A130B]',
-    sage: 'bg-sage hover:brightness-110 text-[#1A130B]',
+    amber: 'bg-amber hover:bg-amber-soft text-white',
+    terra: 'bg-terra hover:brightness-110 text-white',
+    sage: 'bg-sage hover:brightness-110 text-white',
   }[color];
 
   return (
@@ -173,7 +173,7 @@ export function SubmitButton({
       disabled={disabled || state !== 'idle'}
       className={cn(
         'flex h-12 w-full items-center justify-center gap-2 rounded-[10px] text-[15px] font-semibold transition-all duration-150 ease-calm active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60',
-        state === 'saved' ? 'bg-sage text-[#1A130B]' : palette,
+        state === 'saved' ? 'bg-sage text-white' : palette,
       )}
     >
       {state === 'saving' ? (

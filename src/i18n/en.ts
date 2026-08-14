@@ -27,11 +27,11 @@ export const en = {
   },
 
   nav: {
-    feed: 'Feed',
-    gallery: 'Gallery',
+    feed: 'Follow the Impact',
+    gallery: 'Photos',
     home: 'Home',
     myImpact: 'My Impact',
-    enterCode: 'Enter code',
+    enterCode: 'My Code',
     openMyImpact: 'Open My Impact',
     enterYourDonorCode: 'Enter your donor code',
     raised: 'raised',
@@ -39,7 +39,7 @@ export const en = {
     menu: 'Menu',
     primaryAria: 'Primary',
     mobileAria: 'Mobile',
-    brandHome: 'LAPA.Help — Colombia mission — home',
+    brandHome: 'LAPA.Help — home',
     langLabel: 'Language',
     langAria: (current: string) => `Language: ${current}. Select a language`,
     spanish: 'Español',
@@ -64,23 +64,23 @@ export const en = {
 
   home: {
     hero: {
-      brandLine: '— LAPA.Help · Colombia Mission',
       liveBadge: 'Happening right now',
       headline: [
-        { word: 'Give.' },
-        { word: 'Then' },
-        { word: 'watch', accent: true },
-        { word: 'it' },
-        { word: 'arrive.', accent: true },
-      ] as { word: string; accent?: boolean }[],
-      sub: 'One shared fund for earthquake relief in Colombia — every dollar public, every step photographed, in real time.',
+        { word: 'Our' },
+        { word: 'people' },
+        { word: 'are' },
+        { word: 'hurting.' },
+        { word: 'We', br: true },
+        { word: 'can' },
+        { word: 'help.', accent: true },
+      ] as { word: string; accent?: boolean; br?: boolean }[],
+      sub: 'One public fund for earthquake relief in Colombia. Give — then watch your help reach the ground.',
       givenByDonors: 'Given by our people',
       sentToField: 'Already at work',
       familiesHelped: 'Families reached',
       seeNumbers: 'See the numbers',
       hideNumbers: 'Hide the numbers',
-      enterCode: 'I have my code',
-      watchFeed: 'Watch it happen ↓',
+      seeImpact: 'See the Impact',
       scroll: 'scroll',
     },
     trust: {
@@ -124,8 +124,8 @@ export const en = {
       errorBody: "We couldn't reach the live stream. Check your connection and try again.",
       emptyTitle: 'Nothing yet — the day is young.',
       emptyBody: 'The next gift, transfer or field photo will land right here, live.',
-      donationTitle: (name: string) => `${name} gave`,
-      transferTitle: (recipient: string) => `Sent to ${recipient}`,
+      donationTitle: (name: string) => `${name} showed up`,
+      transferTitle: (recipient: string) => `Delivered to ${recipient}`,
       photoTitle: 'Photo from the field',
       matchedChip: "Matched to a donor's gift",
       loadingAria: 'Loading the live ledger',
@@ -269,10 +269,14 @@ export const en = {
   },
 
   feedEntry: {
-    gave: (name: string) => `${name} gave`,
-    sentToField: 'went to work',
-    transferMeta: (recipient: string, purpose: string) =>
-      `${recipient} · ${purpose}`,
+    donationTitle: (name: string, country: string) =>
+      `${name} showed up for ${country}.`,
+    transferTitle: (recipient: string, purpose: string) =>
+      `${recipient} received ${purpose.charAt(0).toLowerCase()}${purpose.slice(1)}.`,
+    metaDonation: (date: string) => `Donation · ${date}`,
+    metaTransfer: (date: string) => `Went to work · ${date}`,
+    viewDetails: 'View details',
+    justShowedUp: 'Someone just showed up.',
     recipient: 'Recipient',
     purpose: 'Purpose',
     newPhoto: 'New photo from the field',
@@ -458,15 +462,10 @@ export const en = {
     potNote:
       'All gifts pool into one fund — nothing earmarked. The team deploys the pot daily against what the field needs right now.',
     page: {
-      title: 'Give — and watch it work.',
-      subtitle:
-        'Your gift joins one shared fund and goes where our people need it most. Your 6-digit code is your window into the mission.',
-      ticketTitle: 'Solidarity Ticket',
-      ticketBody:
-        'A $25 ticket that puts you inside the mission — same public fund, same proof, same window to watch it work.',
-      ticketCta: 'Get my ticket — $25',
-      orDivider: 'or give directly',
-      chooseAmount: 'Choose your amount',
+      title: 'Our people need us.',
+      chooseAmount: 'Choose your contribution.',
+      ticketTag: 'Stand With Us',
+      supportLine: 'One shared fund. You can watch what happens next.',
       customPh: 'Custom',
       customAria: 'Custom amount in dollars',
       customMin: 'The minimum donation is $1.',
@@ -490,14 +489,18 @@ export const en = {
       confirmingTitle: 'Confirming your gift with Stripe…',
       confirmingBody:
         'Hang tight — Stripe is telling us your gift landed. This usually takes a few seconds; keep this tab open.',
-      confirmedTitle: 'Your gift is already at work.',
+      confirmedTitle: 'You’re in.',
       confirmedBody:
-        'Thank you. Your gift joined one shared fund — deployed daily where the need is greatest. This code is your window into the mission:',
-      yourCode: 'Your window into the mission',
+        'Thank you for showing up. Your gift joined one shared fund — deployed where the need is greatest. This code is your window into the mission:',
+      yourCode: 'Your private code',
       codeHint:
-        'Six digits. Yours alone. Come back anytime and watch what your gift makes possible.',
+        'Save these six digits. Come back anytime to see where the mission is going.',
       copyCode: 'Copy code',
       seeMyImpact: 'See my impact',
+      shareCta: 'Share the proof',
+      shareText:
+        'I gave. I watched. This is where it went. — LAPA.Help · Colombia',
+      copied: 'Link copied',
       watchFeed: 'Watch the live feed',
       timeoutTitle: 'Still confirming…',
       timeoutBody:

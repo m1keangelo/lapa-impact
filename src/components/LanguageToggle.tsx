@@ -39,7 +39,7 @@ export default function LanguageToggle({ className }: LanguageToggleProps) {
             className={cn(
               'flex h-7 items-center rounded-[7px] px-2 font-mono text-[11px] font-semibold tracking-[0.08em] transition-all duration-200 ease-calm active:scale-[0.96]',
               active
-                ? 'bg-amber text-[#1A130B]'
+                ? 'bg-amber text-white'
                 : 'text-text-muted hover:text-text',
             )}
           >

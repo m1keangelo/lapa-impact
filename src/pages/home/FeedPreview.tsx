@@ -122,10 +122,11 @@ export default function FeedPreview() {
           <LiveBadge />
         </div>
 
-        {/* Content grid */}
-        <div className="mt-10 grid gap-8 lg:grid-cols-12">
+        {/* Content grid — min-w-0 on children so truncated feed text
+            can never force the track wider than the viewport */}
+        <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-12">
           {/* Feed list */}
-          <div ref={listRef} className="lg:col-span-7">
+          <div ref={listRef} className="min-w-0 lg:col-span-7">
             {status === 'loading' ? (
               <FeedSkeleton />
             ) : status === 'error' ? (
@@ -209,7 +210,7 @@ export default function FeedPreview() {
               whileInView={{ opacity: 1, clipPath: 'inset(0%)' }}
               viewport={{ amount: 0.3, once: true }}
               transition={{ duration: reduceMotion ? 0 : 0.7, ease: EASE }}
-              className="lg:col-span-5"
+              className="min-w-0 lg:col-span-5"
             >
               <button
                 type="button"

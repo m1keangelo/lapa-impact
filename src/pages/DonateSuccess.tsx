@@ -16,6 +16,7 @@ import {
   Copy,
   HandCoins,
   Loader2,
+  Share2,
 } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { FUNCTIONS_BASE_URL } from '@/lib/donate';
@@ -40,6 +41,7 @@ export default function DonateSuccess() {
   );
   const [code, setCode] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [shared, setShared] = useState(false);
   const copyTimer = useRef<number | null>(null);
 
   // Poll lookupDonation until confirmed or the 45s budget runs out.
@@ -99,6 +101,25 @@ export default function DonateSuccess() {
     copyTimer.current = window.setTimeout(() => setCopied(false), 1800);
   };
 
+  // The viral loop is proof, not confetti (master §29): "I gave. I
+  // watched. This is where it went." Native share sheet where available,
+  // clipboard copy otherwise.
+  const shareProof = async () => {
+    const text = t.donate.success.shareText;
+    const url = window.location.origin;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'LAPA.Help', text, url });
+        return;
+      }
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      setShared(true);
+      window.setTimeout(() => setShared(false), 1800);
+    } catch {
+      // Share sheet dismissed — no-op.
+    }
+  };
+
   const rise = (delay: number) => ({
     initial: { opacity: 0, y: reduceMotion ? 0 : 24 },
     animate: { opacity: 1, y: 0 },
@@ -107,9 +128,9 @@ export default function DonateSuccess() {
 
   return (
     <div className="relative overflow-hidden">
-      {/* radial amber glow, matching the FinalCta section */}
+      {/* faint blue glow, matching the FinalCta section */}
       <div
-        className="absolute inset-0 bg-[radial-gradient(600px_circle_at_50%_40%,rgba(232,163,61,0.12),transparent_70%)]"
+        className="absolute inset-0 bg-[radial-gradient(600px_circle_at_50%_40%,rgba(23,105,255,0.07),transparent_70%)]"
         aria-hidden
       />
       <div className="relative mx-auto flex min-h-[70dvh] w-full max-w-[680px] flex-col items-center justify-center px-5 py-20 text-center">
@@ -153,7 +174,7 @@ export default function DonateSuccess() {
                 transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.05 }}
                 className="flex h-20 w-20 items-center justify-center rounded-full bg-amber"
               >
-                <Check className="h-10 w-10 text-[#1A130B]" strokeWidth={3} />
+                <Check className="h-10 w-10 text-white" strokeWidth={3} />
               </motion.div>
             </motion.div>
 
@@ -212,7 +233,7 @@ export default function DonateSuccess() {
               <button
                 type="button"
                 onClick={() => navigate('/impact')}
-                className="inline-flex items-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
+                className="inline-flex items-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
               >
                 <HandCoins className="h-4 w-4" />
                 {t.donate.success.seeMyImpact}
@@ -224,6 +245,16 @@ export default function DonateSuccess() {
                 {t.donate.success.watchFeed}
               </Link>
             </motion.div>
+
+            <motion.button
+              {...rise(0.6)}
+              type="button"
+              onClick={() => void shareProof()}
+              className="mt-5 inline-flex items-center gap-2 text-[13px] font-semibold text-text-muted underline decoration-dotted underline-offset-4 transition-colors hover:text-text"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+              {shared ? t.donate.success.copied : t.donate.success.shareCta}
+            </motion.button>
           </>
         ) : null}
 
@@ -284,7 +315,7 @@ export default function DonateSuccess() {
             >
               <Link
                 to="/"
-                className="rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
+                className="rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
               >
                 {t.donate.success.backHome}
               </Link>

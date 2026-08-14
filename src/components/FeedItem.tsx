@@ -91,11 +91,12 @@ export default function FeedItem({
 
         <span className="flex shrink-0 flex-col items-end gap-0.5">
           {amount != null ? (
+            // Amount stays visible but quiet — people first, not ledger
+            // signs (master §15). Direction reads from the icon color.
             <span
-              className="font-mono text-sm font-medium"
-              style={{ color, fontVariantNumeric: 'tabular-nums' }}
+              className="text-[13px] font-semibold text-text"
+              style={{ fontVariantNumeric: 'tabular-nums' }}
             >
-              {variant === 'transfer' ? '−' : '+'}
               {formatMoney(amount)}
             </span>
           ) : null}

@@ -5,7 +5,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // LAPA design tokens (section 3 of design.md) — dark default, .light overrides
+        // LAPA.Help tokens — light editorial system (one-pass master §4)
         bg: "var(--bg)",
         surface: {
           DEFAULT: "var(--surface)",
@@ -21,7 +21,7 @@ module.exports = {
         amber: {
           DEFAULT: "var(--amber)",
           soft: "var(--amber-soft)",
-          glow: "rgba(232,163,61,0.14)",
+          glow: "rgba(23,105,255,0.10)",
         },
         terra: "var(--terra)",
         sage: "var(--sage)",
@@ -34,7 +34,7 @@ module.exports = {
         foreground: "var(--text)",
         primary: {
           DEFAULT: "var(--amber)",
-          foreground: "#1A130B",
+          foreground: "#FFFFFF",
         },
         secondary: {
           DEFAULT: "var(--surface-2)",
@@ -42,7 +42,7 @@ module.exports = {
         },
         destructive: {
           DEFAULT: "var(--danger)",
-          foreground: "#F3EAD9",
+          foreground: "#FFFFFF",
         },
         muted: {
           DEFAULT: "var(--surface)",

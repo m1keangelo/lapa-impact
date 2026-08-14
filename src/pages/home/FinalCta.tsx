@@ -103,7 +103,7 @@ export default function FinalCta() {
     <section className="relative overflow-hidden py-24 md:py-32">
       {/* subtle radial amber glow */}
       <div
-        className="absolute inset-0 bg-[radial-gradient(600px_circle_at_50%_60%,rgba(232,163,61,0.12),transparent_70%)]"
+        className="absolute inset-0 bg-[radial-gradient(600px_circle_at_50%_60%,rgba(23,105,255,0.07),transparent_70%)]"
         aria-hidden
       />
       <div
@@ -187,7 +187,7 @@ export default function FinalCta() {
             className={cn(
               'flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] transition-all duration-150 ease-calm active:scale-[0.98]',
               complete
-                ? 'bg-amber text-[#1A130B] hover:bg-amber-soft'
+                ? 'bg-amber text-white hover:bg-amber-soft'
                 : 'cursor-not-allowed bg-surface-2 text-text-faint',
             )}
           >
@@ -204,7 +204,7 @@ export default function FinalCta() {
             <Link
               to="/donate"
               aria-label={t.donate.giveAria}
-              className="inline-flex items-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
+              className="inline-flex items-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
             >
               <HandCoins className="h-4 w-4" />
               {t.donate.giveNow}

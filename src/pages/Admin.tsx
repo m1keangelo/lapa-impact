@@ -226,7 +226,7 @@ export default function Admin() {
       )}
       <Toaster
         position="bottom-right"
-        theme={document.documentElement.classList.contains('light') ? 'light' : 'dark'}
+        theme="light"
         toastOptions={{
           style: {
             background: 'var(--surface)',

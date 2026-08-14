@@ -26,11 +26,11 @@ export const es: Dictionary = {
   },
 
   nav: {
-    feed: 'Registro',
-    gallery: 'Galería',
+    feed: 'Sigue el impacto',
+    gallery: 'Fotos',
     home: 'Inicio',
     myImpact: 'Mi impacto',
-    enterCode: 'Ingresar código',
+    enterCode: 'Mi código',
     openMyImpact: 'Abrir mi impacto',
     enterYourDonorCode: 'Ingresa tu código de donante',
     raised: 'recaudados',
@@ -38,7 +38,7 @@ export const es: Dictionary = {
     menu: 'Menú',
     primaryAria: 'Principal',
     mobileAria: 'Móvil',
-    brandHome: 'LAPA.Help — Misión Colombia — inicio',
+    brandHome: 'LAPA.Help — inicio',
     langLabel: 'Idioma',
     langAria: (current: string) => `Idioma: ${current}. Selecciona un idioma`,
     spanish: 'Español',
@@ -63,22 +63,22 @@ export const es: Dictionary = {
 
   home: {
     hero: {
-      brandLine: '— LAPA.Help · Misión Colombia',
       liveBadge: 'Pasando ahora mismo',
       headline: [
-        { word: 'Dona.' },
-        { word: 'Y' },
-        { word: 'míralo', accent: true },
-        { word: 'llegar.', accent: true },
-      ] as { word: string; accent?: boolean }[],
-      sub: 'Un solo fondo para el terremoto en Colombia — cada dólar a la vista, cada paso fotografiado, en vivo.',
+        { word: 'Nuestra' },
+        { word: 'gente' },
+        { word: 'está' },
+        { word: 'sufriendo.' },
+        { word: 'Podemos', br: true },
+        { word: 'ayudar.', accent: true },
+      ] as { word: string; accent?: boolean; br?: boolean }[],
+      sub: 'Un fondo público para los damnificados del sismo en Colombia. Dona — y mira tu ayuda llegar.',
       givenByDonors: 'Donado por nuestra gente',
       sentToField: 'Ya está trabajando',
       familiesHelped: 'Familias alcanzadas',
       seeNumbers: 'Ver los números',
       hideNumbers: 'Ocultar los números',
-      enterCode: 'Ya tengo mi código',
-      watchFeed: 'Míralo suceder ↓',
+      seeImpact: 'Ver el impacto',
       scroll: 'desliza',
     },
     trust: {
@@ -122,8 +122,8 @@ export const es: Dictionary = {
       errorBody: 'No pudimos alcanzar la corriente en vivo. Revisa tu conexión e inténtalo de nuevo.',
       emptyTitle: 'Nada todavía — el día es joven.',
       emptyBody: 'El próximo donativo, transferencia o foto del campo caerá justo aquí, en vivo.',
-      donationTitle: (name: string) => `${name} donó`,
-      transferTitle: (recipient: string) => `Enviado a ${recipient}`,
+      donationTitle: (name: string) => `${name} se sumó`,
+      transferTitle: (recipient: string) => `Entregado a ${recipient}`,
       photoTitle: 'Foto del campo',
       matchedChip: 'Vinculada al donativo de un donante',
       loadingAria: 'Cargando el registro en vivo',
@@ -267,10 +267,14 @@ export const es: Dictionary = {
   },
 
   feedEntry: {
-    gave: (name: string) => `${name} donó`,
-    sentToField: 'salieron a trabajar',
-    transferMeta: (recipient: string, purpose: string) =>
-      `${recipient} · ${purpose}`,
+    donationTitle: (name: string, country: string) =>
+      `${name} se sumó por ${country}.`,
+    transferTitle: (recipient: string, purpose: string) =>
+      `${recipient} recibió ${purpose.charAt(0).toLowerCase()}${purpose.slice(1)}.`,
+    metaDonation: (date: string) => `Donación · ${date}`,
+    metaTransfer: (date: string) => `Salió a trabajar · ${date}`,
+    viewDetails: 'Ver detalles',
+    justShowedUp: 'Alguien acaba de sumarse.',
     recipient: 'Destinatario',
     purpose: 'Propósito',
     newPhoto: 'Nueva foto del campo',
@@ -456,15 +460,10 @@ export const es: Dictionary = {
     potNote:
       'Todos los donativos se suman a un solo fondo — nada está preasignado. El equipo despliega el fondo cada día según lo que el campo necesita ahora mismo.',
     page: {
-      title: 'Dona — y míralo trabajar.',
-      subtitle:
-        'Tu donativo se une a un solo fondo y va donde nuestra gente más lo necesita. Tu código de 6 dígitos es tu ventana a la misión.',
-      ticketTitle: 'Boleta de Solidaridad',
-      ticketBody:
-        'Una boleta de $25 que te pone dentro de la misión — el mismo fondo público, la misma prueba, la misma ventana.',
-      ticketCta: 'Quiero mi boleta — $25',
-      orDivider: 'o dona directamente',
-      chooseAmount: 'Elige tu monto',
+      title: 'Nuestra gente nos necesita.',
+      chooseAmount: 'Elige tu aporte.',
+      ticketTag: 'Súmate',
+      supportLine: 'Un solo fondo. Puedes ver lo que pasa después.',
       customPh: 'Otro',
       customAria: 'Monto personalizado en dólares',
       customMin: 'La donación mínima es $1.',
@@ -488,14 +487,17 @@ export const es: Dictionary = {
       confirmingTitle: 'Confirmando tu donativo con Stripe…',
       confirmingBody:
         'Un momento — Stripe nos está avisando que tu donativo llegó. Suele tardar unos segundos; no cierres esta pestaña.',
-      confirmedTitle: 'Tu donativo ya está trabajando.',
+      confirmedTitle: 'Ya estás dentro.',
       confirmedBody:
-        'Gracias. Tu donativo se unió a un solo fondo — que se despliega cada día donde más hace falta. Este código es tu ventana a la misión:',
-      yourCode: 'Tu ventana a la misión',
+        'Gracias por sumarte. Tu donativo se unió a un solo fondo — que se despliega donde más hace falta. Este código es tu ventana a la misión:',
+      yourCode: 'Tu código privado',
       codeHint:
-        'Seis dígitos. Solo tuyos. Vuelve cuando quieras y mira lo que tu donativo hace posible.',
+        'Guarda estos seis dígitos. Vuelve cuando quieras para ver a dónde llega la misión.',
       copyCode: 'Copiar código',
       seeMyImpact: 'Ver mi impacto',
+      shareCta: 'Comparte la prueba',
+      shareText: 'Doné. Lo vi. Mira a dónde llegó. — LAPA.Help · Colombia',
+      copied: 'Enlace copiado',
       watchFeed: 'Ver el registro en vivo',
       timeoutTitle: 'Aún confirmando…',
       timeoutBody:

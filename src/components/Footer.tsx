@@ -1,12 +1,14 @@
 /**
- * Footer (design.md §7.2) — 3 columns on desktop, stacked on mobile.
- * Bottom row shows the live Firestore connection dot (sage when connected,
- * amber when reconnecting / demo mode).
+ * Footer — the page's closing beat. Deliberately ink-dark (one-pass
+ * master §26 rhythm: …photo story → transparency → CTA → dark close).
+ * 3 columns on desktop, stacked on mobile. Bottom row shows the live
+ * Firestore connection dot (sage when connected, blue otherwise).
  */
 import { Link } from 'react-router';
 import { firebaseReady } from '@/lib/firebase';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { CAMPAIGN } from '@/lib/campaign';
 import { cn } from '@/lib/utils';
 
 export default function Footer() {
@@ -15,28 +17,31 @@ export default function Footer() {
   const connected = firebaseReady && status === 'live';
 
   return (
-    <footer className="border-t border-border bg-surface">
-      <div className="mx-auto w-full max-w-container px-5 pb-8 pt-12 md:px-8">
+    <footer className="bg-[#111111]">
+      <div className="mx-auto w-full max-w-container px-5 pb-24 pt-14 md:px-8 md:pb-8">
         <div className="grid gap-10 md:grid-cols-3">
           {/* 1 — Mission */}
           <div>
             <Link to="/" className="flex items-center gap-2.5">
               <img src="/logo.svg" alt="" className="h-6 w-6" />
-              <span className="font-display text-[17px] font-medium text-text">
-                LAPA.Help <span className="text-amber">Colombia</span>
+              <span className="font-display text-[17px] font-medium text-[#F7F5F0]">
+                LAPA.Help
+              </span>
+              <span className="text-[13px] leading-none" aria-hidden>
+                {CAMPAIGN.flag}
               </span>
             </Link>
-            <p className="mt-4 max-w-[34ch] text-[13px] font-medium leading-[1.5] tracking-[0.01em] text-text-muted">
+            <p className="mt-4 max-w-[34ch] font-display text-[19px] leading-[1.45] text-[#F7F5F0]">
               {t.footer.tagline}
             </p>
-            <p className="mt-2 text-[13px] font-medium tracking-[0.01em] text-text-muted">
+            <p className="mt-3 text-[13px] font-medium tracking-[0.01em] text-[#A39E93]">
               {t.footer.everyDollar}
             </p>
           </div>
 
           {/* 2 — Quick links */}
           <div>
-            <p className="eyebrow">{t.footer.quickLinks}</p>
+            <p className="eyebrow !text-[#A39E93]">{t.footer.quickLinks}</p>
             <ul className="mt-4 space-y-2.5">
               {[
                 { to: '/feed', label: t.footer.liveFeed },
@@ -46,7 +51,7 @@ export default function Footer() {
                 <li key={l.to}>
                   <Link
                     to={l.to}
-                    className="text-[13px] font-medium tracking-[0.01em] text-text-muted transition-colors hover:text-amber"
+                    className="text-[13px] font-medium tracking-[0.01em] text-[#A39E93] transition-colors hover:text-[#F7F5F0]"
                   >
                     {l.label}
                   </Link>
@@ -55,23 +60,23 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* 3 — Field note + flag motif */}
+          {/* 3 — Field note + campaign motif */}
           <div>
-            <p className="eyebrow">{t.footer.fieldNote}</p>
-            <p className="mt-4 max-w-[36ch] text-[13px] font-medium leading-[1.5] tracking-[0.01em] text-text-muted">
+            <p className="eyebrow !text-[#A39E93]">{t.footer.fieldNote}</p>
+            <p className="mt-4 max-w-[36ch] text-[13px] font-medium leading-[1.5] tracking-[0.01em] text-[#A39E93]">
               {t.footer.fieldNoteBody}
             </p>
-            {/* Colombian-flag-inspired motif (decorative, not the literal flag) */}
+            {/* Campaign motif: platform blue / paper / warm clay */}
             <div className="mt-4 flex h-1.5 w-24 overflow-hidden rounded-full" aria-hidden>
               <span className="h-full w-1/2 bg-amber" />
-              <span className="h-full w-1/4 bg-[#F3EAD9]" />
+              <span className="h-full w-1/4 bg-[#F7F5F0]" />
               <span className="h-full w-1/4 bg-terra" />
             </div>
           </div>
         </div>
 
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
-          <p className="text-[12px] font-medium tracking-[0.01em] text-text-muted">
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6">
+          <p className="text-[12px] font-medium tracking-[0.01em] text-[#A39E93]">
             {t.footer.bottomNote}
           </p>
           <span className="inline-flex items-center gap-2">
@@ -86,7 +91,7 @@ export default function Footer() {
                 )}
               />
             </span>
-            <span className="text-[12px] font-medium tracking-[0.01em] text-text-muted">
+            <span className="text-[12px] font-medium tracking-[0.01em] text-[#A39E93]">
               {!firebaseReady
                 ? t.common.demoData
                 : connected

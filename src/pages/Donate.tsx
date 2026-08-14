@@ -1,18 +1,20 @@
 /**
  * Donate page (mobile-first — 90% of visitors are on phones).
  *
- * Two ways in, one shared pot:
- *   1. The $25 solidarity ticket (fixed price, server-side).
- *   2. The donation ladder: $10–$1000 presets or a custom amount ($1 min).
+ * One module, one decision (one-pass master §17–18): a strong human
+ * photograph, "Our people need us.", the amount ladder with the $25
+ * solidarity ticket visually prominent, custom amount, Give Now.
  *
- * Tapping any option asks the createCheckoutSession function for a Stripe
- * Checkout URL and redirects. Until the functions are deployed, everything
- * falls back to the fixed Stripe Payment Link.
+ * Tapping Give asks the createCheckoutSession function for a Stripe
+ * Checkout URL and redirects. Choosing the $25 preset checks out as the
+ * solidarity ticket (fixed server-side price, tagged 'ticket'). Until
+ * the functions are deployed, everything falls back to the fixed
+ * Stripe Payment Link.
  */
 import { useMemo, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { HeartHandshake, Ticket } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { CAMPAIGN, campaignEyebrow } from '@/lib/campaign';
 import { CHECKOUT_AVAILABLE, startCheckout } from '@/lib/donate';
 import { formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -26,8 +28,8 @@ const MIN_CUSTOM_CENTS = 100;
 
 export default function Donate() {
   const reduceMotion = useReducedMotion();
-  const { t } = useLanguage();
-  const [selected, setSelected] = useState<number | null>(2_500);
+  const { t, lang } = useLanguage();
+  const [selected, setSelected] = useState<number | null>(TICKET_CENTS);
   const [custom, setCustom] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
@@ -49,12 +51,15 @@ export default function Donate() {
     return L[String(chosenCents)] ?? L.custom;
   })();
 
-  const go = async (type: 'donation' | 'ticket', amountCents?: number) => {
-    if (busy) return;
+  const go = async () => {
+    if (busy || chosenCents == null) return;
     setBusy(true);
     setError(false);
+    // The $25 preset IS the solidarity ticket — tagged server-side.
+    const type =
+      !customValid && selected === TICKET_CENTS ? 'ticket' : 'donation';
     try {
-      await startCheckout(type, amountCents);
+      await startCheckout(type, chosenCents);
       // Browser is navigating away — keep the busy state.
     } catch {
       setBusy(false);
@@ -64,124 +69,97 @@ export default function Donate() {
 
   const presetBtn = (active: boolean) =>
     cn(
-      'flex h-14 items-center justify-center rounded-[12px] border font-mono text-[16px] font-medium transition-all duration-150 ease-calm active:scale-[0.97]',
+      'relative flex h-14 items-center justify-center rounded-[12px] border text-[16px] font-semibold transition-all duration-150 ease-calm active:scale-[0.97]',
       active
-        ? 'border-amber bg-amber/15 text-amber'
-        : 'border-border bg-surface-2 text-text hover:border-border-strong',
+        ? 'border-amber bg-amber text-white'
+        : 'border-border bg-surface text-text hover:border-border-strong',
     );
 
   return (
-    <main className="mx-auto w-full max-w-xl px-5 pb-24 pt-10 md:pt-16">
-      {/* Header */}
-      <motion.header
-        initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
+    <main className="mx-auto w-full max-w-xl px-5 pb-24 pt-8 md:pt-14">
+      {/* Campaign eyebrow */}
+      <motion.p
+        initial={reduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.4, ease: EASE }}
-        className="text-center"
+        className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted"
       >
-        <h1 className="font-display text-[32px] font-medium leading-[1.1] tracking-[-0.01em] text-text md:text-[44px]">
-          {t.donate.page.title}
-        </h1>
-        <p className="mx-auto mt-3 max-w-[40ch] text-[15px] leading-[1.6] text-text-muted">
-          {t.donate.page.subtitle}
-        </p>
-      </motion.header>
+        LAPA.Help · {campaignEyebrow(lang)}
+      </motion.p>
 
-      {/* $25 ticket */}
+      {/* One strong human photograph */}
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: EASE, delay: reduceMotion ? 0 : 0.06 }}
+        className="mt-4 overflow-hidden rounded-card"
+      >
+        <img
+          src={CAMPAIGN.donateImage}
+          alt={lang === 'es' ? CAMPAIGN.locationEs : CAMPAIGN.location}
+          className="aspect-[16/10] w-full object-cover"
+          loading="eager"
+        />
+      </motion.div>
+
+      {/* Headline + the single decision */}
       <motion.section
         initial={reduceMotion ? false : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: EASE, delay: reduceMotion ? 0 : 0.08 }}
-        className="mt-8 rounded-card border border-amber/40 bg-surface p-5"
-        aria-label={t.donate.page.ticketTitle}
-      >
-        <div className="flex items-start gap-4">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber/15">
-            <Ticket className="h-5 w-5 text-amber" strokeWidth={1.75} />
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-baseline justify-between gap-3">
-              <h2 className="font-display text-[19px] font-medium text-text">
-                {t.donate.page.ticketTitle}
-              </h2>
-              <span
-                className="font-mono text-[19px] font-medium text-amber"
-                style={{ fontVariantNumeric: 'tabular-nums' }}
-              >
-                {formatMoney(TICKET_CENTS)}
-              </span>
-            </div>
-            <p className="mt-1.5 text-[14px] leading-[1.55] text-text-muted">
-              {t.donate.page.ticketBody}
-            </p>
-          </div>
-        </div>
-        <button
-          type="button"
-          disabled={!CHECKOUT_AVAILABLE || busy}
-          onClick={() => void go('ticket')}
-          className="mt-4 flex h-[52px] w-full items-center justify-center rounded-[12px] bg-amber font-semibold text-[#201409] transition-all duration-150 ease-calm hover:brightness-105 active:scale-[0.98] disabled:opacity-50"
-        >
-          {busy ? t.donate.page.opening : t.donate.page.ticketCta}
-        </button>
-      </motion.section>
-
-      {/* Divider */}
-      <div className="mt-8 flex items-center gap-4" aria-hidden>
-        <span className="h-px flex-1 bg-border" />
-        <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-text-faint">
-          {t.donate.page.orDivider}
-        </span>
-        <span className="h-px flex-1 bg-border" />
-      </div>
-
-      {/* Donation ladder */}
-      <motion.section
-        initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: EASE, delay: reduceMotion ? 0 : 0.16 }}
-        className="mt-8"
+        transition={{ duration: 0.4, ease: EASE, delay: reduceMotion ? 0 : 0.12 }}
+        className="mt-7"
         aria-label={t.donate.page.chooseAmount}
       >
-        <div className="flex items-start gap-4">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sage/15">
-            <HeartHandshake className="h-5 w-5 text-sage" strokeWidth={1.75} />
-          </span>
-          <h2 className="pt-2.5 font-display text-[19px] font-medium text-text">
-            {t.donate.page.chooseAmount}
-          </h2>
-        </div>
+        <h1 className="text-center font-display text-[32px] font-medium leading-[1.1] tracking-[-0.01em] text-text md:text-[40px]">
+          {t.donate.page.title}
+        </h1>
+        <p className="mt-2 text-center text-[15px] font-medium text-text-muted">
+          {t.donate.page.chooseAmount}
+        </p>
 
-        <div className="mt-4 grid grid-cols-2 gap-2.5 min-[420px]:grid-cols-3">
-          {PRESETS.map((cents) => (
-            <button
-              key={cents}
-              type="button"
-              onClick={() => {
-                setSelected(cents);
-                setCustom('');
-              }}
-              aria-pressed={!customValid && selected === cents}
-              className={presetBtn(!customValid && selected === cents)}
-            >
-              {formatMoney(cents)}
-            </button>
-          ))}
+        <div className="mt-5 grid grid-cols-2 gap-2.5 min-[420px]:grid-cols-3">
+          {PRESETS.map((cents) => {
+            const active = !customValid && selected === cents;
+            return (
+              <button
+                key={cents}
+                type="button"
+                onClick={() => {
+                  setSelected(cents);
+                  setCustom('');
+                }}
+                aria-pressed={active}
+                className={presetBtn(active)}
+              >
+                {cents === TICKET_CENTS ? (
+                  <span
+                    className={cn(
+                      'absolute -top-2 right-2 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em]',
+                      active ? 'bg-white text-amber' : 'bg-terra text-white',
+                    )}
+                  >
+                    {t.donate.page.ticketTag}
+                  </span>
+                ) : null}
+                {formatMoney(cents)}
+              </button>
+            );
+          })}
           {/* Custom amount fills the last grid cell */}
           <div
             className={cn(
-              'flex h-14 items-center rounded-[12px] border bg-surface-2 px-3 transition-colors duration-150',
+              'flex h-14 items-center rounded-[12px] border bg-surface px-3 transition-colors duration-150',
               customValid ? 'border-amber' : 'border-border focus-within:border-border-strong',
             )}
           >
-            <span className="font-mono text-[16px] text-text-muted">$</span>
+            <span className="text-[16px] text-text-muted">$</span>
             <input
               value={custom}
               onChange={(e) => setCustom(e.target.value)}
               inputMode="decimal"
               placeholder={t.donate.page.customPh}
               aria-label={t.donate.page.customAria}
-              className="h-full w-full bg-transparent pl-1 font-mono text-[16px] text-text placeholder:text-text-faint focus:outline-none"
+              className="h-full w-full bg-transparent pl-1 text-[16px] font-semibold text-text placeholder:font-normal placeholder:text-text-faint focus:outline-none"
               style={{ fontSize: 16 }} /* ≥16px prevents iOS focus zoom */
             />
           </div>
@@ -200,7 +178,7 @@ export default function Donate() {
         ) : null}
 
         {custom.trim() !== '' && !customValid ? (
-          <p className="mt-2 text-[13px] font-medium text-danger" role="alert">
+          <p className="mt-2 text-center text-[13px] font-medium text-danger" role="alert">
             {t.donate.page.customMin}
           </p>
         ) : null}
@@ -208,8 +186,8 @@ export default function Donate() {
         <button
           type="button"
           disabled={!CHECKOUT_AVAILABLE || busy || chosenCents == null || chosenCents < MIN_CUSTOM_CENTS}
-          onClick={() => void go('donation', chosenCents ?? undefined)}
-          className="mt-4 flex h-[52px] w-full items-center justify-center rounded-[12px] bg-sage font-semibold text-[#122112] transition-all duration-150 ease-calm hover:brightness-105 active:scale-[0.98] disabled:opacity-50"
+          onClick={() => void go()}
+          className="mt-4 flex h-[52px] w-full items-center justify-center rounded-[12px] bg-amber text-[16px] font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98] disabled:opacity-50"
         >
           {busy
             ? t.donate.page.opening
@@ -224,8 +202,8 @@ export default function Donate() {
           </p>
         ) : null}
 
-        <p className="mt-5 text-center text-[13px] leading-[1.55] text-text-muted">
-          {t.donate.potNote}
+        <p className="mt-5 text-center text-[14px] font-medium leading-[1.55] text-text">
+          {t.donate.page.supportLine}
         </p>
         <p className="mt-2 text-center text-[12px] font-medium tracking-[0.01em] text-text-faint">
           {t.donate.page.secureNote}
