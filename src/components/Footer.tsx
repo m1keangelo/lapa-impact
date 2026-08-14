@@ -87,7 +87,11 @@ export default function Footer() {
               />
             </span>
             <span className="text-[12px] font-medium tracking-[0.01em] text-text-muted">
-              {connected ? t.footer.connected : t.footer.reconnecting}
+              {!firebaseReady
+                ? t.common.demoData
+                : connected
+                  ? t.footer.connected
+                  : t.footer.reconnecting}
             </span>
           </span>
         </div>
