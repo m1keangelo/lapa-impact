@@ -39,7 +39,7 @@ export const en = {
     menu: 'Menu',
     primaryAria: 'Primary',
     mobileAria: 'Mobile',
-    brandHome: 'LAPA Mission Colombia — home',
+    brandHome: 'LAPA.Help — Colombia mission — home',
     langLabel: 'Language',
     langAria: (current: string) => `Language: ${current}. Select a language`,
     spanish: 'Español',
@@ -56,7 +56,7 @@ export const en = {
     enterCode: 'Enter your code',
     fieldNote: 'Field note',
     fieldNoteBody:
-      'Operated by LAPA Mission Colombia · Relief work in the Andes foothills of Quindío.',
+      'Operated by LAPA — Latino American Professional Alliance · LAPA.Help sends relief where our people need it most. Current mission: earthquake relief in Colombia.',
     bottomNote: 'Built with transparency · Data updates live',
     connected: 'Connected to the live ledger',
     reconnecting: 'Reconnecting…',
@@ -64,6 +64,7 @@ export const en = {
 
   home: {
     hero: {
+      brandLine: '— LAPA.Help · Colombia Mission',
       liveBadge: 'Live from the field',
       headline: [
         { word: 'Every' },
@@ -142,10 +143,10 @@ export const en = {
     finalCta: {
       eyebrow: 'Have a code?',
       title: 'Your impact is waiting.',
-      body: 'Enter the 12-character code from your giving receipt.',
+      body: 'Enter the 6-digit code from your giving receipt.',
       noCode: "Don't have a code? See the public feed →",
       groupAria: 'Donor code',
-      charAria: (i: number) => `Code character ${i + 1}`,
+      charAria: (i: number) => `Code digit ${i + 1}`,
       submitAria: 'Open my impact',
     },
   },
@@ -155,8 +156,8 @@ export const en = {
     back: 'Back to home',
     title: 'Welcome back, neighbor.',
     intro:
-      "Enter the 12-character code from your giving receipt or welcome letter. It's yours alone — keep it private.",
-    codeHint: 'Letters and numbers — no 0, O, I, or l.',
+      "Enter the 6-digit code from your giving receipt or welcome message. It's yours alone — keep it private.",
+    codeHint: 'Just 6 numbers — like 483920.',
     errNotFound:
       "We couldn't find that code. Check for typos — or contact the mission if it should work.",
     errConnection:
@@ -169,8 +170,8 @@ export const en = {
     watchFeed: 'Watch the public feed',
     fieldTeam: 'Field team? →',
     adminSignIn: 'Admin sign in',
-    codeAria: 'Enter your 12-character donor code',
-    groupAria: 'Donor code, 12 characters',
+    codeAria: 'Enter your 6-digit donor code',
+    groupAria: 'Donor code, 6 digits',
     friend: 'friend',
   },
 
@@ -363,11 +364,11 @@ export const en = {
       dateTime: 'Date / time',
       cents: (n: string) => `→ ${n} cents`,
       donorCode: 'Donor code',
-      codePh: '12-character code',
+      codePh: '6-digit code',
       lookingUp: 'Looking up code…',
       foundLine: (name: string, total: string) => `${name} · ${total} given to date`,
       noDonor: 'No donor with this code yet.',
-      invalid: 'Codes are 12 Base58 characters (no 0, O, I, l).',
+      invalid: 'Codes are 6 numbers (0–9).',
       savedLive: 'Recorded · live now',
     },
     giftForm: {

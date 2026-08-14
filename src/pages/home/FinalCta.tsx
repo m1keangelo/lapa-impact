@@ -1,7 +1,7 @@
 /**
  * Home Section 7 — Final CTA (home.md §Section 7).
  * Inline mini CodeInput (6+6 segmented mono boxes) with a single amber
- * arrow button; validates a 12-char Base58 donor code, stores it in
+ * arrow button; validates a 6-digit donor code, stores it in
  * sessionStorage and routes to /impact. Boxes pulse amber sequentially
  * (left→right) when scrolled into view.
  */
@@ -19,7 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-const BASE58 = /^[1-9A-HJ-NP-Za-km-z]$/;
+const DIGIT = /^[0-9]$/;
 
 export default function FinalCta() {
   const reduceMotion = useReducedMotion();
@@ -46,7 +46,7 @@ export default function FinalCta() {
     const cleaned = raw.trim();
     if (cleaned.length > 1) {
       // Pasted multiple characters — distribute across boxes.
-      const valid = cleaned.split('').filter((c) => BASE58.test(c)).slice(0, DONOR_CODE_LENGTH);
+      const valid = cleaned.split('').filter((c) => DIGIT.test(c)).slice(0, DONOR_CODE_LENGTH);
       if (valid.length === 0) return;
       setChars((prev) => {
         const next = [...prev];
@@ -59,7 +59,7 @@ export default function FinalCta() {
       inputsRef.current[focusTo]?.focus();
       return;
     }
-    if (!BASE58.test(cleaned)) return;
+    if (!DIGIT.test(cleaned)) return;
     setChar(i, cleaned);
     if (i < DONOR_CODE_LENGTH - 1) inputsRef.current[i + 1]?.focus();
   };
@@ -165,7 +165,7 @@ export default function FinalCta() {
                     value={ch}
                     onChange={(e) => handleChange(i, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(i, e)}
-                    inputMode="text"
+                    inputMode="numeric"
                     autoComplete="off"
                     autoCapitalize="characters"
                     spellCheck={false}

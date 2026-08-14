@@ -3,7 +3,7 @@
  * The Stripe Payment Link redirects here after hosted checkout. The page
  * polls the public `lookupDonation` Cloud Function every 2s (up to 45s)
  * until the webhook has written `stripeSessions/{sessionId}`, then shows
- * the generated 12-char donor code, auto-saves it to the session, and
+ * the generated 6-digit donor code, auto-saves it to the session, and
  * routes the donor onward. Four states: confirming / confirmed / timeout /
  * unavailable (missing session id or functions base URL).
  */

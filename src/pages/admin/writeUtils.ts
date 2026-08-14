@@ -16,11 +16,8 @@ export function statsGlobalRef(db: Firestore): DocumentReference {
   return doc(db, 'stats', 'global');
 }
 
-/** Donor codes are 12-char nanoid Base58 (no 0/O/I/l) — matches lib/session. */
-export const generateDonorCode = customAlphabet(
-  '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz',
-  12,
-);
+/** Donor codes are 6 numeric digits — matches lib/session. */
+export const generateDonorCode = customAlphabet('0123456789', 6);
 
 /**
  * The workbench datetime field defaults to "now". When the admin leaves it

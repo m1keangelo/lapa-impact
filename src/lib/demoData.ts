@@ -28,7 +28,7 @@ export const demoStats: GlobalStats = {
 export const demoDonations: Donation[] = [
   {
     id: 'demo-don-1',
-    donorCode: 'X7kQ2mPv9Rt4',
+    donorCode: '482913',
     donorName: 'Maria G.',
     amount: 5_000,
     timestamp: now - 22 * MIN,
@@ -36,7 +36,7 @@ export const demoDonations: Donation[] = [
   },
   {
     id: 'demo-don-2',
-    donorCode: 'bN3wTz8HcX5k',
+    donorCode: '107654',
     donorName: 'James T.',
     amount: 25_000,
     timestamp: now - 2 * HOUR,
@@ -44,14 +44,14 @@ export const demoDonations: Donation[] = [
   },
   {
     id: 'demo-don-3',
-    donorCode: 'Qm7Rp4Ks2Vn9',
+    donorCode: '938201',
     donorName: 'Priya S.',
     amount: 10_000,
     timestamp: now - 5 * HOUR,
   },
   {
     id: 'demo-don-4',
-    donorCode: 'F2xLw9Jd6Gy3',
+    donorCode: '550127',
     donorName: 'Tom B.',
     amount: 7_500,
     timestamp: now - 9 * HOUR,
@@ -59,7 +59,7 @@ export const demoDonations: Donation[] = [
   },
   {
     id: 'demo-don-5',
-    donorCode: 'Hv5cN8aE3Zu7',
+    donorCode: '764308',
     donorName: 'Elena R.',
     amount: 50_000,
     timestamp: now - 26 * HOUR,
@@ -67,14 +67,14 @@ export const demoDonations: Donation[] = [
   },
   {
     id: 'demo-don-6',
-    donorCode: 'Kd9sW4qM1Yf6',
+    donorCode: '221960',
     donorName: 'David K.',
     amount: 15_000,
     timestamp: now - 2 * DAY,
   },
   {
     id: 'demo-don-7',
-    donorCode: 'Zt3Gj6Vx8Pb2',
+    donorCode: '810475',
     donorName: 'Ana M.',
     amount: 30_000,
     timestamp: now - 3 * DAY,

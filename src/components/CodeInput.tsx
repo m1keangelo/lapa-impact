@@ -1,7 +1,7 @@
 /**
  * CodeInput (design.md §7.8, login.md §2) — the signature segmented donor
- * code input. 12 Base58 slots rendered as two groups of 6, driven by a
- * single invisible input so mobile keyboards and paste "just work".
+ * code input. 6 numeric slots driven by a single invisible input so mobile
+ * keyboards (numeric keypad) and paste "just work".
  *
  * Behaviors (login.md):
  *  - Active slot: amber border + soft amber glow; filled slots cream text.
@@ -27,13 +27,12 @@ interface CodeInputProps {
   disabled?: boolean;
   autoFocus?: boolean;
   className?: string;
-  /** fired on Enter once the code is 12 chars */
+  /** fired on Enter once the code is 6 digits */
   onSubmitCode?: (code: string) => void;
 }
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-const BASE58 = /^[1-9A-HJ-NP-Za-km-z]$/;
-const BASE58_RUN = /[1-9A-HJ-NP-Za-km-z]/g;
+const DIGIT_RUN = /[0-9]/g;
 
 interface Pop {
   nonce: number;
@@ -87,9 +86,9 @@ export default function CodeInput({
   }, [status, shake]);
 
   const handleChange = (raw: string) => {
-    const matches = raw.match(BASE58_RUN) ?? [];
+    const matches = raw.match(DIGIT_RUN) ?? [];
     const next = matches.join('').slice(0, DONOR_CODE_LENGTH);
-    // Shake when characters were rejected (non-Base58) or the field is full.
+    // Shake when characters were rejected (non-digits) or the field is full.
     const rejected = matches.length < raw.replace(/\s/g, '').length;
     if (rejected || (next === value && raw !== value)) shake();
     onChange(next);
@@ -204,8 +203,8 @@ export default function CodeInput({
         }}
         disabled={disabled}
         autoFocus={autoFocus}
-        inputMode="text"
-        autoComplete="off"
+        inputMode="numeric"
+        autoComplete="one-time-code"
         autoCorrect="off"
         autoCapitalize="off"
         spellCheck={false}
@@ -217,4 +216,5 @@ export default function CodeInput({
   );
 }
 
-export { BASE58 };
+
+

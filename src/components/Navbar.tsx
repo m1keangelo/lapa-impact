@@ -73,7 +73,7 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-2.5" aria-label={t.nav.brandHome}>
           <img src="/logo.svg" alt="" className="h-6 w-6" />
           <span className="font-display text-[17px] font-medium tracking-[-0.01em] text-text">
-            LAPA Mission <span className="text-amber">Colombia</span>
+            LAPA.Help <span className="text-amber">Colombia</span>
           </span>
         </Link>
 

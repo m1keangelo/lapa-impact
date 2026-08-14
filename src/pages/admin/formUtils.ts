@@ -53,7 +53,7 @@ interface LookupResult {
 }
 
 /**
- * Debounced getDoc(donors/{code}) once the input is a plausible 12-char
+ * Debounced getDoc(donors/{code}) once the input is a plausible 6-digit
  * code. State is derived during render; the effect only schedules the
  * async fetch (no synchronous setState in the effect body).
  */

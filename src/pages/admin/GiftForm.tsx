@@ -1,7 +1,7 @@
 /**
  * Workbench Tab A — Log a gift (donation).
- * Existing-donor flow: 12-char code with debounced live lookup.
- * Create-donor flow: generates a 12-char Base58 code, writes donors/{code}
+ * Existing-donor flow: 6-digit code with debounced live lookup.
+ * Create-donor flow: generates a 6-digit code, writes donors/{code}
  * with totalGiven=0 in the same batch as the donation, then shows the code
  * prominently for copying/sharing.
  * Writes: donations/{id} + donors/{code}.totalGiven += amount +

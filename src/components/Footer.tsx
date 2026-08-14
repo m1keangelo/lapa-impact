@@ -23,7 +23,7 @@ export default function Footer() {
             <Link to="/" className="flex items-center gap-2.5">
               <img src="/logo.svg" alt="" className="h-6 w-6" />
               <span className="font-display text-[17px] font-medium text-text">
-                LAPA Mission <span className="text-amber">Colombia</span>
+                LAPA.Help <span className="text-amber">Colombia</span>
               </span>
             </Link>
             <p className="mt-4 max-w-[34ch] text-[13px] font-medium leading-[1.5] tracking-[0.01em] text-text-muted">

@@ -10,7 +10,7 @@ export type TimestampLike =
   | Date
   | number;
 
-/** donors/{code} — code is the document ID (nanoid Base58, 12 chars). */
+/** donors/{code} — code is the document ID (6 numeric digits). */
 export interface Donor {
   code: string;
   name: string;

@@ -1,5 +1,5 @@
 /**
- * Donor session helpers — the donor code (nanoid Base58, Firestore doc ID)
+ * Donor session helpers — the donor code (6 numeric digits, Firestore doc ID)
  * lives in sessionStorage so "My Impact" survives refreshes within a tab.
  * Shared by Navbar, the home mini code input, login and impact pages.
  */
@@ -30,9 +30,9 @@ export function clearDonorCode(): void {
   }
 }
 
-/** Donor codes are 12-char nanoid Base58. */
-export const DONOR_CODE_LENGTH = 12;
+/** Donor codes are 6 numeric digits — short enough to type on a phone. */
+export const DONOR_CODE_LENGTH = 6;
 
 export function isPlausibleDonorCode(code: string): boolean {
-  return new RegExp(`^[1-9A-HJ-NP-Za-km-z]{${DONOR_CODE_LENGTH}}$`).test(code.trim());
+  return new RegExp(`^[0-9]{${DONOR_CODE_LENGTH}}$`).test(code.trim());
 }

@@ -20,11 +20,8 @@ import Stripe from 'stripe';
 const STRIPE_SECRET_KEY = defineSecret('STRIPE_SECRET_KEY');
 const STRIPE_WEBHOOK_SECRET = defineSecret('STRIPE_WEBHOOK_SECRET');
 
-/** Donor codes: 12-char Base58 (no 0, O, I, l) — matches the frontend regex. */
-const newDonorCode = customAlphabet(
-  '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz',
-  12,
-);
+/** Donor codes: 6 numeric digits — matches the frontend regex. */
+const newDonorCode = customAlphabet('0123456789', 6);
 
 function db() {
   if (getApps().length === 0) initializeApp();
@@ -96,7 +93,15 @@ export const stripeWebhook = onRequest(
       if (!snap.empty) donorCode = snap.docs[0].id;
     }
     if (!donorCode) {
-      donorCode = newDonorCode();
+      // 6-digit codes have a real collision chance — re-roll until free.
+      for (;;) {
+        const candidate = newDonorCode();
+        const taken = await firestore.collection('donors').doc(candidate).get();
+        if (!taken.exists) {
+          donorCode = candidate;
+          break;
+        }
+      }
     }
     const donorRef = firestore.collection('donors').doc(donorCode);
     const donorSnap = await donorRef.get();

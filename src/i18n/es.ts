@@ -38,7 +38,7 @@ export const es: Dictionary = {
     menu: 'Menú',
     primaryAria: 'Principal',
     mobileAria: 'Móvil',
-    brandHome: 'LAPA Mission Colombia — inicio',
+    brandHome: 'LAPA.Help — Misión Colombia — inicio',
     langLabel: 'Idioma',
     langAria: (current: string) => `Idioma: ${current}. Selecciona un idioma`,
     spanish: 'Español',
@@ -55,7 +55,7 @@ export const es: Dictionary = {
     enterCode: 'Ingresa tu código',
     fieldNote: 'Nota de campo',
     fieldNoteBody:
-      'Operado por LAPA Mission Colombia · Trabajo de ayuda en las estribaciones andinas del Quindío.',
+      'Operado por LAPA — Alianza Latinoamericana de Profesionales · LAPA.Help lleva ayuda donde nuestra gente más la necesita. Misión actual: ayuda por el terremoto en Colombia.',
     bottomNote: 'Hecho con transparencia · Los datos se actualizan en vivo',
     connected: 'Conectado al registro en vivo',
     reconnecting: 'Reconectando…',
@@ -63,6 +63,7 @@ export const es: Dictionary = {
 
   home: {
     hero: {
+      brandLine: '— LAPA.Help · Misión Colombia',
       liveBadge: 'En vivo desde el campo',
       headline: [
         { word: 'Cada' },
@@ -140,10 +141,10 @@ export const es: Dictionary = {
     finalCta: {
       eyebrow: '¿Tienes un código?',
       title: 'Tu impacto te espera.',
-      body: 'Ingresa el código de 12 caracteres de tu recibo de donación.',
+      body: 'Ingresa el código de 6 dígitos de tu recibo de donación.',
       noCode: '¿No tienes un código? Mira el registro público →',
       groupAria: 'Código de donante',
-      charAria: (i: number) => `Carácter ${i + 1} del código`,
+      charAria: (i: number) => `Dígito ${i + 1} del código`,
       submitAria: 'Abrir mi impacto',
     },
   },
@@ -153,8 +154,8 @@ export const es: Dictionary = {
     back: 'Volver al inicio',
     title: 'Bienvenido de nuevo, vecino.',
     intro:
-      'Ingresa el código de 12 caracteres de tu recibo de donación o carta de bienvenida. Es solo tuyo — guárdalo en privado.',
-    codeHint: 'Letras y números — sin 0, O, I ni l.',
+      'Ingresa el código de 6 dígitos de tu recibo de donación o mensaje de bienvenida. Es solo tuyo — guárdalo en privado.',
+    codeHint: 'Solo 6 números — como 483920.',
     errNotFound:
       'No encontramos ese código. Revisa que no haya errores de tipeo — o contacta a la misión si debería funcionar.',
     errConnection:
@@ -167,8 +168,8 @@ export const es: Dictionary = {
     watchFeed: 'Mira el registro público',
     fieldTeam: '¿Equipo de campo? →',
     adminSignIn: 'Acceso de administrador',
-    codeAria: 'Ingresa tu código de donante de 12 caracteres',
-    groupAria: 'Código de donante, 12 caracteres',
+    codeAria: 'Ingresa tu código de donante de 6 dígitos',
+    groupAria: 'Código de donante, 6 dígitos',
     friend: 'amigo',
   },
 
@@ -361,11 +362,11 @@ export const es: Dictionary = {
       dateTime: 'Fecha / hora',
       cents: (n: string) => `→ ${n} centavos`,
       donorCode: 'Código de donante',
-      codePh: 'Código de 12 caracteres',
+      codePh: 'Código de 6 dígitos',
       lookingUp: 'Buscando el código…',
       foundLine: (name: string, total: string) => `${name} · ${total} donados hasta hoy`,
       noDonor: 'Aún no hay un donante con este código.',
-      invalid: 'Los códigos tienen 12 caracteres Base58 (sin 0, O, I, l).',
+      invalid: 'Los códigos tienen 6 números (0–9).',
       savedLive: 'Registrado · ya en vivo',
     },
     giftForm: {
