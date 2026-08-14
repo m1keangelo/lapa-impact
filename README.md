@@ -56,3 +56,5 @@ Security rules live in `firestore.rules`: donors are get-only by code (no listin
 ## Cost
 
 Designed to run at **$0 in year 1** at 1,000+ donor scale: Firestore free quota (50K reads/day), bounded queries everywhere (`.limit()`), Cloudinary free tier with `f_auto,q_auto` transforms, Vercel/Netlify free static hosting. Firebase Blaze plan required (card on file) but usage stays within the always-free quota.
+
+<!-- deploy trigger: fresh build after lockfile fix -->
