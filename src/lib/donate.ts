@@ -21,3 +21,36 @@ export const STRIPE_PAYMENT_LINK: string | null = clean(
 export const FUNCTIONS_BASE_URL: string | null = clean(
   import.meta.env.VITE_FUNCTIONS_BASE_URL,
 );
+
+/** The site can take money when either checkout path is configured. */
+export const CHECKOUT_AVAILABLE = Boolean(STRIPE_PAYMENT_LINK || FUNCTIONS_BASE_URL);
+
+/**
+ * Starts on-site checkout: asks the createCheckoutSession function for a
+ * Stripe Checkout URL and redirects there. Falls back to the fixed Payment
+ * Link while the functions are not deployed yet.
+ */
+export async function startCheckout(
+  type: 'donation' | 'ticket',
+  amountCents?: number,
+): Promise<void> {
+  if (FUNCTIONS_BASE_URL) {
+    const res = await fetch(`${FUNCTIONS_BASE_URL}/createCheckoutSession`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, amountCents }),
+    });
+    if (!res.ok) throw new Error(`checkout_failed:${res.status}`);
+    const data = (await res.json()) as { url?: string };
+    if (data.url) {
+      window.location.assign(data.url);
+      return;
+    }
+    throw new Error('checkout_failed:no_url');
+  }
+  if (STRIPE_PAYMENT_LINK) {
+    window.location.assign(STRIPE_PAYMENT_LINK);
+    return;
+  }
+  throw new Error('checkout_unavailable');
+}

@@ -6,6 +6,7 @@ import Impact from './pages/Impact';
 import Feed from './pages/Feed';
 import Gallery from './pages/Gallery';
 import Admin from './pages/Admin';
+import Donate from './pages/Donate';
 import DonateSuccess from './pages/DonateSuccess';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="feed" element={<Feed />} />
         <Route path="gallery" element={<Gallery />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="donate" element={<Donate />} />
         <Route path="donate/success" element={<DonateSuccess />} />
         <Route path="*" element={<Home />} />
       </Route>

@@ -21,7 +21,7 @@ import { ChevronDown, HandCoins } from 'lucide-react';
 import LiveBadge from '@/components/LiveBadge';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { STRIPE_PAYMENT_LINK } from '@/lib/donate';
+import { CHECKOUT_AVAILABLE } from '@/lib/donate';
 import { formatCount, formatMoneyShort } from '@/lib/format';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -250,22 +250,20 @@ export default function Hero() {
           }}
           className="mt-10 flex flex-col items-center gap-3 sm:flex-row"
         >
-          {STRIPE_PAYMENT_LINK ? (
-            <a
-              href={STRIPE_PAYMENT_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+          {CHECKOUT_AVAILABLE ? (
+            <Link
+              to="/donate"
               aria-label={t.donate.giveAria}
               className="inline-flex items-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
             >
               <HandCoins className="h-4 w-4" />
               {t.donate.giveNow}
-            </a>
+            </Link>
           ) : null}
           <Link
             to="/login"
             className={
-              STRIPE_PAYMENT_LINK
+              CHECKOUT_AVAILABLE
                 ? 'rounded-[10px] border border-border-strong px-6 py-3.5 text-[15px] font-semibold text-[#F3EAD9] transition-all duration-150 ease-calm hover:bg-surface-2/60 active:scale-[0.98]'
                 : 'rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-[#1A130B] transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]'
             }

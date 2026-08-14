@@ -13,7 +13,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, HandCoins } from 'lucide-react';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { STRIPE_PAYMENT_LINK } from '@/lib/donate';
+import { CHECKOUT_AVAILABLE } from '@/lib/donate';
 import { formatMoneyShort } from '@/lib/format';
 import { getDonorCode } from '@/lib/session';
 import { cn } from '@/lib/utils';
@@ -115,30 +115,28 @@ export default function Navbar() {
           {donorCode ? (
             <Link
               to="/impact"
-              className={cn('ml-2', STRIPE_PAYMENT_LINK ? secondaryBtn : amberBtn)}
+              className={cn('ml-2', CHECKOUT_AVAILABLE ? secondaryBtn : amberBtn)}
             >
               {t.nav.myImpact}
             </Link>
           ) : (
             <Link
               to="/login"
-              className={cn('ml-2', STRIPE_PAYMENT_LINK ? secondaryBtn : amberBtn)}
+              className={cn('ml-2', CHECKOUT_AVAILABLE ? secondaryBtn : amberBtn)}
             >
               {t.nav.enterCode}
             </Link>
           )}
 
-          {STRIPE_PAYMENT_LINK ? (
-            <a
-              href={STRIPE_PAYMENT_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+          {CHECKOUT_AVAILABLE ? (
+            <Link
+              to="/donate"
               aria-label={t.donate.giveAria}
               className={cn(amberBtn, 'ml-2 inline-flex items-center gap-1.5')}
             >
               <HandCoins className="h-4 w-4" />
               {t.donate.button}
-            </a>
+            </Link>
           ) : null}
         </nav>
 
@@ -193,7 +191,7 @@ export default function Navbar() {
                           </NavLink>
                         </motion.div>
                       ))}
-                      {STRIPE_PAYMENT_LINK ? (
+                      {CHECKOUT_AVAILABLE ? (
                         <motion.div
                           initial={{ opacity: 0, x: 24 }}
                           animate={{ opacity: 1, x: 0 }}
@@ -204,17 +202,15 @@ export default function Navbar() {
                           }}
                           className="mt-6"
                         >
-                          <a
-                            href={STRIPE_PAYMENT_LINK}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <Link
+                            to="/donate"
                             onClick={closeSheet}
                             aria-label={t.donate.giveAria}
                             className="flex items-center justify-center gap-2 rounded-[10px] bg-amber px-4 py-3.5 text-center text-base font-semibold text-[#1A130B] transition-all active:scale-[0.98]"
                           >
                             <HandCoins className="h-5 w-5" />
                             {t.donate.button}
-                          </a>
+                          </Link>
                         </motion.div>
                       ) : null}
                       <motion.div
@@ -223,18 +219,18 @@ export default function Navbar() {
                         transition={{
                           delay:
                             0.06 *
-                            ((donorCode ? 4 : 3) + (STRIPE_PAYMENT_LINK ? 1 : 0)),
+                            ((donorCode ? 4 : 3) + (CHECKOUT_AVAILABLE ? 1 : 0)),
                           duration: 0.35,
                           ease: [0.22, 1, 0.36, 1],
                         }}
-                        className={STRIPE_PAYMENT_LINK ? 'mt-3' : 'mt-6'}
+                        className={CHECKOUT_AVAILABLE ? 'mt-3' : 'mt-6'}
                       >
                         <Link
                           to={donorCode ? '/impact' : '/login'}
                           onClick={closeSheet}
                           className={cn(
                             'block rounded-[10px] px-4 py-3.5 text-center text-base font-semibold transition-all active:scale-[0.98]',
-                            STRIPE_PAYMENT_LINK
+                            CHECKOUT_AVAILABLE
                               ? 'border border-border-strong text-text'
                               : 'bg-amber text-[#1A130B]',
                           )}
@@ -248,7 +244,7 @@ export default function Navbar() {
                         transition={{
                           delay:
                             0.06 *
-                            ((donorCode ? 5 : 4) + (STRIPE_PAYMENT_LINK ? 1 : 0)),
+                            ((donorCode ? 5 : 4) + (CHECKOUT_AVAILABLE ? 1 : 0)),
                           duration: 0.35,
                           ease: [0.22, 1, 0.36, 1],
                         }}

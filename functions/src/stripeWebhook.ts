@@ -131,7 +131,7 @@ export const stripeWebhook = onRequest(
       ...(email ? { email } : {}),
       donorName: name,
       stripeSessionId: session.id,
-      source: 'stripe',
+      source: session.metadata?.type === 'ticket' ? 'ticket' : 'stripe',
     });
 
     const statsRef = firestore.collection('stats').doc('global');

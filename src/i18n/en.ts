@@ -458,6 +458,25 @@ export const en = {
     giveAria: 'Give now — opens secure Stripe checkout in a new tab',
     potNote:
       'All gifts pool into one fund — nothing earmarked. The team deploys the pot daily against what the field needs right now.',
+    page: {
+      title: 'Give — and watch it work.',
+      subtitle:
+        'Every dollar pools into one fund and goes where our people need it most. You get a 6-digit code to follow every cent.',
+      ticketTitle: 'Solidarity Ticket',
+      ticketBody:
+        'Your $25 ticket joins you to the mission — and lands in the same public fund you can watch, live.',
+      ticketCta: 'Get my ticket — $25',
+      orDivider: 'or give directly',
+      chooseAmount: 'Choose your amount',
+      customPh: 'Custom',
+      customAria: 'Custom amount in dollars',
+      customMin: 'The minimum donation is $1.',
+      giveCta: (amount: string) => `Give ${amount}`,
+      opening: 'Opening secure checkout…',
+      checkoutError:
+        'We could not open secure checkout. Please try again in a moment.',
+      secureNote: 'Secure checkout by Stripe · Cards, Apple Pay, Google Pay',
+    },
     success: {
       confirmingTitle: 'Confirming your gift with Stripe…',
       confirmingBody:

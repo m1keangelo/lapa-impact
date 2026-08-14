@@ -456,6 +456,25 @@ export const es: Dictionary = {
     giveAria: 'Dona ahora — abre el pago seguro de Stripe en una pestaña nueva',
     potNote:
       'Todos los donativos se suman a un solo fondo — nada está preasignado. El equipo despliega el fondo cada día según lo que el campo necesita ahora mismo.',
+    page: {
+      title: 'Dona — y míralo trabajar.',
+      subtitle:
+        'Cada dólar se suma a un solo fondo y va donde nuestra gente más lo necesita. Recibes un código de 6 dígitos para seguir cada centavo.',
+      ticketTitle: 'Boleta de Solidaridad',
+      ticketBody:
+        'Tu boleta de $25 te une a la misión — y cae en el mismo fondo público que puedes ver en vivo.',
+      ticketCta: 'Quiero mi boleta — $25',
+      orDivider: 'o dona directamente',
+      chooseAmount: 'Elige tu monto',
+      customPh: 'Otro',
+      customAria: 'Monto personalizado en dólares',
+      customMin: 'La donación mínima es $1.',
+      giveCta: (amount: string) => `Donar ${amount}`,
+      opening: 'Abriendo el pago seguro…',
+      checkoutError:
+        'No pudimos abrir el pago seguro. Inténtalo de nuevo en un momento.',
+      secureNote: 'Pago seguro con Stripe · Tarjetas, Apple Pay, Google Pay',
+    },
     success: {
       confirmingTitle: 'Confirmando tu donativo con Stripe…',
       confirmingBody:
