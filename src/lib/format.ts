@@ -19,12 +19,17 @@ export function toMillis(ts: TimestampLike | null | undefined): number {
   return 0;
 }
 
-/** "$1,250.00" from integer cents. */
+/**
+ * "$1,250" from integer cents — decimals only when cents are non-zero
+ * ("$1,250.50"). Whole-dollar amounts stay clean: people read "$50",
+ * accountants read "$50.00". Exact values remain in the underlying data.
+ */
 export function formatMoney(cents: number): string {
+  const whole = cents % 100 === 0;
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 2,
+    minimumFractionDigits: whole ? 0 : 2,
     maximumFractionDigits: 2,
   }).format(cents / 100);
 }

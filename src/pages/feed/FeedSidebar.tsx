@@ -4,8 +4,8 @@
  * names only), and the transparency note. Data comes from the loaded
  * public feed collections — all privacy-safe.
  */
-import { useMemo, useRef } from 'react';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { formatCount, formatMoney, privacyName, toMillis } from '@/lib/format';
 import type { Donation, ImpactUpdate, Transfer } from '@/lib/types';
@@ -71,6 +71,8 @@ interface FeedSidebarProps {
 
 export default function FeedSidebar({ donations, transfers, updates }: FeedSidebarProps) {
   const { t, lang } = useLanguage();
+  const reduceMotion = useReducedMotion();
+  const [showNumbers, setShowNumbers] = useState(false);
   const week = useMemo(() => {
     const gifts = weekBuckets(donations, (d) => toMillis(d.timestamp), (d) => d.amount);
     const out = weekBuckets(transfers, (t) => toMillis(t.timestamp), (t) => t.amount);
@@ -121,24 +123,45 @@ export default function FeedSidebar({ donations, transfers, updates }: FeedSideb
         aria-label={t.feedSidebar.thisWeek}
       >
         <p className="eyebrow">{t.feedSidebar.thisWeek}</p>
-        <div className="mt-4 space-y-4">
-          {rows.map((r) => (
-            <div key={r.label} className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-faint">
-                  {r.label}
-                </p>
-                <p
-                  className="mt-0.5 font-mono text-[15px] font-medium text-text"
-                  style={{ fontVariantNumeric: 'tabular-nums' }}
-                >
-                  {r.value}
-                </p>
+        <button
+          type="button"
+          onClick={() => setShowNumbers((v) => !v)}
+          aria-expanded={showNumbers}
+          className="mt-3 text-[13px] font-semibold text-text-muted underline decoration-dotted underline-offset-4 transition-colors hover:text-text"
+        >
+          {showNumbers ? t.home.hero.hideNumbers : t.home.hero.seeNumbers}
+        </button>
+        <AnimatePresence initial={false}>
+          {showNumbers && (
+            <motion.div
+              key="week-numbers"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.3, ease: EASE }}
+              className="overflow-hidden"
+            >
+              <div className="mt-4 space-y-4">
+                {rows.map((r) => (
+                  <div key={r.label} className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-faint">
+                        {r.label}
+                      </p>
+                      <p
+                        className="mt-0.5 font-mono text-[15px] font-medium text-text"
+                        style={{ fontVariantNumeric: 'tabular-nums' }}
+                      >
+                        {r.value}
+                      </p>
+                    </div>
+                    <Sparkline data={r.data} color={r.color} />
+                  </div>
+                ))}
               </div>
-              <Sparkline data={r.data} color={r.color} />
-            </div>
-          ))}
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.section>
 
       {/* Top supporters */}

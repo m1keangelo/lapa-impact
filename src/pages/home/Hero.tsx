@@ -1,14 +1,15 @@
 /**
  * Home Section 1 — Hero (home.md §Section 1).
  * Full-viewport: /hero-andes.jpg with layered scrim + radial amber glow,
- * word-staggered Fraunces headline, three live counting stats, CTA row and
- * a scroll cue. Entrance + counters use Framer Motion; the background
+ * word-staggered Fraunces headline, CTA row, live counting stats tucked
+ * behind a "see the numbers" toggle, and a scroll cue. The background
  * parallax is FM scroll-linked (GSAP is isolated to the Journey section).
  */
-import { memo, useEffect, useRef } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import {
   animate,
+  AnimatePresence,
   motion,
   useAnimationControls,
   useMotionValue,
@@ -98,6 +99,7 @@ export default function Hero() {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const flash = useAnimationControls();
+  const [showNumbers, setShowNumbers] = useState(false);
 
   // Background parallax: 0.4× scroll speed, fading to bg by end of hero.
   const { scrollYProgress } = useScroll({
@@ -201,50 +203,12 @@ export default function Hero() {
           {t.home.hero.sub}
         </motion.p>
 
-        {/* Live stat cluster */}
+        {/* CTA row — action before accounting */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{
             delay: reduceMotion ? 0 : 1.1,
-            duration: reduceMotion ? 0 : 0.5,
-            ease: EASE,
-          }}
-          className="mt-10"
-        >
-          <motion.div
-            animate={flash}
-            className="flex flex-col items-stretch divide-y divide-border rounded-card border border-border bg-bg/40 backdrop-blur-sm md:flex-row md:items-center md:divide-x md:divide-y-0"
-          >
-          {[
-            { label: t.home.hero.givenByDonors, value: stats.totalIn, color: 'var(--amber)', delay: 1.2, money: true },
-            { label: t.home.hero.sentToField, value: stats.totalOut, color: 'var(--terra)', delay: 1.35, money: true },
-            { label: t.home.hero.familiesHelped, value: stats.familiesHelped, color: 'var(--sage)', delay: 1.5, money: false },
-          ].map((s) => (
-            <div key={s.label} className="flex flex-col items-center px-8 py-5 md:py-6">
-              <CountUp
-                value={s.value}
-                delay={s.delay}
-                format={s.money ? formatMoneyShort : formatCount}
-                className="font-mono text-4xl font-medium leading-none text-[#F3EAD9] md:text-6xl"
-              />
-              <span
-                className="mt-3 text-[11px] font-semibold uppercase tracking-[0.14em]"
-                style={{ color: s.color }}
-              >
-                {s.label}
-              </span>
-            </div>
-          ))}
-          </motion.div>
-        </motion.div>
-
-        {/* CTA row */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            delay: reduceMotion ? 0 : 1.6,
             duration: reduceMotion ? 0 : 0.45,
             ease: EASE,
           }}
@@ -276,6 +240,65 @@ export default function Hero() {
           >
             {t.home.hero.watchFeed}
           </a>
+        </motion.div>
+
+        {/* Numbers on tap — transparency stays one touch away, but the
+            story leads. Full ledger lives on /transparency. */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            delay: reduceMotion ? 0 : 1.4,
+            duration: reduceMotion ? 0 : 0.5,
+          }}
+          className="mt-8 flex flex-col items-center"
+        >
+          <button
+            type="button"
+            onClick={() => setShowNumbers((v) => !v)}
+            aria-expanded={showNumbers}
+            className="text-[13px] font-semibold text-[#B0A18C] underline decoration-dotted underline-offset-4 transition-colors hover:text-[#F3EAD9]"
+          >
+            {showNumbers ? t.home.hero.hideNumbers : t.home.hero.seeNumbers}
+          </button>
+          <AnimatePresence initial={false}>
+            {showNumbers && (
+              <motion.div
+                key="hero-stats"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.35, ease: EASE }}
+                className="overflow-hidden"
+              >
+                <motion.div
+                  animate={flash}
+                  className="mt-5 flex flex-col items-stretch divide-y divide-border rounded-card border border-border bg-bg/40 backdrop-blur-sm md:flex-row md:items-center md:divide-x md:divide-y-0"
+                >
+                  {[
+                    { label: t.home.hero.givenByDonors, value: stats.totalIn, color: 'var(--amber)', delay: 0.1, money: true },
+                    { label: t.home.hero.sentToField, value: stats.totalOut, color: 'var(--terra)', delay: 0.2, money: true },
+                    { label: t.home.hero.familiesHelped, value: stats.familiesHelped, color: 'var(--sage)', delay: 0.3, money: false },
+                  ].map((s) => (
+                    <div key={s.label} className="flex flex-col items-center px-8 py-4 md:py-5">
+                      <CountUp
+                        value={s.value}
+                        delay={s.delay}
+                        format={s.money ? formatMoneyShort : formatCount}
+                        className="font-mono text-2xl font-medium leading-none text-[#F3EAD9] md:text-3xl"
+                      />
+                      <span
+                        className="mt-2.5 text-[11px] font-semibold uppercase tracking-[0.14em]"
+                        style={{ color: s.color }}
+                      >
+                        {s.label}
+                      </span>
+                    </div>
+                  ))}
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
 

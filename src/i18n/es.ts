@@ -47,15 +47,15 @@ export const es: Dictionary = {
 
   footer: {
     tagline:
-      'Ayuda por el terremoto en las aldeas de montaña de Colombia — registrada en público, en tiempo real.',
-    everyDollar: 'Cada dólar se registra públicamente.',
+      'Nuestras raíces no paran en la frontera. Nuestra responsabilidad tampoco.',
+    everyDollar: 'Cada dólar queda a la vista de todos.',
     quickLinks: 'Enlaces rápidos',
     liveFeed: 'Registro en vivo',
     photoGallery: 'Galería de fotos',
     enterCode: 'Ingresa tu código',
     fieldNote: 'Nota de campo',
     fieldNoteBody:
-      'Operado por LAPA — Alianza Latinoamericana de Profesionales · LAPA.Help lleva ayuda donde nuestra gente más la necesita. Misión actual: ayuda por el terremoto en Colombia.',
+      'LAPA.Help es el brazo de servicio de LAPA — Latino American Professional Alliance. Un solo fondo, totalmente público, que va donde nuestra gente más lo necesita. Hoy: Colombia.',
     bottomNote: 'Hecho con transparencia · Los datos se actualizan en vivo',
     connected: 'Conectado al registro en vivo',
     reconnecting: 'Reconectando…',
@@ -64,60 +64,59 @@ export const es: Dictionary = {
   home: {
     hero: {
       brandLine: '— LAPA.Help · Misión Colombia',
-      liveBadge: 'En vivo desde el campo',
+      liveBadge: 'Pasando ahora mismo',
       headline: [
-        { word: 'Cada' },
-        { word: 'dólar' },
-        { word: 'que' },
-        { word: 'donas,' },
-        { word: 'puedes' },
-        { word: 'verlo', accent: true },
+        { word: 'Dona.' },
+        { word: 'Y' },
+        { word: 'míralo', accent: true },
         { word: 'llegar.', accent: true },
       ] as { word: string; accent?: boolean }[],
-      sub: 'Ayuda por el terremoto en las aldeas de montaña de Colombia — registrada en público, en tiempo real. Entran donaciones. Salen transferencias. Llegan fotos del campo. Sin caja negra.',
-      givenByDonors: 'En el fondo',
-      sentToField: 'Desplegado al campo',
+      sub: 'Un solo fondo para el terremoto en Colombia — cada dólar a la vista, cada paso fotografiado, en vivo.',
+      givenByDonors: 'Donado por nuestra gente',
+      sentToField: 'Ya está trabajando',
       familiesHelped: 'Familias alcanzadas',
-      enterCode: 'Ingresa tu código de donante',
-      watchFeed: 'Mira el registro en vivo ↓',
+      seeNumbers: 'Ver los números',
+      hideNumbers: 'Ocultar los números',
+      enterCode: 'Ya tengo mi código',
+      watchFeed: 'Míralo suceder ↓',
       scroll: 'desliza',
     },
     trust: {
       aria: 'Por qué confiar en este registro',
       facts: [
-        'El 100% de las donaciones va al campo',
-        'Cada transferencia tiene prueba fotográfica',
-        'Registro público y en tiempo real',
-        'Operado por voluntarios — $0 de gastos administrativos aquí',
+        'Cada dólar va donde más se necesita',
+        'Cada transferencia regresa con fotos',
+        'Un registro público, actualizado en vivo',
+        'Voluntarios de nuestra propia comunidad',
       ],
     },
     journey: {
       eyebrow: 'El recorrido',
-      title: 'Cómo se mueve el fondo.',
+      title: 'Cómo viaja tu ayuda.',
       aria: 'Cómo se mueve el fondo',
       steps: [
         {
-          title: 'Tú donas.',
-          body: 'Una donante en Ohio dona $50 desde su celular. Su donativo se suma al fondo en ese mismo minuto — monto, hora y nombre. Sin lotes, sin demoras.',
+          title: 'Tú das.',
+          body: 'Desde tu teléfono, en un minuto. Tu donativo entra a un solo fondo — público, al instante.',
         },
         {
-          title: 'Se suma al fondo.',
-          body: 'Cada donativo entra a un solo fondo común — nada preasignado, nada repartido por suposiciones. Todo el registro es público: las cifras de esta página son las de este minuto.',
+          title: 'Se suma.',
+          body: 'Nada preasignado. Tu donativo se une al de todos — un solo fondo, donde más hace falta.',
         },
         {
-          title: 'Se despliega.',
-          body: 'El equipo despliega el fondo contra lo que el campo necesita hoy — las transferencias van a nuestro coordinador en Colombia, cada una con destinatario, propósito y comprobante.',
+          title: 'Sale a trabajar.',
+          body: 'Nuestro equipo en Colombia compra lo que hoy hace falta — cada gasto con nombre, propósito y prueba.',
         },
         {
-          title: 'Llega a destino.',
-          body: 'Los suministros llegan a las aldeas de montaña. Las fotos regresan del campo y aparecen aquí — prueba de lo que el fondo desplegó.',
+          title: 'Y lo ves.',
+          body: 'Las fotos y los reportes regresan aquí. Aquí no donas y esperas — donas y lo ves.',
         },
       ] as { title: string; body: string }[],
     },
     feedPreview: {
       eyebrow: 'Pasando ahora',
-      title: 'El registro, en vivo.',
-      body: 'Todo lo de abajo acaba de pasar — o está por pasar. Esta corriente se actualiza sin recargar.',
+      title: 'Míralo moverse.',
+      body: 'Donativos reales, entregas reales, fotos reales — todo lo de abajo acaba de pasar, en vivo.',
       seeFull: 'Ver el registro completo →',
       errorTitle: 'El registro tuvo un tropiezo.',
       errorBody: 'No pudimos alcanzar la corriente en vivo. Revisa tu conexión e inténtalo de nuevo.',
@@ -135,13 +134,13 @@ export const es: Dictionary = {
       full: 'Galería completa →',
     },
     quote: {
-      text: 'Por primera vez, no me pregunté qué había pasado con mi donación. Lo vi pasar.',
-      attribution: '— Maria G., donante desde 2024',
+      text: 'Recordamos de dónde venimos. Sabemos lo que costó llegar. Sabemos que no llegamos solos. Por eso no olvidamos a los que vienen detrás. Eso es LAPA.Help.',
+      attribution: '— LAPA · Latino American Professional Alliance',
     },
     finalCta: {
       eyebrow: '¿Tienes un código?',
-      title: 'Tu impacto te espera.',
-      body: 'Ingresa el código de 6 dígitos de tu recibo de donación.',
+      title: 'Tu ventana te espera.',
+      body: 'Ingresa tu código de 6 dígitos — tu ventana privada a la misión.',
       noCode: '¿No tienes un código? Mira el registro público →',
       groupAria: 'Código de donante',
       charAria: (i: number) => `Dígito ${i + 1} del código`,
@@ -154,7 +153,7 @@ export const es: Dictionary = {
     back: 'Volver al inicio',
     title: 'Bienvenido de nuevo, vecino.',
     intro:
-      'Ingresa el código de 6 dígitos de tu recibo de donación o mensaje de bienvenida. Es solo tuyo — guárdalo en privado.',
+      'Ingresa tu código de 6 dígitos — tu ventana privada a la misión. Es solo tuyo; guárdalo bien.',
     codeHint: 'Solo 6 números — como 483920.',
     errNotFound:
       'No encontramos ese código. Revisa que no haya errores de tipeo — o contacta a la misión si debería funcionar.',
@@ -241,7 +240,7 @@ export const es: Dictionary = {
   feed: {
     eyebrow: 'El registro público',
     title: 'Todo. A medida que pasa.',
-    sub: 'Cada donativo, cada transferencia a Colombia, cada foto del campo — registrado a la vista de todos. Los donantes aparecen solo con su nombre y la inicial del apellido.',
+    sub: 'Cada donativo, cada entrega, cada foto — a la vista de todos. Los donantes aparecen solo con su nombre y su inicial.',
     moneyIn: (v: string) => `${v} recibidos`,
     moneyOut: (v: string) => `${v} enviados`,
     familiesCount: (v: string) => `${v} familias`,
@@ -269,9 +268,9 @@ export const es: Dictionary = {
 
   feedEntry: {
     gave: (name: string) => `${name} donó`,
-    sentToField: 'enviados al campo',
+    sentToField: 'salieron a trabajar',
     transferMeta: (recipient: string, purpose: string) =>
-      `Destinatario: ${recipient} · Propósito: ${purpose}`,
+      `${recipient} · ${purpose}`,
     recipient: 'Destinatario',
     purpose: 'Propósito',
     newPhoto: 'Nueva foto del campo',
@@ -289,13 +288,13 @@ export const es: Dictionary = {
     noGifts: 'Aún no hay donativos registrados.',
     thankYou: 'Gracias.',
     transparency:
-      'Todos los donativos se suman a un solo fondo, desplegado a diario según lo que el campo necesita. Este registro es público por diseño. Los montos son exactos; las identidades son parciales. ¿Preguntas? Contacta a la misión.',
+      'Un solo fondo. Cada dólar que entra, cada dólar que sale — público por diseño. Montos exactos, identidades protegidas. La comunidad, con recibos.',
   },
 
   gallery: {
     eyebrow: 'Desde el campo',
     titleWords: ['Pruebas,', 'no', 'promesas.'],
-    sub: 'Las fotos regresan de las aldeas de montaña a medida que llega la ayuda. Cuando una foto está ligada a un donativo específico, la verás — de eso se trata todo esto.',
+    sub: 'Las fotos regresan a medida que llega la ayuda. Cuando una está ligada a un donativo, lo verás. Aquí las fotos no decoran — son evidencia.',
     photosCount: (v: string) => `${v} fotos`,
     latestPrefix: ' · última ',
     filters: {
@@ -459,10 +458,10 @@ export const es: Dictionary = {
     page: {
       title: 'Dona — y míralo trabajar.',
       subtitle:
-        'Cada dólar se suma a un solo fondo y va donde nuestra gente más lo necesita. Recibes un código de 6 dígitos para seguir cada centavo.',
+        'Tu donativo se une a un solo fondo y va donde nuestra gente más lo necesita. Tu código de 6 dígitos es tu ventana a la misión.',
       ticketTitle: 'Boleta de Solidaridad',
       ticketBody:
-        'Tu boleta de $25 te une a la misión — y cae en el mismo fondo público que puedes ver en vivo.',
+        'Una boleta de $25 que te pone dentro de la misión — el mismo fondo público, la misma prueba, la misma ventana.',
       ticketCta: 'Quiero mi boleta — $25',
       orDivider: 'o dona directamente',
       chooseAmount: 'Elige tu monto',
@@ -470,6 +469,16 @@ export const es: Dictionary = {
       customAria: 'Monto personalizado en dólares',
       customMin: 'La donación mínima es $1.',
       giveCta: (amount: string) => `Donar ${amount}`,
+      ladder: {
+        '1000': 'Un empujón que mantiene el fondo en movimiento.',
+        '2500': 'La boleta de solidaridad — ya eres parte de la misión.',
+        '5000': 'Puede ayudar a que una familia tenga agua potable.',
+        '10000': 'Puede ayudar a techar un hogar antes de la lluvia.',
+        '25000': 'Puede ayudar a surtir mercados para varias familias.',
+        '50000': 'Puede ayudar a subir un cargamento a la montaña.',
+        '100000': 'Puede ayudar a reconstruir un hogar, pieza a pieza.',
+        custom: 'Cada monto cuenta. Cada centavo es público.',
+      },
       opening: 'Abriendo el pago seguro…',
       checkoutError:
         'No pudimos abrir el pago seguro. Inténtalo de nuevo en un momento.',
@@ -479,12 +488,12 @@ export const es: Dictionary = {
       confirmingTitle: 'Confirmando tu donativo con Stripe…',
       confirmingBody:
         'Un momento — Stripe nos está avisando que tu donativo llegó. Suele tardar unos segundos; no cierres esta pestaña.',
-      confirmedTitle: 'Tu donativo ya está en el fondo.',
+      confirmedTitle: 'Tu donativo ya está trabajando.',
       confirmedBody:
-        'Gracias. Tu donativo se sumó a un fondo común — el equipo lo despliega según lo que el campo necesita hoy. Este código es tu ventana a todo eso:',
-      yourCode: 'Tu código de donante',
+        'Gracias. Tu donativo se unió a un solo fondo — que se despliega cada día donde más hace falta. Este código es tu ventana a la misión:',
+      yourCode: 'Tu ventana a la misión',
       codeHint:
-        'Guárdalo bien — abre tu página personal de impacto. Nunca te pediremos una contraseña.',
+        'Seis dígitos. Solo tuyos. Vuelve cuando quieras y mira lo que tu donativo hace posible.',
       copyCode: 'Copiar código',
       seeMyImpact: 'Ver mi impacto',
       watchFeed: 'Ver el registro en vivo',

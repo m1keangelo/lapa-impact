@@ -62,27 +62,22 @@ export default function FeedEntryCard({
   if (entry.kind === 'donation') {
     const d = entry.donation;
     amount = d.amount;
+    // Human sentence first — "María gave $50". The amount is part of the
+    // sentence, not a bank-statement figure shouting in amber.
     title = (
       <>
         {t.feedEntry.gave(privacyName(d.donorName, lang))}{' '}
-        <span className="font-mono font-medium text-amber" style={{ fontVariantNumeric: 'tabular-nums' }}>
-          {formatMoney(d.amount)}
-        </span>
+        <span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatMoney(d.amount)}</span>
       </>
     );
     meta = d.note ? pickLang(d, 'note', lang) : null;
   } else if (entry.kind === 'transfer') {
     const tr = entry.transfer;
     amount = tr.amount;
-    title = (
-      <>
-        <span className="font-mono font-medium text-terra" style={{ fontVariantNumeric: 'tabular-nums' }}>
-          {formatMoney(tr.amount)}
-        </span>{' '}
-        {t.feedEntry.sentToField}
-      </>
-    );
-    meta = t.feedEntry.transferMeta(pickLang(tr, 'recipient', lang), pickLang(tr, 'purpose', lang));
+    // Recipient first: who received it and what for. Amount sits quietly
+    // in the side column; proof + detail stay one tap away.
+    title = t.feedEntry.transferMeta(pickLang(tr, 'recipient', lang), pickLang(tr, 'purpose', lang));
+    meta = null;
     expandable = true;
   } else if (entry.kind === 'update') {
     title = pickLang(entry.update, 'title', lang);
@@ -220,10 +215,9 @@ export default function FeedEntryCard({
           <span className="flex shrink-0 flex-col items-end gap-0.5">
             {amount != null ? (
               <span
-                className="font-mono text-sm font-medium"
-                style={{ color, fontVariantNumeric: 'tabular-nums' }}
+                className="font-mono text-[13px] font-medium text-text-muted"
+                style={{ fontVariantNumeric: 'tabular-nums' }}
               >
-                {entry.kind === 'transfer' ? '−' : '+'}
                 {formatMoney(amount)}
               </span>
             ) : null}

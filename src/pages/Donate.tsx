@@ -40,6 +40,15 @@ export default function Donate() {
   const customValid = custom.trim() !== '' && customCents >= MIN_CUSTOM_CENTS;
   const chosenCents = customValid ? customCents : selected;
 
+  // One warm line under the ladder: what this amount can do. Custom
+  // amounts and non-preset values get the generic line.
+  const ladderLine = (() => {
+    if (chosenCents == null) return null;
+    const L = t.donate.page.ladder as Record<string, string>;
+    if (customValid) return L.custom;
+    return L[String(chosenCents)] ?? L.custom;
+  })();
+
   const go = async (type: 'donation' | 'ticket', amountCents?: number) => {
     if (busy) return;
     setBusy(true);
@@ -177,6 +186,18 @@ export default function Donate() {
             />
           </div>
         </div>
+
+        {ladderLine ? (
+          <motion.p
+            key={ladderLine}
+            initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            className="mt-3 text-center text-[14px] leading-[1.5] text-text-muted"
+          >
+            {ladderLine}
+          </motion.p>
+        ) : null}
 
         {custom.trim() !== '' && !customValid ? (
           <p className="mt-2 text-[13px] font-medium text-danger" role="alert">

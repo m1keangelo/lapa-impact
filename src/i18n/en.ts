@@ -48,7 +48,7 @@ export const en = {
 
   footer: {
     tagline:
-      "Earthquake relief in Colombia's mountain villages — tracked in public, in real time.",
+      "Our roots don't stop at a border. Neither does our responsibility.",
     everyDollar: 'Every dollar is tracked publicly.',
     quickLinks: 'Quick links',
     liveFeed: 'Live feed',
@@ -56,7 +56,7 @@ export const en = {
     enterCode: 'Enter your code',
     fieldNote: 'Field note',
     fieldNoteBody:
-      'Operated by LAPA — Latino American Professional Alliance · LAPA.Help sends relief where our people need it most. Current mission: earthquake relief in Colombia.',
+      'LAPA.Help is the service arm of LAPA — Latino American Professional Alliance. One shared fund, fully public, deployed where our people need it most. Today: Colombia.',
     bottomNote: 'Built with transparency · Data updates live',
     connected: 'Connected to the live ledger',
     reconnecting: 'Reconnecting…',
@@ -65,61 +65,60 @@ export const en = {
   home: {
     hero: {
       brandLine: '— LAPA.Help · Colombia Mission',
-      liveBadge: 'Live from the field',
+      liveBadge: 'Happening right now',
       headline: [
-        { word: 'Every' },
-        { word: 'dollar' },
-        { word: 'you' },
-        { word: 'give,' },
-        { word: 'you' },
-        { word: 'can' },
+        { word: 'Give.' },
+        { word: 'Then' },
         { word: 'watch', accent: true },
+        { word: 'it' },
         { word: 'arrive.', accent: true },
       ] as { word: string; accent?: boolean }[],
-      sub: "Earthquake relief in Colombia's mountain villages — tracked in public, in real time. Donations in. Transfers out. Photos from the field. No black box.",
-      givenByDonors: 'In the pot',
-      sentToField: 'Deployed to the field',
+      sub: 'One shared fund for earthquake relief in Colombia — every dollar public, every step photographed, in real time.',
+      givenByDonors: 'Given by our people',
+      sentToField: 'Already at work',
       familiesHelped: 'Families reached',
-      enterCode: 'Enter your donor code',
-      watchFeed: 'Watch the live feed ↓',
+      seeNumbers: 'See the numbers',
+      hideNumbers: 'Hide the numbers',
+      enterCode: 'I have my code',
+      watchFeed: 'Watch it happen ↓',
       scroll: 'scroll',
     },
     trust: {
       aria: 'Why trust this ledger',
       facts: [
-        '100% of donations go to the field',
-        'Every transfer has photo proof',
-        'Public, real-time ledger',
-        'Run by volunteers — $0 overhead claimed here',
+        'Every dollar goes where the need is greatest',
+        'Every transfer comes back with photos',
+        'A public ledger, updated live',
+        'Run by volunteers from our own community',
       ],
     },
     journey: {
       eyebrow: 'The journey',
-      title: 'How the pot moves.',
+      title: 'How your help travels.',
       aria: 'How the pot moves',
       steps: [
         {
           title: 'You give.',
-          body: 'A donor in Ohio gives $50 from her phone. Her gift joins the pot the same minute — amount, time, name. No batching, no delay.',
+          body: 'From your phone, in a minute. Your gift enters one shared fund — publicly, the same minute.',
         },
         {
           title: 'It pools.',
-          body: 'Every gift joins one pooled fund — nothing earmarked, nothing pre-allocated by guesswork. The whole ledger is public: the numbers on this page are this minute’s numbers.',
+          body: "Nothing earmarked. Your gift joins everyone's — one fund, headed where the need is greatest.",
         },
         {
           title: 'It deploys.',
-          body: 'The team deploys the pot against what the field needs today — funds transfer to our coordinator in Colombia, each transfer logged with recipient, purpose, and proof.',
+          body: 'Our team in Colombia buys what is needed today — every transfer logged with recipient, purpose, and proof.',
         },
         {
-          title: 'It arrives.',
-          body: 'Supplies reach mountain villages. Photos come back from the field and appear here — proof of what the pot deployed.',
+          title: 'You watch.',
+          body: "Photos and field reports come back here. You don't donate and hope — you donate and watch.",
         },
       ] as { title: string; body: string }[],
     },
     feedPreview: {
       eyebrow: 'Happening now',
-      title: 'The ledger, live.',
-      body: 'Everything below just happened — or is about to. This stream updates without a reload.',
+      title: 'Watch it move.',
+      body: 'Real gifts, real deliveries, real photos — everything below just happened, and updates live.',
       seeFull: 'See the full feed →',
       errorTitle: 'The ledger hiccuped.',
       errorBody: "We couldn't reach the live stream. Check your connection and try again.",
@@ -137,13 +136,13 @@ export const en = {
       full: 'Full gallery →',
     },
     quote: {
-      text: "For the first time, I didn't wonder what happened to my donation. I watched it happen.",
-      attribution: '— Maria G., donor since 2024',
+      text: "We remember where we came from. We know what it took to get here. We know we didn't get here alone. So we don't forget the people who come after us. That's LAPA.Help.",
+      attribution: '— LAPA · Latino American Professional Alliance',
     },
     finalCta: {
       eyebrow: 'Have a code?',
-      title: 'Your impact is waiting.',
-      body: 'Enter the 6-digit code from your giving receipt.',
+      title: 'Your window is waiting.',
+      body: 'Enter your 6-digit code — your private window into the mission.',
       noCode: "Don't have a code? See the public feed →",
       groupAria: 'Donor code',
       charAria: (i: number) => `Code digit ${i + 1}`,
@@ -156,7 +155,7 @@ export const en = {
     back: 'Back to home',
     title: 'Welcome back, neighbor.',
     intro:
-      "Enter the 6-digit code from your giving receipt or welcome message. It's yours alone — keep it private.",
+      "Enter your 6-digit code — your private window into the mission. It's yours alone; keep it safe.",
     codeHint: 'Just 6 numbers — like 483920.',
     errNotFound:
       "We couldn't find that code. Check for typos — or contact the mission if it should work.",
@@ -243,7 +242,7 @@ export const en = {
   feed: {
     eyebrow: 'The public ledger',
     title: 'Everything. As it happens.',
-    sub: 'Every gift, every transfer to Colombia, every photo from the field — recorded in the open. Donors appear as first name and last initial only.',
+    sub: 'Every gift, every delivery, every photo — in the open. Donors appear as first name and last initial only.',
     moneyIn: (v: string) => `${v} in`,
     moneyOut: (v: string) => `${v} out`,
     familiesCount: (v: string) => `${v} families`,
@@ -271,9 +270,9 @@ export const en = {
 
   feedEntry: {
     gave: (name: string) => `${name} gave`,
-    sentToField: 'sent to the field',
+    sentToField: 'went to work',
     transferMeta: (recipient: string, purpose: string) =>
-      `Recipient: ${recipient} · Purpose: ${purpose}`,
+      `${recipient} · ${purpose}`,
     recipient: 'Recipient',
     purpose: 'Purpose',
     newPhoto: 'New photo from the field',
@@ -291,13 +290,13 @@ export const en = {
     noGifts: 'No gifts recorded yet.',
     thankYou: 'Thank you.',
     transparency:
-      'All gifts pool into one fund, deployed daily against what the field needs. This ledger is public by design. Amounts are exact; identities are partial. Questions? Contact the mission.',
+      'One shared fund. Every dollar in, every dollar out — public by design. Amounts exact, identities protected. Community, with receipts.',
   },
 
   gallery: {
     eyebrow: 'From the field',
     titleWords: ['Proof,', 'not', 'promises.'],
-    sub: "Photos come back from the mountain villages as relief arrives. When a photo is tied to a specific gift, you'll see it — that's the point of all this.",
+    sub: "Photos come back as help arrives. When one is tied to a gift, you'll see it. Photos aren't decoration here — they're evidence.",
     photosCount: (v: string) => `${v} photos`,
     latestPrefix: ' · latest ',
     filters: {
@@ -461,10 +460,10 @@ export const en = {
     page: {
       title: 'Give — and watch it work.',
       subtitle:
-        'Every dollar pools into one fund and goes where our people need it most. You get a 6-digit code to follow every cent.',
+        'Your gift joins one shared fund and goes where our people need it most. Your 6-digit code is your window into the mission.',
       ticketTitle: 'Solidarity Ticket',
       ticketBody:
-        'Your $25 ticket joins you to the mission — and lands in the same public fund you can watch, live.',
+        'A $25 ticket that puts you inside the mission — same public fund, same proof, same window to watch it work.',
       ticketCta: 'Get my ticket — $25',
       orDivider: 'or give directly',
       chooseAmount: 'Choose your amount',
@@ -472,6 +471,16 @@ export const en = {
       customAria: 'Custom amount in dollars',
       customMin: 'The minimum donation is $1.',
       giveCta: (amount: string) => `Give ${amount}`,
+      ladder: {
+        '1000': 'A small push that keeps the fund moving.',
+        '2500': "The solidarity ticket — you're inside the mission.",
+        '5000': 'Can help keep clean water flowing for a family.',
+        '10000': 'Can help roof a home before the rains return.',
+        '25000': 'Can help stock relief baskets for several families.',
+        '50000': 'Can help move a full supply run up the mountain.',
+        '100000': 'Can help rebuild a home, piece by piece.',
+        custom: 'Every amount matters. Every cent is public.',
+      },
       opening: 'Opening secure checkout…',
       checkoutError:
         'We could not open secure checkout. Please try again in a moment.',
@@ -481,12 +490,12 @@ export const en = {
       confirmingTitle: 'Confirming your gift with Stripe…',
       confirmingBody:
         'Hang tight — Stripe is telling us your gift landed. This usually takes a few seconds; keep this tab open.',
-      confirmedTitle: 'Your gift is in the pot.',
+      confirmedTitle: 'Your gift is already at work.',
       confirmedBody:
-        'Thank you. Your gift joined one pooled fund — the team deploys it against what the field needs today. This code is your window into all of it:',
-      yourCode: 'Your donor code',
+        'Thank you. Your gift joined one shared fund — deployed daily where the need is greatest. This code is your window into the mission:',
+      yourCode: 'Your window into the mission',
       codeHint:
-        'Keep it safe — it opens your personal impact page. We never ask for a password.',
+        'Six digits. Yours alone. Come back anytime and watch what your gift makes possible.',
       copyCode: 'Copy code',
       seeMyImpact: 'See my impact',
       watchFeed: 'Watch the live feed',
