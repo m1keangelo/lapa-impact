@@ -24,6 +24,17 @@ export interface Campaign {
   /** Hero / donate imagery for this campaign. */
   heroImage: string;
   donateImage: string;
+  /**
+   * ISO timestamp of the moment the mission began (the disaster event).
+   * Mission Day 1 = the calendar day containing this moment, in the
+   * campaign's local timezone. Drives the DÍA 1 / DAY 1 story timeline.
+   */
+  missionStartIso: string;
+  /**
+   * Ground-zero locations for this mission (English / Spanish display).
+   * Used by the finance + field consoles and shown as location chips.
+   */
+  locations: { id: string; en: string; es: string }[];
 }
 
 export const CAMPAIGN: Campaign = {
@@ -37,6 +48,18 @@ export const CAMPAIGN: Campaign = {
   locationEs: 'Chocó, Colombia',
   heroImage: '/hero-andes.jpg',
   donateImage: '/hero-andes.jpg',
+  // M7.4 — 10 Aug 2026, 07:34 Colombia time (UTC-5), San José del Palmar, Chocó.
+  missionStartIso: '2026-08-10T07:34:00-05:00',
+  locations: [
+    { id: 'pereira', en: 'Pereira', es: 'Pereira' },
+    { id: 'armenia', en: 'Armenia', es: 'Armenia' },
+    { id: 'cali', en: 'Cali', es: 'Cali' },
+    { id: 'quibdo', en: 'Quibdó', es: 'Quibdó' },
+    { id: 'manizales', en: 'Manizales', es: 'Manizales' },
+    { id: 'san-jose-del-palmar', en: 'San José del Palmar', es: 'San José del Palmar' },
+    { id: 'choco', en: 'Chocó (rural)', es: 'Chocó (rural)' },
+    { id: 'eje-cafetero', en: 'Eje Cafetero (other)', es: 'Eje Cafetero (otro)' },
+  ],
 };
 
 /** "🇨🇴 Colombia · 2026" — eyebrow lockup, language-aware. */

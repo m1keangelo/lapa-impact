@@ -19,6 +19,7 @@ import type { FeedEntry, MediaItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import FeedEntryCard from './feed/FeedEntryCard';
 import FeedSidebar from './feed/FeedSidebar';
+import StoryTimeline from './feed/StoryTimeline';
 import Lightbox, { type LightboxPhoto } from './gallery/Lightbox';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -118,6 +119,7 @@ export default function Feed() {
   const { t, lang } = useLanguage();
   const FILTERS = buildFilters(t);
 
+  const [view, setView] = useState<'now' | 'story'>('now');
   const [filter, setFilter] = useState<FilterKind>('all');
   const [search, setSearch] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
@@ -126,6 +128,11 @@ export default function Feed() {
   // Lookup maps for photo "matched" chips + lightbox attribution.
   const donationById = useMemo(() => new Map(feed.donations.map((d) => [d.id, d])), [feed.donations]);
   const updateById = useMemo(() => new Map(feed.updates.map((u) => [u.id, u])), [feed.updates]);
+  // Proof chain: update → the purchase that paid for it.
+  const transfersById = useMemo(
+    () => new Map(feed.transfers.map((tr) => [tr.id, tr])),
+    [feed.transfers],
+  );
 
   const visibleEntries = useMemo(
     () =>
@@ -164,7 +171,7 @@ export default function Feed() {
   }, [flashedId]);
 
   const openMediaLightbox = (media: MediaItem) => {
-    const photos: LightboxPhoto[] = visibleEntries
+    const photos: LightboxPhoto[] = (view === 'story' ? feed.entries : visibleEntries)
       .filter((e): e is Extract<FeedEntry, { kind: 'photo' }> => e.kind === 'photo')
       .map((e) => ({
         media: e.media,
@@ -240,9 +247,46 @@ export default function Feed() {
             {t.feed.entriesCount(formatCount(feed.totalLoaded))}
           </span>
         </motion.p>
+
+        {/* NOW vs STORY (spec §18–19): live stream ↔ day-by-day record */}
+        <motion.div
+          className="mt-6 inline-flex rounded-full border border-border bg-surface p-1"
+          role="tablist"
+          aria-label={t.story.storyTitle}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE, delay: 0.26 }}
+        >
+          {(['now', 'story'] as const).map((v) => {
+            const active = view === v;
+            return (
+              <button
+                key={v}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => setView(v)}
+                className={cn(
+                  'relative h-8 rounded-full px-4 text-[13px] font-semibold transition-colors duration-200 ease-calm',
+                  active ? 'text-white' : 'text-text-muted hover:text-text',
+                )}
+              >
+                {active ? (
+                  <motion.span
+                    layoutId="feed-view-pill"
+                    className="absolute inset-0 rounded-full bg-amber"
+                    transition={{ duration: 0.25, ease: EASE }}
+                  />
+                ) : null}
+                <span className="relative">{v === 'now' ? t.story.nowTab : t.story.storyTab}</span>
+              </button>
+            );
+          })}
+        </motion.div>
       </section>
 
-      {/* ——— Section 2: sticky filter bar ——— */}
+      {/* ——— Section 2: sticky filter bar (NOW view only) ——— */}
+      {view === 'now' ? (
       <div className="sticky top-[60px] z-40 -mx-5 mt-8 border-b border-border bg-bg/90 px-5 backdrop-blur-md md:-mx-8 md:px-8">
         <div className="flex min-h-[56px] flex-wrap items-center justify-between gap-2 py-2">
           <div className="flex items-center gap-1 overflow-x-auto no-scrollbar" role="tablist" aria-label={t.feed.filterAria}>
@@ -334,11 +378,22 @@ export default function Feed() {
           ) : null}
         </AnimatePresence>
       </div>
+      ) : null}
 
       {/* ——— Section 3 + 4: stream + sidebar ——— */}
       <div className="flex items-start justify-center gap-8 pb-24 pt-8">
         <main className="w-full max-w-[680px]" aria-live="polite">
           {status === 'loading' ? <FeedSkeleton /> : null}
+
+          {view === 'story' && status !== 'loading' && status !== 'error' ? (
+            <StoryTimeline
+              entries={feed.entries}
+              freshIds={feed.freshIds}
+              transfersById={transfersById}
+              onOpenPhoto={openMediaLightbox}
+              onOpenProof={openProofLightbox}
+            />
+          ) : null}
 
           {status === 'error' ? (
             <div className="flex flex-col items-center gap-3 rounded-card border border-danger/40 bg-surface px-6 py-14 text-center">
@@ -357,7 +412,7 @@ export default function Feed() {
             </div>
           ) : null}
 
-          {status !== 'loading' && status !== 'error' ? (
+          {view === 'now' && status !== 'loading' && status !== 'error' ? (
             visibleEntries.length === 0 ? (
               <EmptyState
                 icon={filter === 'photo' ? Camera : filter === 'donation' ? HandCoins : filter === 'transfer' ? Send : filter === 'update' ? Newspaper : Inbox}
@@ -400,6 +455,7 @@ export default function Feed() {
                                   ? Boolean(entry.media.donationId || entry.media.updateId)
                                   : undefined
                               }
+                              transfersById={transfersById}
                               onOpenPhoto={openMediaLightbox}
                               onOpenProof={openProofLightbox}
                             />

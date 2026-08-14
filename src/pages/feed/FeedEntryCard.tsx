@@ -14,17 +14,27 @@ import {
   FileCheck,
   HandCoins,
   Link2,
+  MapPin,
   Newspaper,
+  Receipt,
   type LucideIcon,
 } from 'lucide-react';
 import { cloudinaryUrl } from '@/lib/cloudinary';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { CAMPAIGN } from '@/lib/campaign';
 import { formatMoney, formatShortDate, pickLang, pickMetrics, privacyName } from '@/lib/format';
-import type { FeedEntry, MediaItem } from '@/lib/types';
+import type { FeedEntry, MediaItem, Transfer } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+
+/** Resolve a campaign location id to its display name. */
+function locationLabel(id: string | undefined, lang: 'en' | 'es'): string | null {
+  if (!id) return null;
+  const loc = CAMPAIGN.locations.find((l) => l.id === id);
+  if (loc) return lang === 'es' ? loc.es : loc.en;
+  return id;
+}
 
 const VARIANT_ICON: Record<FeedEntry['kind'], { icon: LucideIcon; color: string }> = {
   donation: { icon: HandCoins, color: 'var(--amber)' },
@@ -39,6 +49,8 @@ interface FeedEntryCardProps {
   fresh: boolean;
   /** whether a photo entry is linked to a donation or update */
   matched?: boolean;
+  /** purchase lookup for the proof chain (update → linked purchase) */
+  transfersById?: Map<string, Transfer>;
   onOpenPhoto?: (media: MediaItem) => void;
   onOpenProof?: (url: string, caption: string) => void;
 }
@@ -47,6 +59,7 @@ export default function FeedEntryCard({
   entry,
   fresh,
   matched,
+  transfersById,
   onOpenPhoto,
   onOpenProof,
 }: FeedEntryCardProps) {
@@ -216,19 +229,50 @@ export default function FeedEntryCard({
               </span>
             ) : null}
 
-            {/* Transfer: proof chip */}
-            {entry.kind === 'transfer' && entry.transfer.proofUrl ? (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenProof?.(entry.transfer.proofUrl!, t.feedEntry.proofCaption(pickLang(entry.transfer, 'purpose', lang)));
-                }}
-                className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-sage/50 bg-sage/10 px-2.5 py-1 text-[11px] font-semibold text-sage transition-colors duration-150 hover:bg-sage/20"
-              >
-                <FileCheck className="h-3 w-3" />
-                {t.feedEntry.proof}
-              </button>
+            {/* Location chip (transfer + update) */}
+            {entry.kind === 'transfer' && locationLabel(entry.transfer.location, lang) ? (
+              <span className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-medium text-text-muted">
+                <MapPin className="h-3 w-3 text-terra" strokeWidth={1.75} />
+                {locationLabel(entry.transfer.location, lang)}
+              </span>
+            ) : null}
+            {entry.kind === 'update' && locationLabel(entry.update.location, lang) ? (
+              <span className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-medium text-text-muted">
+                <MapPin className="h-3 w-3 text-sage" strokeWidth={1.75} />
+                {locationLabel(entry.update.location, lang)}
+              </span>
+            ) : null}
+
+            {/* Transfer: proof + receipt chips */}
+            {entry.kind === 'transfer' && (entry.transfer.proofUrl || entry.transfer.receiptUrl) ? (
+              <span className="mt-2 flex flex-wrap gap-1.5">
+                {entry.transfer.proofUrl ? (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onOpenProof?.(entry.transfer.proofUrl!, t.feedEntry.proofCaption(pickLang(entry.transfer, 'purpose', lang)));
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-sage/50 bg-sage/10 px-2.5 py-1 text-[11px] font-semibold text-sage transition-colors duration-150 hover:bg-sage/20"
+                  >
+                    <FileCheck className="h-3 w-3" />
+                    {t.feedEntry.proof}
+                  </button>
+                ) : null}
+                {entry.transfer.receiptUrl ? (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onOpenProof?.(entry.transfer.receiptUrl!, t.feedEntry.receiptCaption(entry.transfer.vendor || pickLang(entry.transfer, 'recipient', lang)));
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-terra/50 bg-terra/10 px-2.5 py-1 text-[11px] font-semibold text-terra transition-colors duration-150 hover:bg-terra/20"
+                  >
+                    <Receipt className="h-3 w-3" />
+                    {t.feedEntry.viewReceipt}
+                  </button>
+                ) : null}
+              </span>
             ) : null}
 
             {expandable ? (
@@ -268,10 +312,53 @@ export default function FeedEntryCard({
                       <dt className="eyebrow inline">{t.feedEntry.purpose} · </dt>
                       <dd className="inline text-text-muted">{pickLang(entry.transfer, 'purpose', lang)}</dd>
                     </div>
+                    {entry.transfer.vendor ? (
+                      <div>
+                        <dt className="eyebrow inline">{t.feedEntry.vendor} · </dt>
+                        <dd className="inline text-text-muted">{entry.transfer.vendor}</dd>
+                      </div>
+                    ) : null}
+                    {locationLabel(entry.transfer.location, lang) ? (
+                      <div>
+                        <dt className="eyebrow inline">{t.feedEntry.locationLabel} · </dt>
+                        <dd className="inline text-text-muted">{locationLabel(entry.transfer.location, lang)}</dd>
+                      </div>
+                    ) : null}
                   </dl>
                 ) : null}
                 {entry.kind === 'update' ? (
-                  <p className="text-sm leading-[1.55] text-text-muted">{pickLang(entry.update, 'body', lang)}</p>
+                  <>
+                    <p className="text-sm leading-[1.55] text-text-muted">{pickLang(entry.update, 'body', lang)}</p>
+                    {(() => {
+                      const linked = entry.update.linkedTransferId
+                        ? transfersById?.get(entry.update.linkedTransferId)
+                        : undefined;
+                      return (
+                        <div className="mt-2 space-y-1.5">
+                          {linked ? (
+                            <p className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-terra">
+                              <Receipt className="h-3 w-3" />
+                              {t.feedEntry.chainPurchase(formatMoney(linked.amount))}
+                              {linked.receiptUrl ? (
+                                <button
+                                  type="button"
+                                  onClick={() => onOpenProof?.(linked.receiptUrl!, t.feedEntry.receiptCaption(linked.vendor || pickLang(linked, 'recipient', lang)))}
+                                  className="underline underline-offset-2"
+                                >
+                                  {t.feedEntry.viewReceipt}
+                                </button>
+                              ) : null}
+                            </p>
+                          ) : null}
+                          {entry.update.authorName ? (
+                            <p className="text-[12px] font-medium text-text-muted">
+                              {t.feedEntry.reportedBy(entry.update.authorName)}
+                            </p>
+                          ) : null}
+                        </div>
+                      );
+                    })()}
+                  </>
                 ) : null}
               </div>
             </motion.div>

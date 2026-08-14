@@ -5,11 +5,61 @@ rules_version = '2';
 // Model: the public ledger is readable by everyone (donors watch it live
 // without logging in). Donor codes are sensitive: they can be looked up
 // one at a time (the donor login flow), but the collection can NEVER be
-// listed, so codes cannot be enumerated. All writes require Firebase Auth
-// (the single admin account, email/password).
+// listed, so codes cannot be enumerated.
+//
+// Staff model: accounts are created by hand in the Firebase console
+// (Authentication → Add user); there is no public sign-up. A staff/{uid}
+// doc decides what each account can do:
+//   admin   — everything: approve field reports, post updates/photos,
+//             record money in/out, manage the team.
+//   finance — money desk: record donations/purchases, touch stats.
+//   field   — volunteers: submit fieldReports, nothing else.
+// The FIRST person to sign in claims the admin role via the bootstrap
+// card (self-create of their own staff doc); after that only an existing
+// admin can create/update staff docs.
 
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+    function staffDoc() {
+      return get(/databases/$(database)/documents/staff/$(request.auth.uid)).data;
+    }
+    function isStaff() {
+      return signedIn() && staffDoc().active == true;
+    }
+    function isAdmin() {
+      return isStaff() && staffDoc().role == 'admin';
+    }
+    function canWriteMoney() {
+      return isStaff() && staffDoc().role in ['admin', 'finance'];
+    }
+
+    // staff/{uid} — roles. Self-read (role routing), admin lists the team.
+    // Self-create is the bootstrap claim (admin role only, own uid only);
+    // afterwards only an existing admin can add/update/deactivate staff.
+    match /staff/{uid} {
+      allow get: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isAdmin()
+        || (signedIn() && request.auth.uid == uid
+            && request.resource.data.role == 'admin'
+            && request.resource.data.active == true);
+      allow update, delete: if isAdmin();
+    }
+
+    // fieldReports/{id} — volunteer submissions. Any active staff member
+    // can file one (as themselves, always starting 'submitted'); only an
+    // admin can review (approve/reject) or read the whole queue.
+    match /fieldReports/{id} {
+      allow read: if isStaff();
+      allow create: if isStaff()
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.status == 'submitted';
+      allow update, delete: if isAdmin();
+    }
 
     // donors/{code} — code is the document ID.
     // allow get: the donor login flow looks up ONE code at a time.
@@ -17,38 +67,39 @@ service cloud.firestore {
     match /donors/{code} {
       allow get: if true;
       allow list: if false;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if canWriteMoney();
     }
 
-    // donations/{id} — public ledger (read by everyone, written by admin).
+    // donations/{id} — public ledger (read by everyone, written by money desk).
     match /donations/{id} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if canWriteMoney();
     }
 
-    // transfers/{id} — money out to the field.
+    // transfers/{id} — money out to the field (purchases, vendors, receipts).
     match /transfers/{id} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if canWriteMoney();
     }
 
-    // updates/{id} — field reports.
+    // updates/{id} — published field reports (admin approval materializes
+    // volunteer submissions here).
     match /updates/{id} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
 
     // media/{id} — photo metadata (Cloudinary URLs, captions, links).
     match /media/{id} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
 
     // stats/{id} — 'global' holds the hero totals (totalIn/totalOut/
-    // familiesHelped), maintained by the admin panel via batched increments.
+    // familiesHelped), maintained by the money desk via batched increments.
     match /stats/{id} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if canWriteMoney();
     }
 
     // stripeSessions/{sessionId} — written ONLY by the stripeWebhook Cloud

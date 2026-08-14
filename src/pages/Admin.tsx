@@ -12,13 +12,16 @@
  */
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Camera, CircleAlert, HandCoins, Newspaper, Send } from 'lucide-react';
+import { Camera, CircleAlert, ClipboardCheck, HandCoins, Newspaper, Send, Users } from 'lucide-react';
 import { Toaster } from 'sonner';
+import type { User } from 'firebase/auth';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { firebaseReady } from '@/lib/firebase';
 import { useLanguage, type LanguageContextValue } from '@/i18n/LanguageContext';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useStaff } from '@/hooks/useStaff';
+import type { StaffUser } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import AdminBar from './admin/AdminBar';
 import AuthGate from './admin/AuthGate';
@@ -28,6 +31,12 @@ import TransferForm from './admin/TransferForm';
 import UpdateForm from './admin/UpdateForm';
 import PhotosForm from './admin/PhotosForm';
 import RecentActivity from './admin/RecentActivity';
+import PurchaseForm from './admin/PurchaseForm';
+import MoneyInList from './admin/MoneyInList';
+import FieldReportForm from './admin/FieldReportForm';
+import QueuePanel from './admin/QueuePanel';
+import TeamPanel from './admin/TeamPanel';
+import { inputCls } from './admin/formUtils';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -37,10 +46,12 @@ function buildTabs(t: LanguageContextValue['t']) {
     { id: 'transfer', label: t.admin.tabs.transfer, icon: Send },
     { id: 'update', label: t.admin.tabs.update, icon: Newspaper },
     { id: 'photos', label: t.admin.tabs.photos, icon: Camera },
+    { id: 'queue', label: t.ops.queue.title.replace('.', ''), icon: ClipboardCheck },
+    { id: 'team', label: t.ops.team.title.replace('.', ''), icon: Users },
   ] as const;
 }
 
-type TabId = 'gift' | 'transfer' | 'update' | 'photos';
+type TabId = 'gift' | 'transfer' | 'update' | 'photos' | 'queue' | 'team';
 
 function useOnlineStatus(): boolean {
   const [online, setOnline] = useState(() => navigator.onLine);
@@ -85,9 +96,11 @@ function FirebaseNotice() {
 
 function AdminPanel({
   email,
+  staffName,
   onSignOut,
 }: {
   email: string;
+  staffName: string;
   onSignOut: () => void;
 }) {
   const [tab, setTab] = useState<TabId>('gift');
@@ -197,6 +210,24 @@ function AdminPanel({
                 <PhotosForm onSaved={onSaved} />
               </motion.div>
             </TabsContent>
+            <TabsContent value="queue" className="mt-0">
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, ease: EASE }}
+              >
+                <QueuePanel reviewerName={staffName} />
+              </motion.div>
+            </TabsContent>
+            <TabsContent value="team" className="mt-0">
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, ease: EASE }}
+              >
+                <TeamPanel />
+              </motion.div>
+            </TabsContent>
           </div>
         </Tabs>
 
@@ -206,18 +237,209 @@ function AdminPanel({
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* Role consoles (spec §8–12)                                            */
+/* ------------------------------------------------------------------ */
+
+/** One-time setup: first signed-in account claims the admin profile. */
+function BootstrapCard({
+  staff,
+  onSignOut,
+}: {
+  staff: ReturnType<typeof useStaff>;
+  onSignOut: () => void;
+}) {
+  const { t } = useLanguage();
+  const [name, setName] = useState('');
+  const [busy, setBusy] = useState(false);
+  return (
+    <div className="flex min-h-[60dvh] items-center justify-center px-5 py-16">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: EASE }}
+        className="w-full max-w-[440px] rounded-card border border-border bg-surface p-8"
+      >
+        <h1 className="font-display text-[26px] font-medium text-text">
+          {t.ops.bootstrap.title}
+        </h1>
+        <p className="mt-2 text-[13px] leading-[1.55] text-text-muted">{t.ops.bootstrap.sub}</p>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder={t.ops.bootstrap.namePh}
+          className={cn(inputCls, 'mt-6')}
+        />
+        <button
+          type="button"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            try {
+              await staff.bootstrapAdmin(name);
+            } catch (err) {
+              console.warn('[bootstrap] failed:', err);
+              setBusy(false);
+            }
+          }}
+          className="mt-4 flex h-12 w-full items-center justify-center rounded-[10px] bg-amber text-[15px] font-semibold text-white transition-colors hover:bg-amber-soft disabled:opacity-60"
+        >
+          {t.ops.bootstrap.cta}
+        </button>
+        <button
+          type="button"
+          onClick={onSignOut}
+          className="mt-3 w-full text-center text-[13px] font-medium text-text-muted hover:text-text"
+        >
+          {t.admin.authGate.back}
+        </button>
+      </motion.div>
+    </div>
+  );
+}
+
+/** Signed in but deactivated, or waiting for a role. */
+function NoAccessCard({ onSignOut }: { onSignOut: () => void }) {
+  const { t } = useLanguage();
+  return (
+    <div className="flex min-h-[60dvh] items-center justify-center px-5 py-16">
+      <div className="w-full max-w-[440px] rounded-card border border-border bg-surface p-8 text-center">
+        <h1 className="font-display text-[26px] font-medium text-text">{t.ops.noAccess.title}</h1>
+        <p className="mt-2 text-[13px] leading-[1.55] text-text-muted">{t.ops.noAccess.sub}</p>
+        <button
+          type="button"
+          onClick={onSignOut}
+          className="mt-5 text-[13px] font-medium text-text-muted hover:text-text"
+        >
+          {t.admin.authGate.back}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** Finance console — Mayra's desk: money in (live) + money out w/ receipts. */
+function FinanceConsole({
+  staff,
+  email,
+  onSignOut,
+}: {
+  staff: StaffUser;
+  email: string;
+  onSignOut: () => void;
+}) {
+  const online = useOnlineStatus();
+  const { stats } = useGlobalStats();
+  const { t } = useLanguage();
+  const balanceCents = stats.totalIn - stats.totalOut;
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 24 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.35, ease: EASE }}
+    >
+      <AdminBar email={email} online={online} onSignOut={onSignOut} />
+      <div className="mx-auto w-full max-w-[760px] px-5 pb-20 pt-8 md:px-8">
+        <p className="eyebrow">{t.ops.roles.finance} · {staff.name}</p>
+        <h1 className="mt-2 font-display text-[24px] font-medium tracking-[-0.01em] text-text md:text-[32px]">
+          {t.ops.finance.title}
+        </h1>
+        <p className="mt-1.5 text-[13px] font-medium tracking-[0.01em] text-text-muted">
+          {t.ops.finance.sub}
+        </p>
+        <div className="mt-8 flex flex-col gap-6">
+          <section className="rounded-card border border-border bg-surface p-5 md:p-6">
+            <h2 className="font-display text-[19px] font-medium text-text">
+              {t.ops.finance.outTitle}
+            </h2>
+            <div className="mt-5">
+              <PurchaseForm balanceCents={balanceCents} onSaved={() => undefined} />
+            </div>
+          </section>
+          <MoneyInList />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/** Field console — volunteer reports: photos + note, submitted for review. */
+function FieldConsole({
+  staff,
+  user,
+  onSignOut,
+}: {
+  staff: StaffUser;
+  user: User;
+  onSignOut: () => void;
+}) {
+  const online = useOnlineStatus();
+  const { t } = useLanguage();
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 24 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.35, ease: EASE }}
+    >
+      <AdminBar email={user.email ?? ''} online={online} onSignOut={onSignOut} />
+      <div className="mx-auto w-full max-w-[760px] px-5 pb-20 pt-8 md:px-8">
+        <p className="eyebrow">{t.ops.roles.field} · {staff.name}</p>
+        <h1 className="mt-2 font-display text-[24px] font-medium tracking-[-0.01em] text-text md:text-[32px]">
+          {t.ops.field.title}
+        </h1>
+        <p className="mt-1.5 text-[13px] font-medium tracking-[0.01em] text-text-muted">
+          {t.ops.field.sub}
+        </p>
+        <div className="mt-8 rounded-card border border-border bg-surface p-5 md:p-6">
+          <FieldReportForm user={user} />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function Admin() {
   const { user, loading, signIn, signOut } = useAdminAuth();
+  const staff = useStaff(user);
+
+  const spinner = (
+    <div className="flex min-h-[50dvh] items-center justify-center">
+      <span className="h-6 w-6 animate-spin rounded-full border-2 border-border-strong border-t-amber" />
+    </div>
+  );
 
   return (
     <>
       {firebaseReady ? (
         loading ? (
-          <div className="flex min-h-[50dvh] items-center justify-center">
-            <span className="h-6 w-6 animate-spin rounded-full border-2 border-border-strong border-t-amber" />
-          </div>
+          spinner
         ) : user ? (
-          <AdminPanel email={user.email ?? 'admin'} onSignOut={() => void signOut()} />
+          staff.loading ? (
+            spinner
+          ) : staff.needsBootstrap ? (
+            <BootstrapCard staff={staff} onSignOut={() => void signOut()} />
+          ) : staff.staff && !staff.staff.active ? (
+            <NoAccessCard onSignOut={() => void signOut()} />
+          ) : staff.staff?.role === 'finance' ? (
+            <FinanceConsole
+              staff={staff.staff}
+              email={user.email ?? 'finance'}
+              onSignOut={() => void signOut()}
+            />
+          ) : staff.staff?.role === 'field' ? (
+            <FieldConsole
+              staff={staff.staff}
+              user={user}
+              onSignOut={() => void signOut()}
+            />
+          ) : (
+            <AdminPanel
+              email={user.email ?? 'admin'}
+              staffName={staff.staff?.name ?? user.email ?? 'admin'}
+              onSignOut={() => void signOut()}
+            />
+          )
         ) : (
           <AuthGate signIn={signIn} />
         )

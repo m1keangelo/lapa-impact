@@ -48,6 +48,17 @@ export interface Transfer {
   /** Spanish translation of `purpose` (translateContent function) */
   purposeEs?: string;
   proofUrl?: string;
+  /* ——— Purchase detail (live ground-zero spec §10–11) ——— */
+  /** Who was paid — store, supplier, transport company. */
+  vendor?: string;
+  /** Spending category: food, water, hygiene, shelter, transport, medical… */
+  category?: string;
+  /** Where the money went to work (location id from CAMPAIGN.locations). */
+  location?: string;
+  /** Receipt photo (Cloudinary URL) — the public "View receipt" proof. */
+  receiptUrl?: string;
+  /** Mission day, assigned automatically at write time. */
+  missionDay?: number;
 }
 
 /** updates/{id} — field reports. */
@@ -65,6 +76,68 @@ export interface ImpactUpdate {
   metricsEs?: Record<string, string | number>;
   timestamp: TimestampLike;
   mediaIds?: string[];
+  /* ——— Proof chain (live ground-zero spec §7, §20) ——— */
+  /** Where this happened (location id from CAMPAIGN.locations). */
+  location?: string;
+  /** What kind of step in the chain: delivery, field note, milestone. */
+  category?: 'delivery' | 'field' | 'milestone' | 'note';
+  /** Mission day, assigned automatically at publish time. */
+  missionDay?: number;
+  /** Volunteer/team member who reported it (display name). */
+  authorName?: string;
+  /** The purchase (transfers/{id}) this update delivers on — the chain link. */
+  linkedTransferId?: string;
+  /** The fieldReports/{id} doc this public update was approved from. */
+  sourceReportId?: string;
+}
+
+/* ------------------------------------------------------------------ */
+/* Staff + roles (live ground-zero spec §8–13)                          */
+/* ------------------------------------------------------------------ */
+
+/** staff/{uid} — who is allowed behind the public site, and at what level. */
+export type StaffRole = 'admin' | 'finance' | 'field';
+
+export interface StaffUser {
+  /** Display name, e.g. "Mayra" — shown as attribution on approvals. */
+  name: string;
+  role: StaffRole;
+  active: boolean;
+  email?: string;
+  createdAt?: TimestampLike;
+}
+
+/**
+ * fieldReports/{id} — volunteer submissions from the ground.
+ * Flow: submitted → approved (creates a public updates/{id} + media docs)
+ * or rejected. Volunteers never touch money or publish directly.
+ */
+export interface FieldReport {
+  id: string;
+  /** Short human sentence — "Food and water reached the albergue." */
+  note: string;
+  noteEs?: string;
+  /** Where it happened (location id from CAMPAIGN.locations). */
+  location: string;
+  /** When it happened on the ground (not when it was typed). */
+  happenedAt: TimestampLike;
+  /** Cloudinary URLs, max 4. */
+  photoUrls: string[];
+  /** Optional link to the purchase (transfers/{id}) this report proves. */
+  linkedTransferId?: string;
+  /** What was delivered, when applicable — "40 kits de higiene". */
+  delivered?: string;
+  authorUid: string;
+  authorName: string;
+  status: 'submitted' | 'approved' | 'rejected';
+  /** Set at creation from happenedAt. */
+  missionDay: number;
+  createdAt: TimestampLike;
+  reviewedBy?: string;
+  reviewedAt?: TimestampLike;
+  /** The public update created on approval. */
+  publishedUpdateId?: string;
+  rejectReason?: string;
 }
 
 /** media/{id} — photos from the field (Cloudinary). */
