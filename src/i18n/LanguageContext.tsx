@@ -26,8 +26,9 @@ function detectLanguage(): Language {
   } catch {
     /* storage unavailable — fall through to detection */
   }
-  const nav = typeof navigator !== 'undefined' ? navigator.language : '';
-  return nav?.toLowerCase().startsWith('es') ? 'es' : 'en';
+  // Spanish-first: this is a Colombian mission, so Spanish is the default for
+  // every visitor. English remains available via the navbar toggle.
+  return 'es';
 }
 
 export interface LanguageContextValue {

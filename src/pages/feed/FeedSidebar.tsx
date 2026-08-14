@@ -78,7 +78,7 @@ export default function FeedSidebar({ donations, transfers, updates }: FeedSideb
       updates,
       (u) => toMillis(u.timestamp),
       (u) => {
-        const f = u.metrics?.families;
+        const f = u.metrics?.families ?? u.metrics?.familias;
         return typeof f === 'number' ? f : Number(f) || 0;
       },
     );
