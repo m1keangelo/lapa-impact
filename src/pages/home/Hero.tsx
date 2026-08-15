@@ -1,9 +1,11 @@
 /**
- * Home Section 1 — Hero (home.md §Section 1).
- * Full-viewport: /hero-andes.jpg with layered scrim + radial amber glow,
- * word-staggered Fraunces headline, CTA row, live counting stats tucked
- * behind a "see the numbers" toggle, and a scroll cue. The background
- * parallax is FM scroll-linked (no GSAP — the pinned journey was removed in the final pass).
+ * Home Section 1 — Hero (FIN spec §1/§2/§3/§4/§9/§13).
+ * Full-viewport responsive hero image (AVIF/WebP/JPG srcset) with a radial
+ * readability gradient centered on the headline, the animated tagline
+ * "De aquí. De allá. Juntos.", a two-tone clamp-sized headline
+ * (ivory → LAPA blue), and subordinate CTAs. The intro sequence is pure
+ * CSS (see .hero-seq-* in index.css) with exact beat timings; framer-motion
+ * only keeps the background parallax and the live-numbers toggle.
  */
 import { memo, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
@@ -97,7 +99,7 @@ const ScrollCue = memo(function ScrollCue({
 export default function Hero() {
   const { stats, revision, isDemo } = useGlobalStats();
   const { t, lang } = useLanguage();
-  const HEADLINE = t.home.hero.headline;
+  const h = t.home.hero;
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const flash = useAnimationControls();
@@ -112,7 +114,7 @@ export default function Hero() {
   const bgOpacity = useTransform(scrollYProgress, [0.65, 1], [1, 0]);
   const cueOpacity = useTransform(scrollYProgress, [0, 0.04], [1, 0]);
 
-  // Amber radial pulse on the stat group when live totals push an update.
+  // Blue radial pulse on the stat group when live totals push an update.
   useEffect(() => {
     if (revision > 0 && !reduceMotion) {
       flash.start({
@@ -132,98 +134,86 @@ export default function Hero() {
       className="relative flex items-center justify-center overflow-hidden"
       style={{ minHeight: 'max(100dvh, 640px)' }}
     >
-      {/* Background + scrims */}
+      {/* Background: responsive image (FIN §10/§12) + parallax */}
       <motion.div style={{ y: bgY, opacity: bgOpacity }} className="absolute inset-0">
-        <img
-          src="/hero-andes.jpg"
-          alt=""
-          className="h-full w-full object-cover"
-          fetchPriority="high"
-        />
-      </motion.div>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="absolute inset-0"
-        aria-hidden
-      >
-        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(20,16,12,0.92),rgba(20,16,12,0.55)_50%,rgba(20,16,12,0.7))]" />
-        <div className="absolute inset-0 bg-[radial-gradient(700px_circle_at_50%_58%,rgba(23,105,255,0.18),transparent_70%)]" />
+        <picture>
+          <source
+            type="image/avif"
+            srcSet="/hero-390.avif 390w, /hero-768.avif 768w, /hero-1440.avif 1440w, /hero-1920.avif 1920w"
+            sizes="100vw"
+          />
+          <source
+            type="image/webp"
+            srcSet="/hero-390.webp 390w, /hero-768.webp 768w, /hero-1440.webp 1440w, /hero-1920.webp 1920w"
+            sizes="100vw"
+          />
+          <img
+            src="/hero-andes.jpg"
+            srcSet="/hero-390.jpg 390w, /hero-768.jpg 768w, /hero-1440.jpg 1440w, /hero-1920.jpg 1920w"
+            sizes="100vw"
+            alt=""
+            width="1920"
+            height="1080"
+            loading="eager"
+            fetchPriority="high"
+            className="h-full w-full object-cover"
+          />
+        </picture>
       </motion.div>
 
-      {/* Content */}
-      <div className="relative z-10 mx-auto flex w-full max-w-[760px] flex-col items-center px-5 py-24 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.5, ease: EASE }}
-        >
+      {/* Scrims: base linear + radial readability gradient centered on the
+          headline (FIN §4) — radial, NOT a rectangular box. */}
+      <div className="absolute inset-0" aria-hidden>
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(20,16,12,0.88),rgba(20,16,12,0.45)_50%,rgba(20,16,12,0.6))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(closest-side_at_50%_52%,rgba(0,0,0,0.45),rgba(0,0,0,0.25)_62%,rgba(0,0,0,0))]" />
+      </div>
+
+      {/* Content — CSS intro sequence (FIN §2/§13) */}
+      <div className="relative z-10 mx-auto flex w-full max-w-[820px] flex-col items-center px-5 py-24 text-center">
+        {/* 0.1s — live badge */}
+        <div className="hero-seq-badge">
           {isDemo ? <PreviewChip /> : <LiveBadge label={t.feed.liveColombia} />}
-        </motion.div>
+        </div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: reduceMotion ? 0 : 0.15, duration: 0.5 }}
-          className="mt-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#F3EAD9]"
-        >
+        {/* 0.2s — micro eyebrow */}
+        <p className="hero-seq-eyebrow mt-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#F5F1E8]/80">
           LAPA.Help · {campaignEyebrow(lang)}
-        </motion.p>
+        </p>
 
-        <h1 className="mt-4 font-display text-[36px] font-medium leading-[1.08] tracking-[-0.02em] text-[#F3EAD9] md:text-[64px]">
-          {HEADLINE.map((w, i) => (
-            <span key={i}>
-              {w.br ? <br aria-hidden /> : null}
-              <motion.span
-                className={
-                  w.accent ? 'inline-block italic text-amber' : 'inline-block'
-                }
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  delay: reduceMotion ? 0 : 0.2 + i * 0.07,
-                  duration: reduceMotion ? 0 : 0.6,
-                  ease: EASE,
-                }}
-              >
-                {w.word}
-                {i < HEADLINE.length - 1 && !HEADLINE[i + 1].br ? ' ' : ''}
-              </motion.span>
-            </span>
-          ))}
+        {/* 0.4s / 0.7s / 1.0s — the animated tagline (FIN §2) */}
+        <p
+          className="mt-8 text-[24px] font-medium uppercase tracking-[0.15em] text-[#F5F1E8] md:text-[32px]"
+          aria-label={`${h.tag1} ${h.tag2} ${h.tag3}`}
+        >
+          <span aria-hidden className="hero-seq-tag1 inline-block">{h.tag1}</span>{' '}
+          <span aria-hidden className="hero-seq-tag2 inline-block">{h.tag2}</span>{' '}
+          <span aria-hidden className="hero-seq-tag3 inline-block">{h.tag3}</span>
+        </p>
+
+        {/* 1.2s — main headline (FIN §1 sizing, §3 color split) */}
+        <h1
+          className="hero-seq-headline mt-5 font-display font-bold leading-[1.1] tracking-[-0.02em]"
+          style={{ fontSize: 'clamp(40px, 10vw, 88px)' }}
+        >
+          <span className="block text-[#F5F1E8]">{h.headlineA}</span>
+          {/* LAPA blue accent — a lighter tint of #003D7A so the blue stays
+              VISUALLY OBVIOUS on the dark photo (navy on black would vanish). */}
+          <span className="block text-[#4D8AFF]">{h.headlineB}</span>
         </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            delay: reduceMotion ? 0 : 0.9,
-            duration: reduceMotion ? 0 : 0.5,
-            ease: EASE,
-          }}
-          className="mt-6 max-w-[52ch] text-[17px] leading-[1.6] md:text-[18px]"
-        >
-          <span className="block font-medium text-[#F3EAD9]">{t.home.hero.sub}</span>
-          <span className="mt-1.5 block text-[#B0A18C]">{t.home.hero.subB}</span>
-        </motion.p>
+        {/* 1.6s — supporting text */}
+        <p className="hero-seq-support mt-6 max-w-[52ch] text-[17px] leading-[1.6] md:text-[18px]">
+          <span className="block font-medium text-[#F5F1E8]">{h.sub}</span>
+          <span className="mt-1.5 block text-[#B0A18C]">{h.subB}</span>
+        </p>
 
-        {/* CTA row — action before accounting */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            delay: reduceMotion ? 0 : 1.1,
-            duration: reduceMotion ? 0 : 0.45,
-            ease: EASE,
-          }}
-          className="mt-10 flex flex-col items-center gap-3 sm:flex-row"
-        >
+        {/* 1.8s — CTA row (FIN §9: subordinate to the headline) */}
+        <div className="hero-seq-cta mt-10 flex flex-col items-center gap-3 sm:flex-row">
           {CHECKOUT_AVAILABLE ? (
             <Link
               to="/donate"
               aria-label={t.donate.giveAria}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-amber px-6 py-4 text-[16px] font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98] sm:w-auto"
+              className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[4px] bg-[#003D7A] px-8 py-4 text-[16px] font-semibold text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-[#0A4E97] active:scale-[0.98] sm:w-auto"
             >
               <HandCoins className="h-4 w-4" />
               {t.donate.giveNow}
@@ -231,30 +221,21 @@ export default function Hero() {
           ) : null}
           <a
             href="#feed-preview"
-            className="inline-flex w-full items-center justify-center rounded-[10px] border border-white/25 px-6 py-4 text-[16px] font-semibold text-[#F3EAD9] transition-all duration-150 ease-calm hover:bg-white/10 active:scale-[0.98] sm:w-auto"
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[4px] border-2 border-[#F5F1E8]/60 px-8 py-4 text-[16px] font-semibold text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-white/10 active:scale-[0.98] sm:w-auto"
           >
-            {t.home.hero.seeImpact}
+            {h.seeImpact}
           </a>
-        </motion.div>
+        </div>
 
-        {/* Numbers on tap — transparency stays one touch away, but the
-            story leads. The full public ledger lives on /feed. */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{
-            delay: reduceMotion ? 0 : 1.4,
-            duration: reduceMotion ? 0 : 0.5,
-          }}
-          className="mt-8 flex flex-col items-center"
-        >
+        {/* 2.0s — numbers on tap: transparency one touch away, story leads */}
+        <div className="hero-seq-numbers mt-8 flex flex-col items-center">
           <button
             type="button"
             onClick={() => setShowNumbers((v) => !v)}
             aria-expanded={showNumbers}
-            className="text-[13px] font-semibold text-[#B0A18C] underline decoration-dotted underline-offset-4 transition-colors hover:text-[#F3EAD9]"
+            className="text-[13px] font-semibold text-[#B0A18C] underline decoration-dotted underline-offset-4 transition-colors hover:text-[#F5F1E8]"
           >
-            {showNumbers ? t.home.hero.hideNumbers : t.home.hero.seeNumbers}
+            {showNumbers ? h.hideNumbers : h.seeNumbers}
           </button>
           <AnimatePresence initial={false}>
             {showNumbers && (
@@ -271,16 +252,16 @@ export default function Hero() {
                   className="mt-5 flex flex-col items-stretch divide-y divide-border rounded-card border border-border bg-bg/40 backdrop-blur-sm md:flex-row md:items-center md:divide-x md:divide-y-0"
                 >
                   {[
-                    { label: t.home.hero.givenByDonors, value: stats.totalIn, color: 'var(--amber)', delay: 0.1, money: true },
-                    { label: t.home.hero.sentToField, value: stats.totalOut, color: 'var(--terra)', delay: 0.2, money: true },
-                    { label: t.home.hero.familiesHelped, value: stats.familiesHelped, color: 'var(--sage)', delay: 0.3, money: false },
+                    { label: h.givenByDonors, value: stats.totalIn, color: 'var(--amber)', delay: 0.1, money: true },
+                    { label: h.sentToField, value: stats.totalOut, color: 'var(--terra)', delay: 0.2, money: true },
+                    { label: h.familiesHelped, value: stats.familiesHelped, color: 'var(--sage)', delay: 0.3, money: false },
                   ].map((s) => (
                     <div key={s.label} className="flex flex-col items-center px-8 py-4 md:py-5">
                       <CountUp
                         value={s.value}
                         delay={s.delay}
                         format={s.money ? formatMoneyShort : formatCount}
-                        className="font-mono text-2xl font-medium leading-none text-[#F3EAD9] md:text-3xl"
+                        className="font-mono text-2xl font-medium leading-none text-[#F5F1E8] md:text-3xl"
                       />
                       <span
                         className="mt-2.5 text-[11px] font-semibold uppercase tracking-[0.14em]"
@@ -294,10 +275,10 @@ export default function Hero() {
               </motion.div>
             )}
           </AnimatePresence>
-        </motion.div>
+        </div>
       </div>
 
-      <ScrollCue opacity={cueOpacity} label={t.home.hero.scroll} />
+      <ScrollCue opacity={cueOpacity} label={h.scroll} />
     </section>
   );
 }

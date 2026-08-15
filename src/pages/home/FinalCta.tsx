@@ -53,7 +53,7 @@ export default function FinalCta() {
         <motion.div {...stagger(0.3)} className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
           <Link
             to="/impact"
-            className="inline-flex items-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-[4px] bg-[#003D7A] px-8 py-4 text-[15px] font-semibold text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-[#0A4E97] active:scale-[0.98]"
           >
             {t.home.finalCta.myImpactCta}
             <ArrowRight className="h-4 w-4" />
@@ -62,7 +62,7 @@ export default function FinalCta() {
             <Link
               to="/donate"
               aria-label={t.donate.giveAria}
-              className="inline-flex items-center gap-2 rounded-[10px] border border-border-strong px-6 py-3.5 text-[15px] font-semibold text-text transition-all duration-150 ease-calm hover:bg-surface-2/60 active:scale-[0.98]"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-[4px] border-2 border-[#003D7A] bg-transparent px-8 py-4 text-[15px] font-semibold text-[#003D7A] transition-all duration-150 ease-calm hover:bg-[#003D7A]/5 active:scale-[0.98]"
             >
               <HandCoins className="h-4 w-4" />
               {t.donate.giveNow}

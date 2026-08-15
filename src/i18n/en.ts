@@ -66,15 +66,11 @@ export const en = {
 
   home: {
     hero: {
-      headline: [
-        { word: 'When' },
-        { word: 'our' },
-        { word: 'people' },
-        { word: 'hurt,' },
-        { word: 'we', br: true, accent: true },
-        { word: 'show', accent: true },
-        { word: 'up.', accent: true },
-      ] as { word: string; accent?: boolean; br?: boolean }[],
+      headlineA: 'When our people hurt,',
+      headlineB: 'we show up.',
+      tag1: 'From here.',
+      tag2: 'From there.',
+      tag3: 'Together.',
       sub: 'Today, Colombia needs us.',
       subB: "And we'll show you exactly what your help made possible.",
       givenByDonors: 'Given by our people',
@@ -85,51 +81,21 @@ export const en = {
       seeImpact: 'See the Impact',
       scroll: 'scroll',
     },
-    trust: {
-      aria: 'Why trust this ledger',
-      facts: [
-        'Your contribution joins one shared fund',
-        'We follow the need',
-        'We show the work',
-        'Run by volunteers from our own community',
-      ],
-    },
-    memory: {
-      senses: [
-        "The smell of abuela's kitchen.",
-        'Music coming from the next room.',
-        'A crowded table.',
-        'A phone call home.',
-        'An accent our parents never lost.',
-      ],
-      carried: 'We grew up carrying all of it.',
-    },
-    generation: {
-      left: 'They left home so we could build one.',
-      built: 'We built it.',
-      remember: 'Now we remember where we came from.',
-      notAlone: "We didn't get here alone.",
-      someoneHelped: 'Someone helped our families find their footing.',
-      reachBack: "Now it's our turn to reach back.",
-    },
-    memoryNow: {
-      memoryLabel: 'Memory',
-      nowLabel: 'Now',
-      showUp: 'We show up.',
-      memoryAlt: 'A family kitchen table after a meal, in warm lamplight',
-      nowAlt: 'Neighbors and rescue crews in the street after the earthquake in Colombia',
-    },
-    intro: {
+    who: {
       eyebrow: 'Who we are',
-      mottoEs: [
-        'Somos de allá.',
-        'Somos de aquí.',
-        'Y, de alguna manera, somos de los dos.',
+      line1: "We're from there.",
+      line2: "We're from here.",
+      line3A: "And somehow, we're from ",
+      line3B: 'both.',
+      support: [
+        'We grew up among many roots.',
+        'Someone helped us find our way.',
+        "Now it's our turn to reach out.",
       ],
-      mottoEn: "We're from there. We're from here. And somehow, we're from both.",
-      bordersA: 'The borders changed.',
-      bordersB: "Our roots didn't.",
-      manyRoots: 'We grew up among many roots.',
+    },
+    eventSpot: {
+      eyebrow: 'Now in Colombia',
+      tileCta: 'See the event',
     },
     path: {
       eyebrow: 'How it works',
@@ -194,19 +160,6 @@ export const en = {
       photoTitle: 'Photo from the field',
       matchedChip: "Matched to a donor's gift",
       loadingAria: 'Loading the live ledger',
-    },
-    galleryPreview: {
-      eyebrow: 'Proof, not promises',
-      title: 'From the field.',
-      full: 'Full gallery →',
-    },
-    quote: {
-      text: "You don't donate and hope. You donate and watch.",
-    },
-    bridge: {
-      action: 'LAPA.Help is what happens when community becomes action.',
-      goWhere: 'We go where our people need us most.',
-      colombia: '🇨🇴 Today, that is Colombia.',
     },
     closing: {
       remember: 'We remember where we came from.',

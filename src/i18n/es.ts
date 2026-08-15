@@ -65,14 +65,11 @@ export const es: Dictionary = {
 
   home: {
     hero: {
-      headline: [
-        { word: 'Cuando' },
-        { word: 'nuestra' },
-        { word: 'gente' },
-        { word: 'sufre,' },
-        { word: 'nosotros', br: true, accent: true },
-        { word: 'llegamos.', accent: true },
-      ] as { word: string; accent?: boolean; br?: boolean }[],
+      headlineA: 'Cuando nuestra gente sufre,',
+      headlineB: 'nosotros llegamos.',
+      tag1: 'De aquí.',
+      tag2: 'De allá.',
+      tag3: 'Juntos.',
       sub: 'Hoy, Colombia nos necesita.',
       subB: 'Y te mostraremos exactamente lo que tu ayuda hizo posible.',
       givenByDonors: 'Donado por nuestra gente',
@@ -83,51 +80,21 @@ export const es: Dictionary = {
       seeImpact: 'Ver el impacto',
       scroll: 'desliza',
     },
-    trust: {
-      aria: 'Por qué confiar en este registro',
-      facts: [
-        'Tu aporte se suma a un solo fondo',
-        'Seguimos la necesidad',
-        'Mostramos el trabajo',
-        'Lo mueven voluntarios de nuestra propia comunidad',
-      ],
-    },
-    memory: {
-      senses: [
-        'El olor de la cocina de la abuela.',
-        'La música que venía del cuarto de al lado.',
-        'Una mesa llena de gente.',
-        'Una llamada a casa.',
-        'Un acento que nuestros padres nunca perdieron.',
-      ],
-      carried: 'Crecimos cargando todo eso.',
-    },
-    generation: {
-      left: 'Ellos se fueron de casa para que nosotros pudiéramos construir la nuestra.',
-      built: 'La construimos.',
-      remember: 'Ahora recordamos de dónde venimos.',
-      notAlone: 'No llegamos aquí solos.',
-      someoneHelped: 'Alguien ayudó a nuestras familias a encontrar su camino.',
-      reachBack: 'Ahora nos toca extender la mano.',
-    },
-    memoryNow: {
-      memoryLabel: 'El recuerdo',
-      nowLabel: 'Hoy',
-      showUp: 'Nosotros llegamos.',
-      memoryAlt: 'La mesa de la cocina de una familia después de comer, con luz cálida',
-      nowAlt: 'Vecinos y equipos de rescate en la calle tras el sismo en Colombia',
-    },
-    intro: {
+    who: {
       eyebrow: 'Quiénes somos',
-      mottoEs: [
-        'Somos de allá.',
-        'Somos de aquí.',
-        'Y, de alguna manera, somos de los dos.',
+      line1: 'Somos de allá.',
+      line2: 'Somos de aquí.',
+      line3A: 'Y, de alguna manera, somos ',
+      line3B: 'de los dos.',
+      support: [
+        'Crecimos entre muchas raíces.',
+        'Alguien nos ayudó a encontrar nuestro camino.',
+        'Ahora nos toca extender la mano.',
       ],
-      mottoEn: 'Somos de allá. Somos de aquí. Y, de alguna manera, somos de los dos.',
-      bordersA: 'Las fronteras cambiaron.',
-      bordersB: 'Nuestras raíces, no.',
-      manyRoots: 'Crecimos entre muchas raíces.',
+    },
+    eventSpot: {
+      eyebrow: 'Ahora en Colombia',
+      tileCta: 'Ver el evento',
     },
     path: {
       eyebrow: 'Cómo funciona',
@@ -192,19 +159,6 @@ export const es: Dictionary = {
       photoTitle: 'Foto del campo',
       matchedChip: 'Vinculada al donativo de un donante',
       loadingAria: 'Cargando el registro en vivo',
-    },
-    galleryPreview: {
-      eyebrow: 'Pruebas, no promesas',
-      title: 'Desde el campo.',
-      full: 'Galería completa →',
-    },
-    quote: {
-      text: 'Aquí no donas y esperas. Donas y lo ves.',
-    },
-    bridge: {
-      action: 'LAPA.Help es lo que pasa cuando la comunidad se convierte en acción.',
-      goWhere: 'Vamos donde nuestra gente más nos necesita.',
-      colombia: '🇨🇴 Hoy, ese lugar es Colombia.',
     },
     closing: {
       remember: 'Recordamos de dónde venimos.',
