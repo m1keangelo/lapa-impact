@@ -36,8 +36,13 @@ export interface EventDoc {
   ticketPriceCents: number;
   /** Where the ticket button points (Stripe Payment Link). */
   ticketUrl: string | null;
-  /** Real event photo or poster URL — null until one exists (PART 70). */
+  /** Real event photo or poster URL — null until one exists (PART 70).
+      Legacy single poster; superseded by imageEn / imageEs. */
   image: string | null;
+  /** Poster shown to English visitors (left column in Admin → Medios). */
+  imageEn?: string | null;
+  /** Poster shown to Spanish visitors (right column in Admin → Medios). */
+  imageEs?: string | null;
   performers: EventPerformer[];
   /** What's happening — short bilingual chips (Food, Drinks, Raffles…). */
   features: LocalText[];
@@ -65,6 +70,8 @@ export const SEED_EVENT: EventDoc = {
   ticketPriceCents: 2500,
   ticketUrl: STRIPE_PAYMENT_LINK,
   image: null,
+  imageEn: null,
+  imageEs: null,
   performers: [
     { name: 'DJ Flaco', role: { en: 'Music', es: 'Música' } },
     { name: 'DJ Danny', role: { en: 'Music', es: 'Música' } },
@@ -114,3 +121,13 @@ export const SEED_EVENT: EventDoc = {
   ],
   status: 'published',
 };
+
+/**
+ * Poster for the visitor's language: the matching side first, then the
+ * other language, then the legacy single poster. Null = show the blue
+ * date tile instead.
+ */
+export function eventImageFor(event: EventDoc, lang: 'en' | 'es'): string | null {
+  if (lang === 'es') return event.imageEs ?? event.imageEn ?? event.image ?? null;
+  return event.imageEn ?? event.imageEs ?? event.image ?? null;
+}

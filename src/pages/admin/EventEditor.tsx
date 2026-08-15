@@ -8,7 +8,7 @@
  * organizer exists yet, an admin can claim the role once, right here.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronDown, ImagePlus, Lock, Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, ImagePlus, Info, Lock, Plus, Trash2 } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 import {
   collection,
@@ -91,9 +91,11 @@ export default function EventEditor({
   const [busy, setBusy] = useState(false);
   const [claimBusy, setClaimBusy] = useState(false);
   const [hasPrimary, setHasPrimary] = useState<boolean | null>(null);
-  const [posterBusy, setPosterBusy] = useState(false);
-  const [posterError, setPosterError] = useState(false);
-  const posterInput = useRef<HTMLInputElement>(null);
+  const [posterBusy, setPosterBusy] = useState<'en' | 'es' | null>(null);
+  const [posterError, setPosterError] = useState<'en' | 'es' | null>(null);
+  const [posterTooBig, setPosterTooBig] = useState<'en' | 'es' | null>(null);
+  const posterInputEn = useRef<HTMLInputElement>(null);
+  const posterInputEs = useRef<HTMLInputElement>(null);
 
   const isPrimary = staff.role === 'admin' && staff.primary === true;
   const canEdit = isPrimary;
@@ -140,11 +142,20 @@ export default function EventEditor({
     }
   };
 
-  /** Poster/photo upload: pick → compress in-browser → Cloudinary → draft. */
-  const onPosterFile = async (file: File | null) => {
+  /** Poster upload per language: pick → 10MB guard → compress in-browser
+      → Cloudinary → draft. Deleting just clears the slot (Cloudinary
+      keeps the file, the site stops using it). */
+  const onPosterFile = async (file: File | null, side: 'en' | 'es') => {
     if (!file || posterBusy) return;
-    setPosterError(false);
-    setPosterBusy(true);
+    setPosterError(null);
+    setPosterTooBig(null);
+    if (file.size > 10 * 1024 * 1024) {
+      setPosterTooBig(side);
+      const ref = side === 'en' ? posterInputEn : posterInputEs;
+      if (ref.current) ref.current.value = '';
+      return;
+    }
+    setPosterBusy(side);
     try {
       const compressed = await imageCompression(file, {
         maxSizeMB: 1,
@@ -152,13 +163,14 @@ export default function EventEditor({
         useWebWorker: true,
       });
       const result = await uploadToCloudinary(compressed, { folder: 'lapa-event' });
-      patch((d) => ((d.image = result.secureUrl), d));
+      patch((d) => (side === 'en' ? ((d.imageEn = result.secureUrl), d) : ((d.imageEs = result.secureUrl), d)));
     } catch (err) {
       console.warn('[EventEditor] poster upload failed:', err);
-      setPosterError(true);
+      setPosterError(side);
     } finally {
-      setPosterBusy(false);
-      if (posterInput.current) posterInput.current.value = '';
+      setPosterBusy(null);
+      const ref = side === 'en' ? posterInputEn : posterInputEs;
+      if (ref.current) ref.current.value = '';
     }
   };
 
@@ -382,42 +394,96 @@ export default function EventEditor({
         ) : null}
       </Section>
 
-      {/* ── MEDIA ────────────────────────────────────────────────── */}
+      {/* ── MEDIA ── one poster per language: English LEFT, Spanish
+          RIGHT (like every other bilingual field). Each slot: preview,
+          upload, delete, manual URL fallback. The ⓘ line carries the
+          exact dimensions so anyone uploading knows the rules. */}
       <Section title={ev.sections.media} open={openSections.includes('media')} onToggle={() => toggle('media')}>
-        {canEdit && cloudinaryReady ? (
-          <>
-            <input
-              ref={posterInput}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => void onPosterFile(e.target.files?.[0] ?? null)}
-            />
-            <button
-              type="button"
-              disabled={posterBusy}
-              onClick={() => posterInput.current?.click()}
-              className="inline-flex min-h-[48px] items-center gap-2 rounded-[10px] border border-border-strong px-5 text-[14px] font-semibold text-text transition-colors hover:bg-surface-2/60 disabled:opacity-60"
-            >
-              <ImagePlus className="h-4 w-4 text-amber" aria-hidden />
-              {posterBusy ? t.admin.photosForm.uploading : ev.uploadPoster}
-            </button>
-            {posterError ? (
-              <p className="text-[13px] font-medium text-danger">{ev.uploadError}</p>
-            ) : null}
-          </>
-        ) : null}
-        <Field label={ev.image} hint={ev.imageHint}>
-          <input
-            disabled={disabled}
-            value={draft.image ?? ''}
-            onChange={(e) => patch((d) => ((d.image = e.target.value.trim() || null), d))}
-            className={cn(inputCls, 'font-mono text-[13px] disabled:opacity-60')}
-          />
-        </Field>
-        {draft.image ? (
-          <img src={draft.image} alt="" className="mt-2 max-h-48 rounded-[10px] border border-border object-cover" />
-        ) : null}
+        <p className="flex items-start gap-2.5 rounded-[10px] border border-amber/40 bg-amber-glow/50 px-3.5 py-3 text-[13px] leading-[1.55] text-text-muted">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber" aria-hidden />
+          <span>{ev.posterSizeInfo}</span>
+        </p>
+        <div className="grid gap-5 sm:grid-cols-2">
+          {(['en', 'es'] as const).map((side) => {
+            const value = side === 'en' ? (draft.imageEn ?? null) : (draft.imageEs ?? null);
+            const inputRef = side === 'en' ? posterInputEn : posterInputEs;
+            return (
+              <div key={side} className="rounded-[12px] border border-border bg-surface-2/40 p-4">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                  {side === 'en' ? ev.posterEn : ev.posterEs}
+                </p>
+
+                {value ? (
+                  <div className="relative mt-3">
+                    <img
+                      src={value}
+                      alt=""
+                      className="aspect-[4/5] w-full rounded-[10px] border border-border object-cover"
+                    />
+                    {canEdit ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          patch((d) => (side === 'en' ? ((d.imageEn = null), d) : ((d.imageEs = null), d)))
+                        }
+                        aria-label={ev.removePoster}
+                        className="absolute right-2 top-2 inline-flex min-h-[40px] items-center gap-1.5 rounded-[8px] bg-black/65 px-3 text-[12px] font-semibold text-white transition-colors hover:bg-danger"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" aria-hidden />
+                        {ev.removePoster}
+                      </button>
+                    ) : null}
+                  </div>
+                ) : (
+                  <p className="mt-3 rounded-[10px] border border-dashed border-border-strong px-3 py-5 text-center text-[12px] text-text-faint">
+                    {ev.posterEmpty}
+                  </p>
+                )}
+
+                {canEdit && cloudinaryReady ? (
+                  <>
+                    <input
+                      ref={inputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => void onPosterFile(e.target.files?.[0] ?? null, side)}
+                    />
+                    <button
+                      type="button"
+                      disabled={posterBusy !== null}
+                      onClick={() => inputRef.current?.click()}
+                      className="mt-3 inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[10px] border border-border-strong bg-surface px-4 text-[13px] font-semibold text-text transition-colors hover:bg-surface-2/60 disabled:opacity-60"
+                    >
+                      <ImagePlus className="h-4 w-4 text-amber" aria-hidden />
+                      {posterBusy === side ? t.admin.photosForm.uploading : ev.uploadPoster}
+                    </button>
+                    {posterError === side ? (
+                      <p className="mt-2 text-[12px] font-medium text-danger">{ev.uploadError}</p>
+                    ) : null}
+                    {posterTooBig === side ? (
+                      <p className="mt-2 text-[12px] font-medium text-danger">{ev.posterTooBig}</p>
+                    ) : null}
+                  </>
+                ) : null}
+
+                <input
+                  disabled={disabled}
+                  value={value ?? ''}
+                  placeholder="https://…"
+                  aria-label={side === 'en' ? ev.posterEn : ev.posterEs}
+                  onChange={(e) =>
+                    patch((d) => {
+                      const v = e.target.value.trim() || null;
+                      return side === 'en' ? ((d.imageEn = v), d) : ((d.imageEs = v), d);
+                    })
+                  }
+                  className={cn(inputCls, 'mt-3 font-mono text-[12px] disabled:opacity-60')}
+                />
+              </div>
+            );
+          })}
+        </div>
       </Section>
 
       {/* ── PUBLISHING ───────────────────────────────────────────── */}

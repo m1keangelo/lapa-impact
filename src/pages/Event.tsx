@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useEvent } from '@/hooks/useEvent';
+import { eventImageFor } from '@/lib/eventData';
 import { formatMoneyShort } from '@/lib/format';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -82,11 +83,12 @@ export default function Event() {
             {event.title ? event.title[lang] : t.event.fallbackTitle}
           </motion.h1>
 
-          {/* Real event photo or poster once one exists (PART 70). */}
-          {event.image ? (
+          {/* Real event photo or poster once one exists (PART 70) —
+              the visitor's language side first. */}
+          {eventImageFor(event, lang) ? (
             <motion.figure {...rise(0.12)} className="mt-8">
               <img
-                src={event.image}
+                src={eventImageFor(event, lang)!}
                 alt={event.title ? event.title[lang] : t.event.fallbackTitle}
                 className="w-full rounded-card border border-border object-cover"
                 loading="lazy"

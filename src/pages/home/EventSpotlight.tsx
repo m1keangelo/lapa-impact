@@ -11,6 +11,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Calendar, Clock, MapPin, Ticket } from 'lucide-react';
 import { useEvent } from '@/hooks/useEvent';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { eventImageFor } from '@/lib/eventData';
 import { formatMoneyShort } from '@/lib/format';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -33,6 +34,7 @@ export default function EventSpotlight() {
   });
 
   const title = event.title?.[lang] ?? t.event.fallbackTitle;
+  const poster = eventImageFor(event, lang);
 
   return (
     <section className="mx-auto w-full max-w-container px-5 pb-24 md:px-8 md:pb-32">
@@ -40,11 +42,12 @@ export default function EventSpotlight() {
         {...rise(0)}
         className="grid items-center gap-8 lg:grid-cols-[55fr_45fr] lg:gap-12"
       >
-        {/* ── Image (55%) — poster when published, blue date tile until then ── */}
-        {event.image ? (
+        {/* ── Image (55%) — poster in the visitor's language when
+            published, blue date tile until then ── */}
+        {poster ? (
           <figure className="overflow-hidden rounded-card border border-border">
             <img
-              src={event.image}
+              src={poster}
               alt={title}
               loading="lazy"
               className="aspect-[4/5] w-full object-cover sm:aspect-[5/4]"

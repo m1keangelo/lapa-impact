@@ -10,7 +10,7 @@
 import { useRef, useState } from 'react';
 import imageCompression from 'browser-image-compression';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
-import { CircleAlert, ImagePlus, Loader2, Trash2 } from 'lucide-react';
+import { CircleAlert, ImagePlus, Info, Loader2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useHeroImages } from '@/hooks/useHeroImages';
@@ -41,6 +41,10 @@ export default function HeroEditor({ staff, email }: { staff: StaffUser; email: 
     try {
       let next = [...images];
       for (const file of files) {
+        if (file.size > 10 * 1024 * 1024) {
+          toast.error(hf.tooBig);
+          continue;
+        }
         const compressed = await imageCompression(file, {
           maxSizeMB: 1,
           maxWidthOrHeight: 1920,
@@ -88,6 +92,11 @@ export default function HeroEditor({ staff, email }: { staff: StaffUser; email: 
         <h3 className="text-[15px] font-semibold text-text">{hf.title}</h3>
         <p className="mt-1 max-w-[64ch] text-[13px] leading-[1.6] text-text-muted">{hf.sub}</p>
       </div>
+
+      <p className="flex items-start gap-2.5 rounded-[10px] border border-amber/40 bg-amber-glow/50 px-3.5 py-3 text-[13px] leading-[1.55] text-text-muted">
+        <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber" aria-hidden />
+        <span>{hf.sizeInfo}</span>
+      </p>
 
       {!cloudinaryReady && (
         <p className="flex items-center gap-2 rounded-[10px] border border-danger/60 px-3.5 py-2.5 text-[13px] font-medium text-danger">
