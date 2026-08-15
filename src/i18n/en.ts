@@ -66,13 +66,16 @@ export const en = {
 
   home: {
     hero: {
-      headlineA: 'When our people hurt,',
-      headlineB: 'we show up.',
-      tag1: 'From here.',
-      tag2: 'From there.',
-      tag3: 'Together.',
-      sub: 'Today, Colombia needs us.',
-      subB: "And we'll show you exactly what your help made possible.",
+      somosA: "We're",
+      somosB: 'from here.',
+      raicesA: 'Our roots',
+      raicesB: 'are from there.',
+      centerpiece: "We don't have to choose.",
+      payoffA: 'And when our people need help,',
+      payoffB: 'we show up.',
+      mission: 'LAPA connects our strength here with the people who need help there.',
+      flagsAria:
+        'Flags of Colombia, Mexico, Bolivia, Venezuela, Peru, Ecuador, Argentina, Chile, Puerto Rico, the Dominican Republic, Guatemala, El Salvador, Honduras, Nicaragua, Costa Rica, Panama, Paraguay, Uruguay, Cuba and Brazil',
       givenByDonors: 'Given by our people',
       sentToField: 'Already at work',
       familiesHelped: 'Families reached',

@@ -1,11 +1,17 @@
 /**
- * Home Section 1 — Hero (FIN spec §1/§2/§3/§4/§9/§13).
- * Full-viewport responsive hero image (AVIF/WebP/JPG srcset) with a radial
- * readability gradient centered on the headline, the animated tagline
- * "De aquí. De allá. Juntos.", a two-tone clamp-sized headline
- * (ivory → LAPA blue), and subordinate CTAs. The intro sequence is pure
- * CSS (see .hero-seq-* in index.css) with exact beat timings; framer-motion
- * only keeps the background parallax and the live-numbers toggle.
+ * Home Section 1 — Hero (identity typography pass).
+ * The hero IS the identity story, told in four art-directed beats over the
+ * field photograph — all live HTML/CSS, no graphics:
+ *
+ *   🇺🇸 SOMOS DE AQUÍ.            (large, clean, flag set into the type)
+ *   [flags] NUESTRAS RAÍCES SON DE ALLÁ. [flags]  (constellation, not a string)
+ *   NO TENEMOS QUE ELEGIR.        (the emotional centerpiece — biggest)
+ *   Y CUANDO LOS NUESTROS NECESITAN AYUDA, ESTAMOS AHÍ.  (the payoff)
+ *   + one-line mission, CTAs, numbers-on-tap.
+ *
+ * Flags are real image elements (public/flags/*.png) — never emoji, which
+ * don't render on Windows. Beats animate in with the .hero-seq-* CSS
+ * classes (index.css); framer-motion only keeps the parallax + counters.
  */
 import { memo, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
@@ -30,6 +36,33 @@ import { CHECKOUT_AVAILABLE } from '@/lib/donate';
 import { formatCount, formatMoneyShort } from '@/lib/format';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+
+/* The roots — order is the doc's; row split keeps the constellation
+   balanced on desktop and wraps cleanly into 2–4 rows on mobile. */
+const FLAGS_A = ['co', 'mx', 'bo', 've', 'pe', 'ec', 'ar', 'cl', 'pr', 'do'];
+const FLAGS_B = ['gt', 'sv', 'hn', 'ni', 'cr', 'pa', 'py', 'uy', 'cu', 'br'];
+/* Deterministic scale rhythm (small → larger → small), never random. */
+const FLAG_SIZES = [20, 26, 32, 26, 20, 20, 26, 32, 26, 20];
+
+function FlagRow({ codes, className }: { codes: string[]; className: string }) {
+  return (
+    <div
+      aria-hidden
+      className={`flex flex-wrap items-center justify-center gap-x-3.5 gap-y-3 md:gap-x-5 ${className}`}
+    >
+      {codes.map((code, i) => (
+        <img
+          key={code}
+          src={`/flags/${code}.png`}
+          alt=""
+          loading="eager"
+          style={{ height: FLAG_SIZES[i % FLAG_SIZES.length] }}
+          className="w-auto rounded-[3px] shadow-[0_1px_4px_rgba(0,0,0,0.35)] ring-1 ring-white/20"
+        />
+      ))}
+    </div>
+  );
+}
 
 /* ---------- counting number ---------- */
 function CountUp({
@@ -134,7 +167,7 @@ export default function Hero() {
       className="relative flex items-center justify-center overflow-hidden"
       style={{ minHeight: 'max(100dvh, 640px)' }}
     >
-      {/* Background: responsive image (FIN §10/§12) + parallax */}
+      {/* Background: responsive image + parallax */}
       <motion.div style={{ y: bgY, opacity: bgOpacity }} className="absolute inset-0">
         <picture>
           <source
@@ -162,14 +195,14 @@ export default function Hero() {
       </motion.div>
 
       {/* Scrims: base linear + radial readability gradient centered on the
-          headline (FIN §4) — radial, NOT a rectangular box. */}
+          type — radial, NOT a rectangular box. */}
       <div className="absolute inset-0" aria-hidden>
-        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(20,16,12,0.88),rgba(20,16,12,0.45)_50%,rgba(20,16,12,0.6))]" />
-        <div className="absolute inset-0 bg-[radial-gradient(closest-side_at_50%_52%,rgba(0,0,0,0.45),rgba(0,0,0,0.25)_62%,rgba(0,0,0,0))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(20,16,12,0.88),rgba(20,16,12,0.5)_45%,rgba(20,16,12,0.65))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(closest-side_at_50%_50%,rgba(0,0,0,0.45),rgba(0,0,0,0.25)_62%,rgba(0,0,0,0))]" />
       </div>
 
-      {/* Content — CSS intro sequence (FIN §2/§13) */}
-      <div className="relative z-10 mx-auto flex w-full max-w-[820px] flex-col items-center px-5 py-24 text-center">
+      {/* Content — the four beats, one thought */}
+      <div className="relative z-10 mx-auto flex w-full max-w-[900px] flex-col items-center px-5 py-24 text-center">
         {/* 0.1s — live badge */}
         <div className="hero-seq-badge">
           {isDemo ? <PreviewChip /> : <LiveBadge label={t.feed.liveColombia} />}
@@ -180,34 +213,96 @@ export default function Hero() {
           LAPA.Help · {campaignEyebrow(lang)}
         </p>
 
-        {/* 0.4s / 0.7s / 1.0s — the animated tagline (FIN §2) */}
-        <p
-          className="mt-8 text-[24px] font-medium uppercase tracking-[0.15em] text-[#F5F1E8] md:text-[32px]"
-          aria-label={`${h.tag1} ${h.tag2} ${h.tag3}`}
-        >
-          <span aria-hidden className="hero-seq-tag1 inline-block">{h.tag1}</span>{' '}
-          <span aria-hidden className="hero-seq-tag2 inline-block">{h.tag2}</span>{' '}
-          <span aria-hidden className="hero-seq-tag3 inline-block">{h.tag3}</span>
-        </p>
-
-        {/* 1.2s — main headline (FIN §1 sizing, §3 color split) */}
-        <h1
-          className="hero-seq-headline mt-5 font-display font-bold leading-[1.1] tracking-[-0.02em]"
-          style={{ fontSize: 'clamp(40px, 10vw, 88px)' }}
-        >
-          <span className="block text-[#F5F1E8]">{h.headlineA}</span>
-          {/* LAPA blue accent — a lighter tint of #003D7A so the blue stays
-              VISUALLY OBVIOUS on the dark photo (navy on black would vanish). */}
-          <span className="block text-[#4D8AFF]">{h.headlineB}</span>
+        {/* Screen-reader summary of the whole statement */}
+        <h1 className="sr-only">
+          {h.somosA} {h.somosB} {h.raicesA} {h.raicesB} {h.centerpiece} {h.payoffA}{' '}
+          {h.payoffB}
         </h1>
 
-        {/* 1.6s — supporting text */}
-        <p className="hero-seq-support mt-6 max-w-[52ch] text-[17px] leading-[1.6] md:text-[18px]">
-          <span className="block font-medium text-[#F5F1E8]">{h.sub}</span>
-          <span className="mt-1.5 block text-[#B0A18C]">{h.subB}</span>
+        {/* Beat 1 — 🇺🇸 SOMOS DE AQUÍ. (0.4s) — flag set INTO the type,
+            "SOMOS" quieter, "DE AQUÍ." carries the weight */}
+        <p
+          aria-hidden
+          className="hero-seq-somos mt-12 flex flex-wrap items-baseline justify-center gap-x-[0.35em] font-display uppercase leading-[1.1] tracking-[0.02em] text-[#F5F1E8] md:mt-16"
+          style={{ fontSize: 'clamp(30px, 6vw, 56px)' }}
+        >
+          <img
+            src="/flags/us.png"
+            alt=""
+            loading="eager"
+            style={{ height: '0.78em' }}
+            className="w-auto translate-y-[0.08em] self-center rounded-[3px] shadow-[0_1px_4px_rgba(0,0,0,0.35)] ring-1 ring-white/20"
+          />
+          <span className="font-medium opacity-90" style={{ fontSize: '0.62em' }}>
+            {h.somosA}
+          </span>
+          <span className="font-bold">{h.somosB}</span>
         </p>
 
-        {/* 1.8s — CTA row (FIN §9: subordinate to the headline) */}
+        {/* Beat 2 — the roots: flag constellation surrounding
+            NUESTRAS RAÍCES SON DE ALLÁ. (0.9s → 1.4s) */}
+        <div
+          role="img"
+          aria-label={h.flagsAria}
+          className="mt-12 flex w-full flex-col items-center gap-6 md:mt-16 md:gap-7"
+        >
+          <FlagRow codes={FLAGS_A} className="hero-seq-flags-a" />
+          <p
+            aria-hidden
+            className="hero-seq-raices font-display uppercase leading-[1.15] tracking-[0.02em]"
+          >
+            <span
+              className="block font-semibold text-[#F5F1E8]"
+              style={{ fontSize: 'clamp(24px, 5vw, 46px)' }}
+            >
+              {h.raicesA}
+            </span>
+            <span
+              className="mt-1 block font-normal italic text-[#F5F1E8]/75"
+              style={{ fontSize: 'clamp(19px, 3.6vw, 34px)' }}
+            >
+              {h.raicesB}
+            </span>
+          </p>
+          <FlagRow codes={FLAGS_B} className="hero-seq-flags-b" />
+        </div>
+
+        {/* Beat 3 — NO TENEMOS QUE ELEGIR. (1.9s) — the centerpiece.
+            Nothing decorates it; the type does the work. */}
+        <p
+          aria-hidden
+          className="hero-seq-center mt-16 max-w-[16ch] font-display font-bold uppercase leading-[1.08] tracking-[-0.01em] text-[#F5F1E8] md:mt-24"
+          style={{ fontSize: 'clamp(40px, 9.5vw, 88px)' }}
+        >
+          {h.centerpiece}
+        </p>
+
+        {/* Beat 4 — the payoff (2.5s): subordinate, then ESTAMOS AHÍ.
+            lands harder and turns LAPA blue. */}
+        <p
+          aria-hidden
+          className="hero-seq-payoff mt-12 font-display uppercase leading-[1.18] tracking-[0.015em] md:mt-16"
+        >
+          <span
+            className="block font-medium text-[#F5F1E8]/90"
+            style={{ fontSize: 'clamp(19px, 3.4vw, 32px)' }}
+          >
+            {h.payoffA}
+          </span>
+          <span
+            className="hero-seq-blue mt-1 block font-bold text-[#F5F1E8]"
+            style={{ fontSize: 'clamp(26px, 5vw, 46px)' }}
+          >
+            {h.payoffB}
+          </span>
+        </p>
+
+        {/* 3.1s — the one-line mission */}
+        <p className="hero-seq-mission mt-10 max-w-[52ch] text-[17px] leading-[1.6] text-[#F5F1E8]/85 md:text-[18px]">
+          {h.mission}
+        </p>
+
+        {/* 3.4s — CTA row (subordinate to the type) */}
         <div className="hero-seq-cta mt-10 flex flex-col items-center gap-3 sm:flex-row">
           {CHECKOUT_AVAILABLE ? (
             <Link
@@ -227,7 +322,7 @@ export default function Hero() {
           </a>
         </div>
 
-        {/* 2.0s — numbers on tap: transparency one touch away, story leads */}
+        {/* 3.6s — numbers on tap: transparency one touch away, story leads */}
         <div className="hero-seq-numbers mt-8 flex flex-col items-center">
           <button
             type="button"

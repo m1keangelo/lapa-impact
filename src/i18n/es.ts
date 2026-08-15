@@ -65,13 +65,16 @@ export const es: Dictionary = {
 
   home: {
     hero: {
-      headlineA: 'Cuando nuestra gente sufre,',
-      headlineB: 'nosotros llegamos.',
-      tag1: 'De aquí.',
-      tag2: 'De allá.',
-      tag3: 'Juntos.',
-      sub: 'Hoy, Colombia nos necesita.',
-      subB: 'Y te mostraremos exactamente lo que tu ayuda hizo posible.',
+      somosA: 'Somos',
+      somosB: 'de aquí.',
+      raicesA: 'Nuestras raíces',
+      raicesB: 'son de allá.',
+      centerpiece: 'No tenemos que elegir.',
+      payoffA: 'Y cuando los nuestros necesitan ayuda,',
+      payoffB: 'estamos ahí.',
+      mission: 'LAPA conecta nuestra fuerza aquí con quienes necesitan ayuda allá.',
+      flagsAria:
+        'Banderas de Colombia, México, Bolivia, Venezuela, Perú, Ecuador, Argentina, Chile, Puerto Rico, República Dominicana, Guatemala, El Salvador, Honduras, Nicaragua, Costa Rica, Panamá, Paraguay, Uruguay, Cuba y Brasil',
       givenByDonors: 'Donado por nuestra gente',
       sentToField: 'Ya está trabajando',
       familiesHelped: 'Familias alcanzadas',

@@ -103,25 +103,30 @@
   }
 }
 
-/* ── Hero intro sequence (FIN spec §2/§13) ─────────────────────────
-   One gentle rise per beat — no bounce, no typewriter. Reduced motion
-   is handled by the global rule above: everything lands instantly. */
+/* ── Hero intro sequence (identity hero) ───────────────────────────
+   One gentle rise per beat — no bounce, no typewriter. The beats walk
+   the visitor through the emotional progression: here → roots → no
+   choosing → we show up. Reduced motion is handled by the global rule
+   above: everything lands instantly. */
 @keyframes hero-rise {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* "Juntos." turns LAPA blue after it lands */
+/* "Estamos ahí." turns LAPA blue after it lands */
 @keyframes hero-tag-blue {
   to { color: #4D8AFF; }
 }
 
-.hero-seq-badge    { animation: hero-rise 0.5s ease-out 0.1s both; }
-.hero-seq-eyebrow  { animation: hero-rise 0.6s ease-out 0.2s both; }
-.hero-seq-tag1     { animation: hero-rise 0.5s ease-out 0.4s both; }
-.hero-seq-tag2     { animation: hero-rise 0.5s ease-out 0.7s both; }
-.hero-seq-tag3     { animation: hero-rise 0.5s ease-out 1.0s both, hero-tag-blue 0.45s ease-out 1.35s both; }
-.hero-seq-headline { animation: hero-rise 0.8s ease-out 1.2s both; }
-.hero-seq-support  { animation: hero-rise 0.6s ease-out 1.6s both; }
-.hero-seq-cta      { animation: hero-rise 0.6s ease-out 1.8s both; }
-.hero-seq-numbers  { animation: hero-rise 0.6s ease-out 2.0s both; }
+.hero-seq-badge      { animation: hero-rise 0.5s ease-out 0.1s both; }
+.hero-seq-eyebrow    { animation: hero-rise 0.6s ease-out 0.2s both; }
+.hero-seq-somos      { animation: hero-rise 0.7s ease-out 0.4s both; }
+.hero-seq-flags-a    { animation: hero-rise 0.7s ease-out 0.9s both; }
+.hero-seq-raices     { animation: hero-rise 0.7s ease-out 1.2s both; }
+.hero-seq-flags-b    { animation: hero-rise 0.7s ease-out 1.4s both; }
+.hero-seq-center     { animation: hero-rise 0.8s ease-out 1.9s both; }
+.hero-seq-payoff     { animation: hero-rise 0.8s ease-out 2.5s both; }
+.hero-seq-blue       { animation: hero-tag-blue 0.5s ease-out 3.0s both; }
+.hero-seq-mission    { animation: hero-rise 0.6s ease-out 3.1s both; }
+.hero-seq-cta        { animation: hero-rise 0.6s ease-out 3.4s both; }
+.hero-seq-numbers    { animation: hero-rise 0.6s ease-out 3.6s both; }
