@@ -145,13 +145,22 @@ export default function Impact() {
           >
             {t.myImpact.greeting(name)}
           </motion.h1>
+          <motion.p
+            {...rise(0.12)}
+            className="mt-2 text-[14px] font-medium tracking-[0.01em] text-text-muted"
+          >
+            {t.myImpact.sub}
+          </motion.p>
           {totalGiven > 0 ? (
             <motion.div {...rise(0.16)} className="mt-5 max-w-[56ch]">
-              <p className="font-display text-xl font-medium leading-[1.35] text-text md:text-2xl">
+              <p className="font-display text-xl font-medium leading-[1.35] text-amber md:text-2xl">
+                {t.myImpact.showedUp}
+              </p>
+              <p className="mt-2 font-display text-xl font-medium leading-[1.35] text-text md:text-2xl">
                 {t.myImpact.joined(formatMoneyShort(totalGiven))}
               </p>
               <p className="mt-2 text-[15px] leading-[1.55] text-text-muted">
-                {t.myImpact.sharedFundNote}
+                {t.myImpact.whatNext}
               </p>
             </motion.div>
           ) : null}

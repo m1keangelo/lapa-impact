@@ -20,6 +20,7 @@ import {
 } from 'framer-motion';
 import { ChevronDown, HandCoins } from 'lucide-react';
 import LiveBadge from '@/components/LiveBadge';
+import PreviewChip from '@/components/PreviewChip';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { campaignEyebrow } from '@/lib/campaign';
@@ -94,7 +95,7 @@ const ScrollCue = memo(function ScrollCue({
 });
 
 export default function Hero() {
-  const { stats, revision } = useGlobalStats();
+  const { stats, revision, isDemo } = useGlobalStats();
   const { t, lang } = useLanguage();
   const HEADLINE = t.home.hero.headline;
   const reduceMotion = useReducedMotion();
@@ -158,7 +159,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.5, ease: EASE }}
         >
-          <LiveBadge label={t.home.hero.liveBadge} />
+          {isDemo ? <PreviewChip /> : <LiveBadge label={t.feed.liveColombia} />}
         </motion.div>
 
         <motion.p
@@ -201,9 +202,10 @@ export default function Hero() {
             duration: reduceMotion ? 0 : 0.5,
             ease: EASE,
           }}
-          className="mt-6 max-w-[52ch] text-[17px] leading-[1.6] text-[#B0A18C] md:text-[18px]"
+          className="mt-6 max-w-[52ch] text-[17px] leading-[1.6] md:text-[18px]"
         >
-          {t.home.hero.sub}
+          <span className="block font-medium text-[#F3EAD9]">{t.home.hero.sub}</span>
+          <span className="mt-1.5 block text-[#B0A18C]">{t.home.hero.subB}</span>
         </motion.p>
 
         {/* CTA row — action before accounting */}

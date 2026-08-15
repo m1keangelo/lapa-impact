@@ -128,6 +128,17 @@ export default function StoryTimeline({
             ) : null}
             <span className="h-px flex-1 bg-border" aria-hidden />
           </div>
+          {/* Final copy pass §18 — chapter line for the days we can speak
+              to without inventing facts (1, 2, and today). */}
+          {day === 1 || day === 2 || (day === today && day > 2) ? (
+            <p className="mt-1.5 font-display text-[15px] italic leading-[1.4] text-text-muted">
+              {day === 1
+                ? t.story.chapters.day1
+                : day === 2
+                  ? t.story.chapters.day2
+                  : t.story.chapters.today}
+            </p>
+          ) : null}
 
           <div className="mt-4 flex flex-col gap-3">
             {/* LAPA activity first — it's the point of the platform. */}

@@ -50,13 +50,11 @@ export const es: Dictionary = {
   },
 
   footer: {
-    tagline:
-      'Nuestras raíces no paran en la frontera. Nuestra responsabilidad tampoco.',
+    tagline: 'Profesionales de oficio. Unidos por la comunidad.',
     everyDollar: 'Cada dólar queda a la vista de todos.',
     quickLinks: 'Enlaces rápidos',
     liveFeed: 'Registro en vivo',
     photoGallery: 'Galería de fotos',
-    enterCode: 'Ingresa tu código',
     fieldNote: 'Nota de campo',
     fieldNoteBody:
       'LAPA.Help es el brazo de servicio de LAPA — Latino American Professional Alliance. Un solo fondo, totalmente público, que va donde nuestra gente más lo necesita. Hoy: Colombia.',
@@ -67,16 +65,16 @@ export const es: Dictionary = {
 
   home: {
     hero: {
-      liveBadge: 'Pasando ahora mismo',
       headline: [
-        { word: 'Nuestra' },
+        { word: 'Cuando' },
+        { word: 'nuestra' },
         { word: 'gente' },
-        { word: 'está' },
-        { word: 'sufriendo.' },
-        { word: 'Podemos', br: true },
-        { word: 'ayudar.', accent: true },
+        { word: 'sufre,' },
+        { word: 'nosotros', br: true, accent: true },
+        { word: 'llegamos.', accent: true },
       ] as { word: string; accent?: boolean; br?: boolean }[],
-      sub: 'Un fondo público para los damnificados del sismo en Colombia. Dona — y mira tu ayuda llegar.',
+      sub: 'Hoy, Colombia nos necesita.',
+      subB: 'Y te mostraremos exactamente lo que tu ayuda hizo posible.',
       givenByDonors: 'Donado por nuestra gente',
       sentToField: 'Ya está trabajando',
       familiesHelped: 'Familias alcanzadas',
@@ -88,16 +86,40 @@ export const es: Dictionary = {
     trust: {
       aria: 'Por qué confiar en este registro',
       facts: [
-        'Cada dólar va donde más se necesita',
-        'Cada transferencia regresa con fotos',
-        'Un registro público, actualizado en vivo',
-        'Voluntarios de nuestra propia comunidad',
+        'Tu aporte se suma a un solo fondo',
+        'Seguimos la necesidad',
+        'Mostramos el trabajo',
+        'Lo mueven voluntarios de nuestra propia comunidad',
       ],
+    },
+    memory: {
+      senses: [
+        'El olor de la cocina de la abuela.',
+        'La música que venía del cuarto de al lado.',
+        'Una mesa llena de gente.',
+        'Una llamada a casa.',
+        'Un acento que nuestros padres nunca perdieron.',
+      ],
+      carried: 'Crecimos cargando todo eso.',
+      left: 'Se fueron de casa para que nosotros pudiéramos construir una.',
+      built: 'La construimos.',
+      turnTitle: 'No llegamos aquí solos.',
+      turnA: 'Alguien ayudó a nuestras familias a encontrar su camino.',
+      turnB: 'Ahora nos toca extender la mano.',
     },
     intro: {
       eyebrow: 'Quiénes somos',
-      title: 'LAPA es quiénes somos. LAPA.Help es lo que hacemos.',
-      body: 'LAPA — la Alianza Latinoamericana de Profesionales — es nuestra comunidad de profesionales que recuerda de dónde viene. LAPA.Help es cómo esa comunidad llega cuando importa: un solo fondo público, una misión, cada dólar a la vista.',
+      mottoEs: [
+        'Somos de allá.',
+        'Somos de aquí.',
+        'Y, de alguna manera, somos de los dos.',
+      ],
+      mottoEn: 'Somos de allá. Somos de aquí. Y, de alguna manera, somos de los dos.',
+      bordersA: 'Las fronteras cambiaron.',
+      bordersB: 'Nuestras raíces, no.',
+      purpose: 'Nuestras raíces son latinas. Nuestra misión es humana.',
+      action: 'LAPA.Help es lo que pasa cuando la comunidad se convierte en acción.',
+      goWhere: 'Vamos donde nuestra gente más nos necesita.',
       colombia: '🇨🇴 Hoy, Colombia nos necesita.',
     },
     path: {
@@ -134,6 +156,15 @@ export const es: Dictionary = {
     },
     quote: {
       text: 'Aquí no donas y esperas. Donas y lo ves.',
+    },
+    closing: {
+      remember: 'Recordamos de dónde venimos.',
+      knowA: 'Sabemos lo que costó llegar.',
+      knowB: 'Sabemos que no llegamos solos.',
+      showUp: 'Por eso, cuando nuestra gente nos necesita, ahí estamos.',
+      roots: 'Nuestras raíces no se detienen en una frontera.',
+      responsibility: 'Nuestra responsabilidad tampoco.',
+      sign: 'LAPA.Help',
     },
     finalCta: {
       eyebrow: 'Mi impacto',
@@ -204,9 +235,11 @@ export const es: Dictionary = {
     eyebrow: 'Mi impacto',
     greeting: (name: string) => `Hola, ${name}.`,
     fallbackName: 'vecino',
+    sub: 'Tus donativos. Tu historia. Tu prueba.',
+    showedUp: 'Tú llegaste.',
     joined: (amount: string) =>
       `Tu donativo de ${amount} se sumó al fondo para Colombia.`,
-    sharedFundNote: 'Un solo fondo compartido. Esto es lo que está haciendo posible:',
+    whatNext: 'Esto es lo que pasó después.',
     myGiving: 'Mis donativos',
     giftsCount: (n: string) => `${n} donativos`,
     emptyTitle: 'Tu ventana a la misión.',
@@ -215,7 +248,7 @@ export const es: Dictionary = {
     linkingNote:
       '¿Acabas de donar? Estamos conectando tu donativo a tu cuenta — puede tardar un minuto después del pago.',
     giveCta: 'Donar ahora',
-    updatesTitle: 'Desde la misión',
+    updatesTitle: 'Reportes de la misión',
     storyCta: 'La historia hasta ahora →',
     proofCta: 'Ver la prueba →',
     signOut: 'Salir',
@@ -350,6 +383,9 @@ export const es: Dictionary = {
     viewDetails: 'Ver detalles',
     shareStory: 'Compartir esta historia',
     justShowedUp: 'Alguien acaba de sumarse.',
+    transferEyebrow: 'Lo pusimos a trabajar.',
+    updateEyebrow: 'Desde el terreno',
+    photoEyebrow: 'Aquí está la prueba.',
     recipient: 'Destinatario',
     purpose: 'Propósito',
     newPhoto: 'Nueva foto del campo',
@@ -700,6 +736,7 @@ export const es: Dictionary = {
       opening: 'Abriendo el pago seguro…',
       checkoutError:
         'No pudimos abrir el pago seguro. Inténtalo de nuevo en un momento.',
+      grow: 'Crecemos porque damos. Y porque damos, crecemos.',
       secureNote: 'Pago seguro con Stripe · Tarjetas, Apple Pay, Google Pay',
     },
     success: {
@@ -746,6 +783,11 @@ export const es: Dictionary = {
     sourcePrefix: 'Fuente',
     todayChip: 'Hoy',
     noEntries: 'La actividad de nuestro equipo aparece aquí a medida que se registra en el terreno.',
+    chapters: {
+      day1: 'La tierra se movió. Todo cambió.',
+      day2: 'Las primeras necesidades quedaron claras.',
+      today: 'Y el trabajo continúa.',
+    },
   },
   ops: {
     roles: {

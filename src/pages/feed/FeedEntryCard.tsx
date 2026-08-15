@@ -103,6 +103,9 @@ export default function FeedEntryCard({
   let amount: number | null = null;
   const ts = entry.ts;
   let expandable = false;
+  // Final copy pass §16–17 — small story eyebrow per kind (donations don't
+  // need one: the title itself says "showed up").
+  let eyebrow: { text: string; className: string } | null = null;
 
   // People + proof (one-pass master §15–16): human sentence → amount →
   // "Donation · Aug 14" → details. Never a bank statement.
@@ -118,6 +121,7 @@ export default function FeedEntryCard({
   } else if (entry.kind === 'transfer') {
     const tr = entry.transfer;
     amount = tr.amount;
+    eyebrow = { text: t.feedEntry.transferEyebrow, className: 'text-terra' };
     title = t.feedEntry.transferTitle(
       pickLang(tr, 'recipient', lang),
       pickLang(tr, 'purpose', lang),
@@ -125,10 +129,12 @@ export default function FeedEntryCard({
     meta = t.feedEntry.metaTransfer(formatShortDate(ts, lang));
     expandable = true;
   } else if (entry.kind === 'update') {
+    eyebrow = { text: t.feedEntry.updateEyebrow, className: 'text-sage' };
     title = pickLang(entry.update, 'title', lang);
     meta = null;
     expandable = true;
   } else {
+    eyebrow = { text: t.feedEntry.photoEyebrow, className: 'text-text-faint' };
     title = pickLang(entry.media, 'caption', lang) || t.feedEntry.newPhoto;
   }
 
@@ -181,6 +187,16 @@ export default function FeedEntryCard({
           </span>
 
           <span className="min-w-0 flex-1">
+            {eyebrow ? (
+              <span
+                className={cn(
+                  'mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em]',
+                  eyebrow.className,
+                )}
+              >
+                {eyebrow.text}
+              </span>
+            ) : null}
             {fresh && entry.kind === 'donation' ? (
               <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] text-amber">
                 {t.feedEntry.justShowedUp}

@@ -51,13 +51,11 @@ export const en = {
   },
 
   footer: {
-    tagline:
-      "Our roots don't stop at a border. Neither does our responsibility.",
+    tagline: 'Professionals by trade. United by community.',
     everyDollar: 'Every dollar is tracked publicly.',
     quickLinks: 'Quick links',
     liveFeed: 'Live feed',
     photoGallery: 'Photo gallery',
-    enterCode: 'Enter your code',
     fieldNote: 'Field note',
     fieldNoteBody:
       'LAPA.Help is the service arm of LAPA — Latino American Professional Alliance. One shared fund, fully public, deployed where our people need it most. Today: Colombia.',
@@ -68,17 +66,17 @@ export const en = {
 
   home: {
     hero: {
-      liveBadge: 'Happening right now',
       headline: [
-        { word: 'Our' },
+        { word: 'When' },
+        { word: 'our' },
         { word: 'people' },
-        { word: 'are' },
-        { word: 'hurting.' },
-        { word: 'We', br: true },
-        { word: 'can' },
-        { word: 'help.', accent: true },
+        { word: 'hurt,' },
+        { word: 'we', br: true, accent: true },
+        { word: 'show', accent: true },
+        { word: 'up.', accent: true },
       ] as { word: string; accent?: boolean; br?: boolean }[],
-      sub: 'One public fund for earthquake relief in Colombia. Give — then watch your help reach the ground.',
+      sub: 'Today, Colombia needs us.',
+      subB: "And we'll show you exactly what your help made possible.",
       givenByDonors: 'Given by our people',
       sentToField: 'Already at work',
       familiesHelped: 'Families reached',
@@ -90,16 +88,40 @@ export const en = {
     trust: {
       aria: 'Why trust this ledger',
       facts: [
-        'Every dollar goes where the need is greatest',
-        'Every transfer comes back with photos',
-        'A public ledger, updated live',
+        'Your contribution joins one shared fund',
+        'We follow the need',
+        'We show the work',
         'Run by volunteers from our own community',
       ],
     },
+    memory: {
+      senses: [
+        "The smell of abuela's kitchen.",
+        'Music coming from the next room.',
+        'A crowded table.',
+        'A phone call home.',
+        'An accent our parents never lost.',
+      ],
+      carried: 'We grew up carrying all of it.',
+      left: 'They left home so we could build one.',
+      built: 'We built it.',
+      turnTitle: "We didn't get here alone.",
+      turnA: 'Someone helped our families find their footing.',
+      turnB: "Now it's our turn to reach back.",
+    },
     intro: {
       eyebrow: 'Who we are',
-      title: 'LAPA is who we are. LAPA.Help is what we do.',
-      body: 'LAPA — the Latino American Professional Alliance — is our community of professionals who remember where we came from. LAPA.Help is how that community shows up when it matters: one public fund, one mission, every dollar in the open.',
+      mottoEs: [
+        'Somos de allá.',
+        'Somos de aquí.',
+        'Y, de alguna manera, somos de los dos.',
+      ],
+      mottoEn: "We're from there. We're from here. And somehow, we're from both.",
+      bordersA: 'The borders changed.',
+      bordersB: "Our roots didn't.",
+      purpose: 'Our roots are Latino. Our mission is human.',
+      action: 'LAPA.Help is what happens when community becomes action.',
+      goWhere: 'We go where our people need us most.',
       colombia: '🇨🇴 Today, Colombia needs us.',
     },
     path: {
@@ -136,6 +158,15 @@ export const en = {
     },
     quote: {
       text: "You don't donate and hope. You donate and watch.",
+    },
+    closing: {
+      remember: 'We remember where we came from.',
+      knowA: 'We know what it took to get here.',
+      knowB: "We know we didn't get here alone.",
+      showUp: 'So when our people need us, we show up.',
+      roots: "Our roots don't stop at a border.",
+      responsibility: 'Neither does our responsibility.',
+      sign: 'LAPA.Help',
     },
     finalCta: {
       eyebrow: 'My Impact',
@@ -207,9 +238,11 @@ export const en = {
     eyebrow: 'My Impact',
     greeting: (name: string) => `Hi, ${name}.`,
     fallbackName: 'neighbor',
+    sub: 'Your giving. Your story. Your proof.',
+    showedUp: 'You showed up.',
     joined: (amount: string) =>
       `Your ${amount} joined the Colombia response fund.`,
-    sharedFundNote: 'One shared fund. Here is what it’s making possible:',
+    whatNext: "Here's what happened next.",
     myGiving: 'My giving',
     giftsCount: (n: string) => `${n} gifts`,
     emptyTitle: 'Your window into the mission.',
@@ -218,7 +251,7 @@ export const en = {
     linkingNote:
       'Just donated? We’re connecting your gift to your account — it can take a minute after checkout.',
     giveCta: 'Give now',
-    updatesTitle: 'From the mission',
+    updatesTitle: 'Mission updates',
     storyCta: 'The story so far →',
     proofCta: 'See the proof →',
     signOut: 'Sign out',
@@ -353,6 +386,9 @@ export const en = {
     viewDetails: 'View details',
     shareStory: 'Share this story',
     justShowedUp: 'Someone just showed up.',
+    transferEyebrow: 'We put it to work.',
+    updateEyebrow: 'From the ground',
+    photoEyebrow: "Here's the proof.",
     recipient: 'Recipient',
     purpose: 'Purpose',
     newPhoto: 'New photo from the field',
@@ -702,6 +738,7 @@ export const en = {
       opening: 'Opening secure checkout…',
       checkoutError:
         'We could not open secure checkout. Please try again in a moment.',
+      grow: 'We grow because we give. And because we give, we grow.',
       secureNote: 'Secure checkout by Stripe · Cards, Apple Pay, Google Pay',
     },
     success: {
@@ -749,6 +786,11 @@ export const en = {
     sourcePrefix: 'Source',
     todayChip: 'Today',
     noEntries: 'Our own field activity starts appearing here as the team logs it.',
+    chapters: {
+      day1: 'The ground moved. Everything changed.',
+      day2: 'The first needs became clear.',
+      today: 'And the work continues.',
+    },
   },
   ops: {
     roles: {

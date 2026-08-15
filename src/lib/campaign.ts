@@ -105,37 +105,37 @@ export const EVENT: MissionEvent = {
   businesses: [
     {
       name: 'BETO AUTO REPAIR',
-      gives: { en: 'A year of oil changes for five winners', es: 'Un año de cambios de aceite para cinco ganadores' },
+      gives: { en: 'A one-year oil change for five winners.', es: 'Un año de cambios de aceite para cinco ganadores.' },
       kind: { en: 'Service · Prize', es: 'Servicio · Premio' },
     },
     {
       name: 'THINK LOGIC',
-      gives: { en: 'Event shirts', es: 'Camisetas del evento' },
+      gives: { en: 'Event shirts and in-kind event support.', es: 'Camisetas del evento y apoyo en especie.' },
       kind: { en: 'Merchandise · In-kind', es: 'Mercancía · En especie' },
     },
     {
       name: 'CASA REAL',
-      gives: { en: 'Marketing', es: 'Marketing' },
+      gives: { en: 'Marketing support.', es: 'Apoyo de marketing.' },
       kind: { en: 'Marketing', es: 'Marketing' },
     },
     {
       name: 'M STREET MORTGAGE',
-      gives: { en: 'Event hosting', es: 'Anfitrión del evento' },
+      gives: { en: 'Helping host the event.', es: 'Ayuda como anfitrión del evento.' },
       kind: { en: 'Event · Hosting', es: 'Evento · Anfitrión' },
     },
     {
       name: 'DJ FLACO',
-      gives: { en: 'Promotion', es: 'Promoción' },
+      gives: { en: 'Marketing and promotion support.', es: 'Apoyo de marketing y promoción.' },
       kind: { en: 'Marketing · Promotion', es: 'Marketing · Promoción' },
     },
     {
       name: 'DJ DANNY',
-      gives: { en: 'Promotion', es: 'Promoción' },
+      gives: { en: 'Marketing and event support.', es: 'Apoyo de marketing y del evento.' },
       kind: { en: 'Marketing · Promotion', es: 'Marketing · Promoción' },
     },
     {
       name: 'LA LOCO',
-      gives: { en: 'Venue + proceeds', es: 'Lugar + recaudación' },
+      gives: { en: 'Event space, plus a portion of food and beverage proceeds supporting the Colombia mission.', es: 'El espacio del evento, más una parte de lo recaudado en comida y bebida para la misión en Colombia.' },
       kind: { en: 'Venue · Proceeds', es: 'Lugar · Recaudación' },
     },
   ],
