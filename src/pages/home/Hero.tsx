@@ -39,32 +39,16 @@ import { formatCount, formatMoneyShort } from '@/lib/format';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-/* The roots — order is the doc's; row split keeps the constellation
-   balanced on desktop and wraps cleanly into 2–4 rows on mobile. */
-const FLAGS_A = ['co', 'mx', 'bo', 've', 'pe', 'ec', 'ar', 'cl', 'pr', 'do'];
-const FLAGS_B = ['gt', 'sv', 'hn', 'ni', 'cr', 'pa', 'py', 'uy', 'cu', 'br'];
-/* Deterministic scale rhythm (small → larger → small), never random. */
-const FLAG_SIZES = [20, 26, 32, 26, 20, 20, 26, 32, 26, 20];
-
-function FlagRow({ codes, className }: { codes: string[]; className: string }) {
-  return (
-    <div
-      aria-hidden
-      className={`flex flex-wrap items-center justify-center gap-x-3.5 gap-y-3 md:gap-x-5 ${className}`}
-    >
-      {codes.map((code, i) => (
-        <img
-          key={code}
-          src={`/flags/${code}.png`}
-          alt=""
-          loading="eager"
-          style={{ height: FLAG_SIZES[i % FLAG_SIZES.length] }}
-          className="w-auto rounded-[3px] shadow-[0_1px_4px_rgba(0,0,0,0.35)] ring-1 ring-white/20"
-        />
-      ))}
-    </div>
-  );
-}
+/* The roots — the doc's order, ONE single horizontal line on desktop
+   (the flags are the answer to "¿de dónde son nuestras raíces?"), a
+   careful centered wrap only when the viewport physically can't fit
+   them. Deterministic scale rhythm (small → larger → small), never
+   random. */
+const FLAGS = [
+  'co', 'mx', 'bo', 've', 'pe', 'ec', 'ar', 'cl', 'pr', 'do',
+  'gt', 'sv', 'hn', 'ni', 'cr', 'pa', 'py', 'uy', 'cu', 'br',
+];
+const FLAG_SIZES = [28, 31, 34, 31, 28];
 
 /* ---------- counting number ---------- */
 function CountUp({
@@ -234,8 +218,9 @@ export default function Hero() {
         <div className="absolute inset-0 bg-[radial-gradient(closest-side_at_50%_50%,rgba(0,0,0,0.45),rgba(0,0,0,0.25)_62%,rgba(0,0,0,0))]" />
       </div>
 
-      {/* Content — the four beats, one thought */}
-      <div className="relative z-10 mx-auto flex w-full max-w-[900px] flex-col items-center px-5 py-24 text-center">
+      {/* Content — the five beats, one thought. Wide container so the
+          flag line can breathe; text blocks carry their own measures. */}
+      <div className="relative z-10 mx-auto flex w-full max-w-[1200px] flex-col items-center px-5 py-16 text-center md:py-20">
         {/* 0.1s — live badge */}
         <div className="hero-seq-badge">
           {isDemo ? <PreviewChip /> : <LiveBadge label={t.feed.liveColombia} />}
@@ -252,79 +237,104 @@ export default function Hero() {
           {h.payoffB}
         </h1>
 
-        {/* Beat 1 — 🇺🇸 SOMOS DE AQUÍ. (0.4s) — flag set INTO the type,
-            "SOMOS" quieter, "DE AQUÍ." carries the weight */}
+        {/* Beat 1 — SOMOS DE AQUÍ. 🇺🇸 (0.4s, flag settles at 0.85s).
+            The flag is the punctuation at the END of the sentence —
+            "SOMOS" quieter, "DE AQUÍ." carries the weight. */}
         <p
           aria-hidden
-          className="hero-seq-somos mt-12 flex flex-wrap items-baseline justify-center gap-x-[0.35em] font-display uppercase leading-[1.1] tracking-[0.02em] text-[#F5F1E8] md:mt-16"
-          style={{ fontSize: 'clamp(30px, 6vw, 56px)' }}
+          className="hero-seq-somos mt-10 font-display uppercase leading-[1.08] tracking-[0.02em] text-[#F5F1E8] md:mt-14"
+          style={{ fontSize: 'clamp(34px, 5.9vw, 80px)' }}
         >
+          <span className="font-medium opacity-90">{h.somosA} </span>
+          <span className="font-bold">{h.somosB}</span>
           <img
             src="/flags/us.png"
             alt=""
             loading="eager"
-            style={{ height: '0.78em' }}
-            className="w-auto translate-y-[0.08em] self-center rounded-[3px] shadow-[0_1px_4px_rgba(0,0,0,0.35)] ring-1 ring-white/20"
+            style={{ height: '0.7em', marginLeft: '0.32em' }}
+            className="hero-seq-usflag inline-block w-auto translate-y-[0.06em] rounded-[3px] shadow-[0_2px_6px_rgba(0,0,0,0.4)] ring-1 ring-white/25"
           />
-          <span className="font-medium opacity-90" style={{ fontSize: '0.62em' }}>
-            {h.somosA}
-          </span>
-          <span className="font-bold">{h.somosB}</span>
         </p>
 
-        {/* Beat 2 — the roots: flag constellation surrounding
-            NUESTRAS RAÍCES SON DE ALLÁ. (0.9s → 1.4s) */}
+        {/* Beat 2 — NUESTRAS RAÍCES / SON DE ALLÁ. (1.2s) — one complete
+            declaration, breathing room from beat 1, no flags here. */}
+        <p
+          aria-hidden
+          className="hero-seq-raices mt-12 font-display uppercase leading-[1.12] tracking-[0.02em] md:mt-16"
+        >
+          <span
+            className="block font-semibold text-[#F5F1E8]"
+            style={{ fontSize: 'clamp(30px, 5.2vw, 72px)' }}
+          >
+            {h.raicesA}
+          </span>
+          <span
+            className="mt-1.5 block font-normal italic text-[#F5F1E8]/85"
+            style={{ fontSize: 'clamp(26px, 4.6vw, 64px)' }}
+          >
+            {h.raicesB}
+          </span>
+        </p>
+
+        {/* Beat 3 — the answer: ALL twenty flags, ONE horizontal line on
+            desktop (≥1200px), staggered in left → right (1.55s + 45ms). */}
         <div
           role="img"
           aria-label={h.flagsAria}
-          className="mt-12 flex w-full flex-col items-center gap-6 md:mt-16 md:gap-7"
+          className="mt-9 flex w-full flex-wrap items-center justify-center gap-x-3.5 gap-y-3.5 md:mt-12 min-[1200px]:flex-nowrap min-[1200px]:gap-x-4"
         >
-          <FlagRow codes={FLAGS_A} className="hero-seq-flags-a" />
-          <p
-            aria-hidden
-            className="hero-seq-raices font-display uppercase leading-[1.15] tracking-[0.02em]"
-          >
-            <span
-              className="block font-semibold text-[#F5F1E8]"
-              style={{ fontSize: 'clamp(24px, 5vw, 46px)' }}
-            >
-              {h.raicesA}
-            </span>
-            <span
-              className="mt-1 block font-normal italic text-[#F5F1E8]/75"
-              style={{ fontSize: 'clamp(19px, 3.6vw, 34px)' }}
-            >
-              {h.raicesB}
-            </span>
-          </p>
-          <FlagRow codes={FLAGS_B} className="hero-seq-flags-b" />
+          {FLAGS.map((code, i) => (
+            <img
+              key={code}
+              src={`/flags/${code}.png`}
+              alt=""
+              loading="eager"
+              style={{
+                height: FLAG_SIZES[i % FLAG_SIZES.length],
+                animationDelay: `${1.55 + i * 0.045}s`,
+              }}
+              className="hero-seq-flags w-auto shrink-0 rounded-[2px] shadow-[0_2px_5px_rgba(0,0,0,0.35)] ring-1 ring-white/15"
+            />
+          ))}
         </div>
 
-        {/* Beat 3 — NO TENEMOS QUE ELEGIR. (1.9s) — the centerpiece.
-            Nothing decorates it; the type does the work. */}
+        {/* Beat 4 — NO TENEMOS QUE ELEGIR. (2.9s, word by word) — the
+            emotional centerpiece. Nothing decorates it; the type does
+            the work. */}
         <p
           aria-hidden
-          className="hero-seq-center mt-16 max-w-[16ch] font-display font-bold uppercase leading-[1.08] tracking-[-0.01em] text-[#F5F1E8] md:mt-24"
-          style={{ fontSize: 'clamp(40px, 9.5vw, 88px)' }}
+          className="mt-20 font-display font-bold uppercase leading-[1.06] tracking-[-0.01em] text-[#F5F1E8] [text-wrap:balance] md:mt-24"
+          style={{ fontSize: 'clamp(40px, 8vw, 100px)' }}
         >
-          {h.centerpiece}
+          {h.centerpiece.split(' ').map((word, i, arr) => (
+            <span
+              key={i}
+              className="hero-seq-word inline-block"
+              style={{
+                animationDelay: `${2.9 + i * 0.28}s`,
+                marginRight: i < arr.length - 1 ? '0.26em' : undefined,
+              }}
+            >
+              {word}
+            </span>
+          ))}
         </p>
 
-        {/* Beat 4 — the payoff (2.5s): subordinate, then ESTAMOS AHÍ.
+        {/* Beat 5 — the payoff (4.6s): subordinate, then ESTAMOS AHÍ.
             lands harder and turns LAPA blue. */}
         <p
           aria-hidden
-          className="hero-seq-payoff mt-12 font-display uppercase leading-[1.18] tracking-[0.015em] md:mt-16"
+          className="hero-seq-payoff mt-20 font-display uppercase leading-[1.18] tracking-[0.015em] md:mt-24"
         >
           <span
             className="block font-medium text-[#F5F1E8]/90"
-            style={{ fontSize: 'clamp(19px, 3.4vw, 32px)' }}
+            style={{ fontSize: 'clamp(20px, 3vw, 42px)' }}
           >
             {h.payoffA}
           </span>
           <span
-            className="hero-seq-blue mt-1 block font-bold text-[#F5F1E8]"
-            style={{ fontSize: 'clamp(26px, 5vw, 46px)' }}
+            className="hero-seq-blue mt-1.5 block font-bold text-[#F5F1E8]"
+            style={{ fontSize: 'clamp(28px, 4.4vw, 56px)' }}
           >
             {h.payoffB}
           </span>

@@ -105,12 +105,21 @@
 
 /* ── Hero intro sequence (identity hero) ───────────────────────────
    One gentle rise per beat — no bounce, no typewriter. The beats walk
-   the visitor through the emotional progression: here → roots → no
-   choosing → we show up. Reduced motion is handled by the global rule
+   the visitor through the emotional progression: here → roots → the
+   flags answer "¿de dónde?" → no choosing → we show up. Per-flag and
+   per-word delays are set inline (animationDelay); these classes only
+   carry the motion. Reduced motion is handled by the global rule
    above: everything lands instantly. */
 @keyframes hero-rise {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* The 🇺🇸 punctuation settles in right after SOMOS DE AQUÍ. — a tiny
+   bit of depth, no waving. */
+@keyframes hero-flag-in {
+  from { opacity: 0; transform: translateY(0.12em) rotate(-4deg) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) rotate(0) scale(1); }
 }
 
 /* "Estamos ahí." turns LAPA blue after it lands */
@@ -121,12 +130,12 @@
 .hero-seq-badge      { animation: hero-rise 0.5s ease-out 0.1s both; }
 .hero-seq-eyebrow    { animation: hero-rise 0.6s ease-out 0.2s both; }
 .hero-seq-somos      { animation: hero-rise 0.7s ease-out 0.4s both; }
-.hero-seq-flags-a    { animation: hero-rise 0.7s ease-out 0.9s both; }
+.hero-seq-usflag     { animation: hero-flag-in 0.7s ease-out 0.85s both; }
 .hero-seq-raices     { animation: hero-rise 0.7s ease-out 1.2s both; }
-.hero-seq-flags-b    { animation: hero-rise 0.7s ease-out 1.4s both; }
-.hero-seq-center     { animation: hero-rise 0.8s ease-out 1.9s both; }
-.hero-seq-payoff     { animation: hero-rise 0.8s ease-out 2.5s both; }
-.hero-seq-blue       { animation: hero-tag-blue 0.5s ease-out 3.0s both; }
-.hero-seq-mission    { animation: hero-rise 0.6s ease-out 3.1s both; }
-.hero-seq-cta        { animation: hero-rise 0.6s ease-out 3.4s both; }
-.hero-seq-numbers    { animation: hero-rise 0.6s ease-out 3.6s both; }
+.hero-seq-flags      { animation: hero-rise 0.6s ease-out both; } /* delay inline per flag */
+.hero-seq-word       { animation: hero-rise 0.55s ease-out both; } /* delay inline per word */
+.hero-seq-payoff     { animation: hero-rise 0.8s ease-out 4.6s both; }
+.hero-seq-blue       { animation: hero-tag-blue 0.5s ease-out 5.1s both; }
+.hero-seq-mission    { animation: hero-rise 0.6s ease-out 5.2s both; }
+.hero-seq-cta        { animation: hero-rise 0.6s ease-out 5.5s both; }
+.hero-seq-numbers    { animation: hero-rise 0.6s ease-out 5.7s both; }
