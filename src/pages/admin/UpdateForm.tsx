@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 import type { MediaItem } from '@/lib/types';
 import { Field, SubmitButton } from './fields';
 import { inputCls, textareaCls, type SaveState } from './formUtils';
-import { nowLocalInputValue, resolveTimestamp, statsGlobalRef } from './writeUtils';
+import { logAudit, nowLocalInputValue, resolveTimestamp, statsGlobalRef } from './writeUtils';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 const SUGGESTED_METRICS = ['familiesHelped', 'mealsServed', 'homesRepaired'];
@@ -87,6 +87,7 @@ export default function UpdateForm({ onSaved }: { onSaved: () => void }) {
         );
       }
       await batch.commit();
+      void logAudit(db, 'update.publish', { title: title.trim().slice(0, 80) });
 
       toast.success(t.admin.updateForm.saved);
       onSaved();

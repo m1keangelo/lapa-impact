@@ -18,7 +18,7 @@ import { formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { AmountField, Field, SubmitButton } from './fields';
 import { dollarsToCents, inputCls, type SaveState } from './formUtils';
-import { nowLocalInputValue, resolveTimestamp, statsGlobalRef } from './writeUtils';
+import { logAudit, nowLocalInputValue, resolveTimestamp, statsGlobalRef } from './writeUtils';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -101,6 +101,7 @@ export default function TransferForm({
         { merge: true },
       );
       await batch.commit();
+      void logAudit(db, 'money.transfer', { amount: cents, recipient: recipient.trim() });
 
       toast.success(t.admin.transferForm.saved);
       onSaved();

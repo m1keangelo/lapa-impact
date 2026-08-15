@@ -14,8 +14,9 @@ import { CircleAlert, ImagePlus, Info, Loader2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useHeroImages } from '@/hooks/useHeroImages';
-import { cloudinaryReady, cloudinaryThumb, uploadToCloudinary } from '@/lib/cloudinary';
+import { assertValidImage, cloudinaryReady, cloudinaryThumb, uploadToCloudinary } from '@/lib/cloudinary';
 import { db } from '@/lib/firebase';
+import { logAudit } from './writeUtils';
 import type { StaffUser } from '@/lib/types';
 
 export default function HeroEditor({ staff, email }: { staff: StaffUser; email: string }) {
@@ -33,6 +34,7 @@ export default function HeroEditor({ staff, email }: { staff: StaffUser; email: 
       updatedAt: serverTimestamp(),
       updatedBy: email,
     });
+    void logAudit(db, 'hero.images', { count: next.length });
   };
 
   const onFiles = async (files: File[]) => {
@@ -41,8 +43,12 @@ export default function HeroEditor({ staff, email }: { staff: StaffUser; email: 
     try {
       let next = [...images];
       for (const file of files) {
-        if (file.size > 10 * 1024 * 1024) {
-          toast.error(hf.tooBig);
+        try {
+          await assertValidImage(file);
+        } catch (err) {
+          toast.error(
+            err instanceof Error && err.message === 'too-big' ? hf.tooBig : t.common.invalidImage,
+          );
           continue;
         }
         const compressed = await imageCompression(file, {

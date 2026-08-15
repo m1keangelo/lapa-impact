@@ -8,6 +8,7 @@ import { useCallback, useRef, useState } from 'react';
 import imageCompression from 'browser-image-compression';
 import { nanoid } from 'nanoid';
 import {
+  assertValidImage,
   cloudinaryReady,
   uploadToCloudinary,
   type CloudinaryUploadResult,
@@ -58,6 +59,8 @@ export function usePhotoQueue() {
             'Cloudinary is not configured — set VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET.',
           );
         }
+        // Never trust the picker: real image bytes, ≤10MB, jpeg/png/webp.
+        await assertValidImage(item.file);
         patch(id, { status: 'compressing', progress: 25, error: null });
         const compressed = await imageCompression(item.file, COMPRESS_OPTIONS);
         patch(id, { status: 'uploading', progress: 60 });

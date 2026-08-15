@@ -53,6 +53,34 @@ export function cloudinaryThumb(source: string, width = 480): string {
   return cloudinaryUrl(source, { width, crop: 'fill' });
 }
 
+/* ------------------------------------------------------------------ */
+/* Upload validation (security pass). Uploads are an attack surface:   */
+/* never trust the filename or the declared MIME type — check the      */
+/* actual magic bytes. JPEG / PNG / WebP only, max 10 MB source.        */
+/* ------------------------------------------------------------------ */
+
+export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+
+const IMAGE_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
+/**
+ * Throws 'too-big' or 'bad-type' unless the file is a real JPEG/PNG/WebP
+ * under 10 MB. Call BEFORE compressing/uploading.
+ */
+export async function assertValidImage(file: File | Blob): Promise<void> {
+  if (file.size > MAX_UPLOAD_BYTES) throw new Error('too-big');
+  const type = (file as File).type ?? '';
+  if (!IMAGE_MIME.has(type)) throw new Error('bad-type');
+  const head = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+  const isJpeg = head[0] === 0xff && head[1] === 0xd8 && head[2] === 0xff;
+  const isPng =
+    head[0] === 0x89 && head[1] === 0x50 && head[2] === 0x4e && head[3] === 0x47;
+  const isWebp =
+    head[0] === 0x52 && head[1] === 0x49 && head[2] === 0x46 && head[3] === 0x46 &&
+    head[8] === 0x57 && head[9] === 0x45 && head[10] === 0x42 && head[11] === 0x50;
+  if (!isJpeg && !isPng && !isWebp) throw new Error('bad-type');
+}
+
 export interface CloudinaryUploadResult {
   publicId: string;
   secureUrl: string;

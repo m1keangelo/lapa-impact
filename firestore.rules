@@ -42,6 +42,33 @@ service cloud.firestore {
       return isAdmin() && staffDoc().primary == true;
     }
 
+    // ── Write-validation helpers (security pass) ──────────────────
+    // Bounded money: integer cents, $0.01 … $1,000,000.
+    function validAmount(v) {
+      return v is int && v > 0 && v <= 100000000;
+    }
+    function boundedStr(v, max) {
+      return v is string && v.size() <= max;
+    }
+    // Optional string field: absent OR bounded string.
+    function optStr(data, key, max) {
+      return !data.keys().hasAny([key]) || boundedStr(data.get(key, ''), max);
+    }
+    // HIGH-RISK: the ticket/donation destination may ONLY point at our
+    // Stripe payment links — never an arbitrary URL.
+    function validTicketUrl(v) {
+      return v == null || (v is string
+        && (v.matches('^https://buy\\.stripe\\.com/.*')
+            || v.matches('^https://donate\\.stripe\\.com/.*')));
+    }
+    // Event imagery must be https (Cloudinary in practice) and bounded.
+    function validImageUrl(v) {
+      return v == null || (v is string && v.size() <= 1000 && v.matches('^https://.*'));
+    }
+    function validCloudinaryUrl(v) {
+      return v is string && v.size() <= 1000 && v.matches('^https://res\\.cloudinary\\.com/.*');
+    }
+
     // staff/{uid} — roles. Self-read (role routing), admin lists the team.
     // Self-create is the bootstrap claim (admin role only, own uid only);
     // afterwards only an existing admin can add/update/deactivate staff.
@@ -66,25 +93,53 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
-    // donors/{code} — code is the document ID.
-    // allow get: the donor login flow looks up ONE code at a time.
-    // allow list = false: prevents enumerating all donor codes/emails.
+    // donors/{code} — code is the document ID. LEGACY: the 6-digit code
+    // system is gone (final doc §58) and NO client reads this collection
+    // anymore — reads are money-desk only, so donor PII can't be
+    // brute-forced one code at a time. List stays closed.
     match /donors/{code} {
-      allow get: if true;
+      allow get: if canWriteMoney();
       allow list: if false;
       allow create, update, delete: if canWriteMoney();
     }
 
-    // donations/{id} — public ledger (read by everyone, written by money desk).
+    // donations/{id} — public ledger (read by everyone, written by money
+    // desk). Validated shape: real money amounts, bounded text, server
+    // timestamp. Historical records are NEVER rewritten or deleted by the
+    // money desk — only an admin may correct them (and every correction
+    // leaves an auditLogs entry).
     match /donations/{id} {
       allow read: if true;
-      allow create, update, delete: if canWriteMoney();
+      allow create: if canWriteMoney()
+        && validAmount(request.resource.data.amount)
+        && boundedStr(request.resource.data.donorName, 120)
+        && optStr(request.resource.data, 'note', 500)
+        && request.resource.data.timestamp is timestamp;
+      allow update, delete: if isAdmin();
     }
 
-    // transfers/{id} — money out to the field (purchases, vendors, receipts).
+    // transfers/{id} — money out to the field (purchases, vendors,
+    // receipts). Same ledger rules: validated on create, admin-only
+    // corrections afterwards.
     match /transfers/{id} {
       allow read: if true;
-      allow create, update, delete: if canWriteMoney();
+      allow create: if canWriteMoney()
+        && validAmount(request.resource.data.amount)
+        && boundedStr(request.resource.data.recipient, 160)
+        && boundedStr(request.resource.data.purpose, 500)
+        && request.resource.data.timestamp is timestamp
+        && (!request.resource.data.keys().hasAny(['proofUrl'])
+            || validCloudinaryUrl(request.resource.data.proofUrl))
+        && (!request.resource.data.keys().hasAny(['receiptUrl'])
+            || validCloudinaryUrl(request.resource.data.receiptUrl))
+        && (!request.resource.data.keys().hasAny(['overdrawnBy'])
+            || request.resource.data.overdrawnBy is int)
+        && optStr(request.resource.data, 'vendor', 160)
+        && optStr(request.resource.data, 'category', 60)
+        && optStr(request.resource.data, 'location', 60)
+        && (!request.resource.data.keys().hasAny(['missionDay'])
+            || request.resource.data.missionDay is int);
+      allow update, delete: if isAdmin();
     }
 
     // updates/{id} — published field reports (admin approval materializes
@@ -94,17 +149,32 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
-    // media/{id} — photo metadata (Cloudinary URLs, captions, links).
+    // media/{id} — photo metadata. URLs must point at OUR Cloudinary
+    // account's delivery host; captions bounded.
     match /media/{id} {
       allow read: if true;
-      allow create, update, delete: if isAdmin();
+      allow create: if isAdmin()
+        && validCloudinaryUrl(request.resource.data.cloudinaryUrl)
+        && validCloudinaryUrl(request.resource.data.thumbnailUrl)
+        && boundedStr(request.resource.data.caption, 300);
+      allow update, delete: if isAdmin();
     }
 
     // stats/{id} — 'global' holds the hero totals (totalIn/totalOut/
-    // familiesHelped), maintained by the money desk via batched increments.
+    // familiesHelped), maintained by the money desk via batched
+    // increments. Values must stay sane non-negative integers.
     match /stats/{id} {
       allow read: if true;
-      allow create, update, delete: if canWriteMoney();
+      allow write: if canWriteMoney()
+        && request.resource.data.get('totalIn', 0) is int
+        && request.resource.data.get('totalIn', 0) >= 0
+        && request.resource.data.get('totalIn', 0) <= 100000000
+        && request.resource.data.get('totalOut', 0) is int
+        && request.resource.data.get('totalOut', 0) >= 0
+        && request.resource.data.get('totalOut', 0) <= 100000000
+        && request.resource.data.get('familiesHelped', 0) is int
+        && request.resource.data.get('familiesHelped', 0) >= 0
+        && request.resource.data.get('familiesHelped', 0) <= 1000000;
     }
 
     // accounts/{uid} — donor profiles (master §35–37: email+password
@@ -124,26 +194,52 @@ service cloud.firestore {
     // server-side (Admin SDK bypasses rules) to connect gifts to accounts.
     match /giftEmails/{donationId} {
       allow read: if false;
-      allow create: if canWriteMoney();
+      allow create: if canWriteMoney()
+        && boundedStr(request.resource.data.email, 320);
       allow update, delete: if false;
     }
 
     // settings/{id} — 'public' holds the launch mode (final doc §6–13):
-    // 'preview' shows clearly-labeled demo content; 'live' shows only real
-    // approved activity; 'paused' keeps showing real data while new public
-    // updates are deliberately stopped. Only an admin flips the switch —
-    // never an automatic count/amount/time trigger.
+    // 'preview' / 'live' / 'paused'. 'hero' holds the homepage slideshow
+    // image list (max 30). Only an admin writes either, and only with
+    // valid values — never an automatic count/amount/time trigger.
     match /settings/{id} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isAdmin() && (
+        (id == 'public'
+          && request.resource.data.get('mode', 'live') in ['preview', 'live', 'paused'])
+        || (id == 'hero'
+          && request.resource.data.get('images', []) is list
+          && request.resource.data.get('images', []).size() <= 30)
+      );
     }
 
     // events/{id} — 'current' holds the public fundraiser event (FINAL(2)
     // PART 54/70): everyone reads it (the /event page is public); only the
-    // primary admin can publish or change it — other staff see it read-only.
+    // primary admin can publish or change it. HIGH-RISK: the ticket URL is
+    // the donation destination — it may only be a Stripe payment link,
+    // and event imagery must be bounded https URLs.
     match /events/{id} {
       allow read: if true;
-      allow write: if isPrimaryAdmin();
+      allow write: if isPrimaryAdmin()
+        && validTicketUrl(request.resource.data.get('ticketUrl', null))
+        && validImageUrl(request.resource.data.get('image', null))
+        && validImageUrl(request.resource.data.get('imageEn', null))
+        && validImageUrl(request.resource.data.get('imageEs', null));
+    }
+
+    // auditLogs/{id} — append-only administrative trail (WHO / WHAT /
+    // WHEN). Any active staff account can APPEND their own entries (the
+    // actor must be themselves); only admins can read them; NOBODY can
+    // edit or delete history — not even an admin.
+    match /auditLogs/{id} {
+      allow read: if isAdmin();
+      allow create: if isStaff()
+        && request.resource.data.actorUid == request.auth.uid
+        && boundedStr(request.resource.data.action, 80)
+        && request.resource.data.at is timestamp
+        && optStr(request.resource.data, 'actorEmail', 200);
+      allow update, delete: if false;
     }
 
     // stripeSessions/{sessionId} — written ONLY by the stripeWebhook Cloud

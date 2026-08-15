@@ -28,6 +28,7 @@ import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { cloudinaryReady, cloudinaryThumb, cloudinaryUrl } from '@/lib/cloudinary';
 import { db } from '@/lib/firebase';
+import { logAudit } from './writeUtils';
 import { formatMoney, privacyName, toMillis } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Donation } from '@/lib/types';
@@ -219,6 +220,7 @@ export default function PhotosForm({ onSaved }: { onSaved: () => void }) {
         });
       }
       await batch.commit();
+      void logAudit(db, 'media.publish', { count: doneItems.length });
       toast.success(t.admin.photosForm.published(doneItems.length));
       onSaved();
       clearDone(doneItems.map((it) => it.id));

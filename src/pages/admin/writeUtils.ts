@@ -2,6 +2,8 @@
  * Shared Firestore write helpers for the admin workbench.
  */
 import {
+  addDoc,
+  collection,
   doc,
   serverTimestamp,
   Timestamp,
@@ -9,6 +11,7 @@ import {
   type FieldValue,
   type Firestore,
 } from 'firebase/firestore';
+import { auth } from '@/lib/firebase';
 
 /** stats/global — every money/impact write touches this doc (merge-safe). */
 export function statsGlobalRef(db: Firestore): DocumentReference {
@@ -33,4 +36,29 @@ export function nowLocalInputValue(): string {
   const d = new Date();
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/**
+ * Append-only audit trail (auditLogs collection). Records WHO did WHAT and
+ * WHEN for every privileged write. Best-effort: a failed audit write never
+ * blocks the real operation, but it is logged to the console.
+ */
+export async function logAudit(
+  db: Firestore,
+  action: string,
+  detail: Record<string, string | number | boolean | null> = {},
+): Promise<void> {
+  const user = auth?.currentUser;
+  if (!user) return;
+  try {
+    await addDoc(collection(db, 'auditLogs'), {
+      actorUid: user.uid,
+      actorEmail: user.email ?? null,
+      action,
+      detail,
+      at: serverTimestamp(),
+    });
+  } catch (err) {
+    console.warn('[audit] write failed:', err);
+  }
 }

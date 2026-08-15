@@ -22,7 +22,7 @@ import { missionDay } from '@/lib/mission';
 import { cn } from '@/lib/utils';
 import { AmountField, Field, SubmitButton } from './fields';
 import { dollarsToCents, inputCls, type SaveState } from './formUtils';
-import { nowLocalInputValue, resolveTimestamp, statsGlobalRef } from './writeUtils';
+import { logAudit, nowLocalInputValue, resolveTimestamp, statsGlobalRef } from './writeUtils';
 
 type ReceiptState =
   | { status: 'idle' }
@@ -121,6 +121,7 @@ export default function PurchaseForm({
       });
       batch.set(statsGlobalRef(db), { totalOut: increment(cents), updatedAt: ts }, { merge: true });
       await batch.commit();
+      void logAudit(db, 'money.purchase', { amount: cents, vendor: vendor.trim(), category });
 
       toast.success(t.ops.finance.saved);
       onSaved();

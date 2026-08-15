@@ -17,6 +17,7 @@ import Modal from '@/components/Modal';
 import { db } from '@/lib/firebase';
 import { usePublicMode, type PublicMode } from '@/hooks/usePublicMode';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { logAudit } from './writeUtils';
 import { cn } from '@/lib/utils';
 
 type PendingAction = 'live' | 'paused' | 'preview' | null;
@@ -84,6 +85,7 @@ export default function PublicExperiencePanel({ email }: { email: string }) {
         { mode: next, updatedAt: serverTimestamp(), updatedBy: email },
         { merge: true },
       );
+      void logAudit(db, 'settings.mode', { mode: next });
       toast.success(confirmCopy[next].toast);
       setPending(null);
     } catch (err) {

@@ -22,7 +22,7 @@ import { privacyName } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { AmountField, Field, SubmitButton } from './fields';
 import { dollarsToCents, inputCls, textareaCls, type SaveState } from './formUtils';
-import { nowLocalInputValue, resolveTimestamp, statsGlobalRef } from './writeUtils';
+import { logAudit, nowLocalInputValue, resolveTimestamp, statsGlobalRef } from './writeUtils';
 
 export default function GiftForm({ onSaved }: { onSaved: () => void }) {
   const { t } = useLanguage();
@@ -69,6 +69,7 @@ export default function GiftForm({ onSaved }: { onSaved: () => void }) {
         { merge: true },
       );
       await batch.commit();
+      void logAudit(db, 'money.gift', { amount: cents, hasEmail: Boolean(email.trim()) });
 
       toast.success(t.admin.giftForm.saved);
       onSaved();

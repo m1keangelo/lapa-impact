@@ -21,6 +21,7 @@ import { useLanguage } from '@/i18n/LanguageContext';
 import { db } from '@/lib/firebase';
 import type { StaffRole, StaffUser } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { logAudit } from './writeUtils';
 import { Field, SubmitButton } from './fields';
 import { inputCls, type SaveState } from './formUtils';
 
@@ -62,6 +63,7 @@ export default function TeamPanel() {
         },
         { merge: true },
       );
+      void logAudit(db, 'staff.upsert', { targetUid: uid.trim(), role });
       toast.success(t.ops.team.saved);
       setSaveState('saved');
       setTimeout(() => {
@@ -85,6 +87,7 @@ export default function TeamPanel() {
         { active: !member.active },
         { merge: true },
       );
+      void logAudit(db, 'staff.toggle', { targetUid: member.uid, active: !member.active });
     } catch (err) {
       console.error('[TeamPanel] toggle failed:', err);
       toast.error(t.common.saveFailed);

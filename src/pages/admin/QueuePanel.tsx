@@ -26,6 +26,7 @@ import { useReportQueue } from '@/hooks/useFieldReports';
 import { usePublicFeed } from '@/hooks/usePublicFeed';
 import { cn } from '@/lib/utils';
 import { inputCls } from './formUtils';
+import { logAudit } from './writeUtils';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -90,6 +91,7 @@ function QueueCard({
         publishedUpdateId: updateRef.id,
       });
       await batch.commit();
+      void logAudit(db, 'fieldreport.approve', { reportId: report.id, updateId: updateRef.id });
       toast.success(t.ops.queue.approvedToast);
     } catch (err) {
       console.error('[QueueCard] approve failed:', err);
@@ -109,6 +111,7 @@ function QueueCard({
         reviewedAt: serverTimestamp(),
         ...(rejectReason.trim() ? { rejectReason: rejectReason.trim() } : {}),
       });
+      void logAudit(db, 'fieldreport.reject', { reportId: report.id });
       toast.success(t.ops.queue.rejectedToast);
     } catch (err) {
       console.error('[QueueCard] reject failed:', err);

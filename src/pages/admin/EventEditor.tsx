@@ -22,7 +22,8 @@ import { useLanguage } from '@/i18n/LanguageContext';
 import { db } from '@/lib/firebase';
 import { SEED_EVENT, type EventDoc } from '@/lib/eventData';
 import { useEvent } from '@/hooks/useEvent';
-import { cloudinaryReady, uploadToCloudinary } from '@/lib/cloudinary';
+import { assertValidImage, cloudinaryReady, uploadToCloudinary } from '@/lib/cloudinary';
+import { logAudit } from './writeUtils';
 import type { StaffUser } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Field } from './fields';
@@ -149,9 +150,12 @@ export default function EventEditor({
     if (!file || posterBusy) return;
     setPosterError(null);
     setPosterTooBig(null);
-    if (file.size > 10 * 1024 * 1024) {
-      setPosterTooBig(side);
-      const ref = side === 'en' ? posterInputEn : posterInputEs;
+    const ref = side === 'en' ? posterInputEn : posterInputEs;
+    try {
+      await assertValidImage(file);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'too-big') setPosterTooBig(side);
+      else toast.error(t.common.invalidImage);
       if (ref.current) ref.current.value = '';
       return;
     }
@@ -169,7 +173,6 @@ export default function EventEditor({
       setPosterError(side);
     } finally {
       setPosterBusy(null);
-      const ref = side === 'en' ? posterInputEn : posterInputEs;
       if (ref.current) ref.current.value = '';
     }
   };
@@ -183,6 +186,11 @@ export default function EventEditor({
         status: 'published',
         updatedAt: serverTimestamp(),
         updatedBy: email,
+      });
+      void logAudit(db, 'event.publish', {
+        title: (draft.title?.en ?? '').slice(0, 80),
+        hasImageEn: Boolean(draft.imageEn ?? draft.image),
+        hasImageEs: Boolean(draft.imageEs ?? draft.image),
       });
       toast.success(t.admin.ev.published);
     } catch (err) {

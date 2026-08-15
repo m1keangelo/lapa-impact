@@ -34,7 +34,7 @@ import { useMyReports } from '@/hooks/useFieldReports';
 import { cn } from '@/lib/utils';
 import { Field, SubmitButton } from './fields';
 import { inputCls, textareaCls, type SaveState } from './formUtils';
-import { nowLocalInputValue } from './writeUtils';
+import { logAudit, nowLocalInputValue } from './writeUtils';
 
 const MAX_PHOTOS = 4;
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -120,6 +120,7 @@ export default function FieldReportForm({ user }: { user: User }) {
         missionDay: missionDay(happenedMs),
         createdAt: serverTimestamp(),
       });
+      void logAudit(db, 'fieldreport.submit', { location: locationId, photos: photos.length });
       toast.success(t.ops.field.submitted);
       setSaveState('saved');
       setTimeout(() => {

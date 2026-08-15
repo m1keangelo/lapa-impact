@@ -23,6 +23,7 @@ export const es: Dictionary = {
     aDonor: 'Un donante',
     anonymous: 'Anónimo',
     saveFailed: 'No se pudo guardar — revisa tu conexión; no se registró nada.',
+    invalidImage: 'Ese archivo no es una imagen válida — usa JPG, PNG o WebP.',
   },
 
   nav: {

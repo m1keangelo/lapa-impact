@@ -24,6 +24,7 @@ export const en = {
     aDonor: 'A donor',
     anonymous: 'Anonymous',
     saveFailed: "Couldn't save — check connection, nothing was recorded.",
+    invalidImage: 'That file is not a valid image — use JPG, PNG or WebP.',
   },
 
   nav: {
