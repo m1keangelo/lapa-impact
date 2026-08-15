@@ -202,10 +202,11 @@ export default function FeedEntryCard({
                 {t.feedEntry.justShowedUp}
               </span>
             ) : null}
-            <span className="block text-[15px] font-medium leading-snug text-text">{title}</span>
+            <span className="block text-[15px] font-semibold leading-snug text-text">{title}</span>
             {amount != null ? (
+              // FINAL TYPOGRAPHY §18 — amount is bold and largest.
               <span
-                className="mt-0.5 block text-[15px] font-semibold text-text"
+                className="mt-1 block text-[18px] font-bold text-text"
                 style={{ fontVariantNumeric: 'tabular-nums' }}
               >
                 {formatMoney(amount)}

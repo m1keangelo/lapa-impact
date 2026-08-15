@@ -67,7 +67,7 @@ export default function FeedItem({
         disabled={!expandable}
         onClick={() => expandable && setOpen((o) => !o)}
         className={cn(
-          'flex w-full items-center gap-3 px-4 py-3 text-left',
+          'flex w-full items-center gap-3 px-4 py-4 text-left',
           expandable ? 'active:bg-surface-3' : 'cursor-default',
         )}
       >
@@ -79,7 +79,7 @@ export default function FeedItem({
         </span>
 
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-[15px] font-medium leading-snug text-text">
+          <span className="block truncate text-[15px] font-semibold leading-snug text-text">
             {title}
           </span>
           {meta ? (
@@ -91,10 +91,10 @@ export default function FeedItem({
 
         <span className="flex shrink-0 flex-col items-end gap-0.5">
           {amount != null ? (
-            // Amount stays visible but quiet — people first, not ledger
-            // signs (master §15). Direction reads from the icon color.
+            // FINAL TYPOGRAPHY §18 — the amount is bold and largest on
+            // the record; direction still reads from the icon color.
             <span
-              className="text-[13px] font-semibold text-text"
+              className="text-[17px] font-bold text-text"
               style={{ fontVariantNumeric: 'tabular-nums' }}
             >
               {formatMoney(amount)}

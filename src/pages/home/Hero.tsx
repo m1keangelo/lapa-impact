@@ -303,8 +303,8 @@ export default function Hero() {
             the work. */}
         <p
           aria-hidden
-          className="mt-20 font-display font-bold uppercase leading-[1.06] tracking-[-0.01em] text-[#F5F1E8] [text-wrap:balance] md:mt-24"
-          style={{ fontSize: 'clamp(40px, 8vw, 100px)' }}
+          className="mt-20 font-display font-semibold uppercase leading-[1.06] tracking-[-0.01em] text-[#F5F1E8] [text-wrap:balance] md:mt-24"
+          style={{ fontSize: 'clamp(44px, 6vw, 88px)' }}
         >
           {h.centerpiece.split(' ').map((word, i, arr) => (
             <span
@@ -320,21 +320,22 @@ export default function Hero() {
           ))}
         </p>
 
-        {/* Beat 5 — the payoff (4.6s): subordinate, then ESTAMOS AHÍ.
-            lands harder and turns LAPA blue. */}
+        {/* Beat 5 — the payoff (4.6s). ESTAMOS AHÍ. is LEVEL 01, the
+            typographic summit of the homepage (clamp 64–120px): the
+            largest type on the page — nothing else imitates its scale. */}
         <p
           aria-hidden
-          className="hero-seq-payoff mt-20 font-display uppercase leading-[1.18] tracking-[0.015em] md:mt-24"
+          className="hero-seq-payoff mt-24 font-display uppercase leading-[1.12] tracking-[0.01em] md:mt-32"
         >
           <span
             className="block font-medium text-[#F5F1E8]/90"
-            style={{ fontSize: 'clamp(20px, 3vw, 42px)' }}
+            style={{ fontSize: 'clamp(22px, 3vw, 44px)' }}
           >
             {h.payoffA}
           </span>
           <span
-            className="hero-seq-blue mt-1.5 block font-bold text-[#F5F1E8]"
-            style={{ fontSize: 'clamp(28px, 4.4vw, 56px)' }}
+            className="hero-seq-blue mt-4 block font-bold text-[#F5F1E8] md:mt-6"
+            style={{ fontSize: 'clamp(64px, 9vw, 120px)' }}
           >
             {h.payoffB}
           </span>
@@ -351,7 +352,7 @@ export default function Hero() {
             <Link
               to="/donate"
               aria-label={t.donate.giveAria}
-              className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[4px] bg-[#003D7A] px-8 py-4 text-[16px] font-semibold text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-[#0A4E97] active:scale-[0.98] sm:w-auto"
+              className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[4px] bg-[#003D7A] px-8 py-4 text-[16px] font-bold tracking-[0.01em] text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-[#0A4E97] active:scale-[0.98] sm:w-auto"
             >
               <HandCoins className="h-4 w-4" />
               {t.donate.giveNow}
@@ -359,7 +360,7 @@ export default function Hero() {
           ) : null}
           <a
             href="#feed-preview"
-            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[4px] border-2 border-[#F5F1E8]/60 px-8 py-4 text-[16px] font-semibold text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-white/10 active:scale-[0.98] sm:w-auto"
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[4px] border-2 border-[#F5F1E8]/60 px-8 py-4 text-[16px] font-bold tracking-[0.01em] text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-white/10 active:scale-[0.98] sm:w-auto"
           >
             {h.seeImpact}
           </a>

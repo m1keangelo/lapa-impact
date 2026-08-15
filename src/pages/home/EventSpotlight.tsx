@@ -93,7 +93,8 @@ export default function EventSpotlight() {
 
           <motion.h2
             {...rise(0.1)}
-            className="mt-3 font-display text-[28px] font-medium leading-[1.15] tracking-[-0.015em] text-text md:text-[36px]"
+            className="mt-3 font-display font-medium leading-[1.15] tracking-[-0.015em] text-text"
+            style={{ fontSize: 'clamp(30px, 3.6vw, 48px)' }}
           >
             {title}
           </motion.h2>
@@ -128,14 +129,14 @@ export default function EventSpotlight() {
           >
             <Link
               to="/event"
-              className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[4px] bg-[#003D7A] px-8 py-4 text-[16px] font-semibold text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-[#0A4E97] active:scale-[0.98] sm:w-auto"
+              className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[4px] bg-[#003D7A] px-8 py-4 text-[16px] font-bold tracking-[0.01em] text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-[#0A4E97] active:scale-[0.98] sm:w-auto"
             >
               <Ticket className="h-4 w-4" />
               {t.event.getTicket} · {formatMoneyShort(event.ticketPriceCents)}
             </Link>
             <Link
               to="/donate"
-              className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[4px] border-2 border-[#003D7A] bg-transparent px-8 py-4 text-[16px] font-semibold text-[#003D7A] transition-all duration-150 ease-calm hover:bg-[#003D7A]/5 active:scale-[0.98] sm:w-auto"
+              className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[4px] border-2 border-[#003D7A] bg-transparent px-8 py-4 text-[16px] font-bold tracking-[0.01em] text-[#003D7A] transition-all duration-150 ease-calm hover:bg-[#003D7A]/5 active:scale-[0.98] sm:w-auto"
             >
               {t.donate.giveNow}
             </Link>

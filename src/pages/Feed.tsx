@@ -221,7 +221,8 @@ export default function Feed() {
           )}
         </div>
         <motion.h1
-          className="mt-3 font-display text-[38px] font-medium leading-[1.08] tracking-[-0.015em] text-text md:text-5xl"
+          className="mt-4 font-sans font-bold leading-[1.1] tracking-[-0.02em] text-text"
+          style={{ fontSize: 'clamp(32px, 4vw, 52px)' }}
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.07 }}
@@ -229,7 +230,7 @@ export default function Feed() {
           {t.feed.title}
         </motion.h1>
         <motion.p
-          className="mt-3 max-w-[56ch] text-[15px] leading-[1.55] text-text-muted"
+          className="mt-4 max-w-[56ch] text-[16px] leading-[1.6] text-text-muted md:text-[17px]"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.14 }}
@@ -491,7 +492,7 @@ export default function Feed() {
                       <span className="h-px flex-1 bg-border" aria-hidden />
                     </motion.header>
 
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <AnimatePresence initial={false}>
                         {group.entries.map((entry) => (
                           <div key={`${entry.kind}-${entry.id}`} id={`entry-${entry.id}`}>

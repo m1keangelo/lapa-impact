@@ -58,8 +58,8 @@ export default function Path() {
         </motion.p>
         <motion.h2
           {...reveal(0.08)}
-          className="mt-4 max-w-[14ch] font-display font-medium leading-[1.08] tracking-[-0.015em] text-text"
-          style={{ fontSize: 'clamp(40px, 5.5vw, 76px)' }}
+          className="mt-5 max-w-[18ch] font-sans font-bold leading-[1.1] tracking-[-0.02em] text-text"
+          style={{ fontSize: 'clamp(32px, 4vw, 56px)' }}
         >
           {t.home.path.title}
         </motion.h2>
@@ -96,17 +96,19 @@ export default function Path() {
                   onViewportEnter={() => setActive(i)}
                 />
 
-                {/* HUGE number — sits ON the path (bg masks the line),
+                {/* BIG number — heavy sans with tabular figures, the
+                    visual spine (§16–17: ≈3× the step title, never
+                    overpowering). Sits ON the path (bg masks the line),
                     neutral until its step is active. */}
                 <motion.span
                   {...reveal(0)}
                   aria-hidden
                   className={cn(
-                    'relative z-10 -ml-1 bg-bg px-1 text-center font-display font-semibold leading-none tracking-[-0.02em] transition-colors duration-500',
+                    'relative z-10 -ml-1 bg-bg px-1 text-center font-sans font-bold leading-none tracking-[-0.03em] transition-colors duration-500',
                     isActive ? 'scale-[1.04] text-[#003D7A]' : 'text-[#D8D2C8]',
                   )}
                   style={{
-                    fontSize: 'clamp(76px, 10vw, 140px)',
+                    fontSize: 'clamp(64px, 7.5vw, 108px)',
                     fontVariantNumeric: 'tabular-nums',
                     transformOrigin: 'center',
                     transitionProperty: 'color, transform',
@@ -125,21 +127,21 @@ export default function Path() {
                   <motion.h3
                     {...reveal(0.12)}
                     className={cn(
-                      'font-display uppercase leading-[1.12] tracking-[0.01em] transition-all duration-500',
+                      'font-sans font-bold uppercase leading-[1.15] tracking-[0.02em] transition-all duration-500',
                       isFinal
-                        ? 'font-semibold text-[#003D7A]'
+                        ? 'text-[#003D7A]'
                         : isActive
-                          ? 'font-semibold text-text'
-                          : 'font-medium text-text/85',
+                          ? 'text-text'
+                          : 'text-text/85',
                     )}
-                    style={{ fontSize: 'clamp(28px, 3.2vw, 44px)' }}
+                    style={{ fontSize: 'clamp(24px, 2.6vw, 36px)' }}
                   >
                     {s.title}
                   </motion.h3>
                   <motion.p
                     {...reveal(0.22)}
-                    className="mt-3 leading-[1.55] text-text-muted"
-                    style={{ fontSize: 'clamp(18px, 1.7vw, 25px)' }}
+                    className="mt-3 leading-[1.6] text-text-muted"
+                    style={{ fontSize: 'clamp(16px, 1.4vw, 18px)' }}
                   >
                     {s.body}
                   </motion.p>

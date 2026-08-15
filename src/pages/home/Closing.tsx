@@ -31,42 +31,55 @@ export default function Closing() {
       <div className="mx-auto max-w-[640px] text-center">
         <motion.h2
           {...rise(0)}
-          className="font-display text-[30px] font-medium leading-[1.14] tracking-[-0.015em] text-text md:text-5xl"
+          className="font-display font-medium leading-[1.14] tracking-[-0.015em] text-text"
+          style={{ fontSize: 'clamp(32px, 4.2vw, 56px)' }}
         >
           {c.remember}
         </motion.h2>
 
         <motion.p
           {...rise(0.1)}
-          className="mt-6 text-[16px] leading-[1.65] text-text-muted md:text-[17px]"
+          className="mt-7 text-[17px] leading-[1.65] text-text-muted md:text-[18px]"
         >
           {c.knowA}
         </motion.p>
         <motion.p
           {...rise(0.18)}
-          className="mt-1.5 text-[16px] leading-[1.65] text-text-muted md:text-[17px]"
+          className="mt-2 text-[17px] leading-[1.65] text-text-muted md:text-[18px]"
         >
           {c.knowB}
         </motion.p>
 
-        {/* PART 104 — the human invitation */}
+        {/* PART 104 — the human invitation. FINAL TYPOGRAPHY §21: the
+            last sentence of a book — editorial serif, tight leading,
+            weight contrast inside each sentence, massive whitespace.
+            Clearly quieter than the hero summit (ESTAMOS AHÍ). */}
         <motion.p
           {...rise(0.08)}
-          className="mt-14 font-display text-[24px] font-medium leading-[1.2] tracking-[-0.015em] text-text md:mt-16 md:text-3xl"
+          className="mx-auto mt-24 max-w-[16ch] font-display leading-[1.08] tracking-[-0.015em] text-text md:mt-32"
+          style={{ fontSize: 'clamp(42px, 6vw, 88px)' }}
         >
-          {c.purpose}
+          <span className="block">
+            <span className="font-normal">{c.purposeA1}</span>
+            <span className="font-semibold">{c.purposeA2}</span>
+          </span>
+          <span className="mt-2 block">
+            <span className="font-normal">{c.purposeB1}</span>
+            <span className="font-semibold">{c.purposeB2}</span>
+          </span>
         </motion.p>
 
         {/* PART 16 — the signature closing moment */}
         <motion.p
           {...rise(0.08)}
-          className="mt-14 text-[16px] leading-[1.65] text-text-muted md:mt-16 md:text-[17px]"
+          className="mt-24 text-[17px] leading-[1.65] text-text-muted md:mt-32 md:text-[18px]"
         >
           {c.roots}
         </motion.p>
         <motion.p
           {...rise(0.16)}
-          className="mt-1.5 font-display text-[26px] font-medium leading-[1.18] tracking-[-0.015em] text-text md:text-4xl"
+          className="mt-2 font-display font-medium leading-[1.18] tracking-[-0.015em] text-text"
+          style={{ fontSize: 'clamp(28px, 3.8vw, 52px)' }}
         >
           {c.responsibility}
         </motion.p>

@@ -38,14 +38,15 @@ export default function FinalCta() {
 
         <motion.h2
           {...stagger(0.1)}
-          className="mt-4 font-display text-[32px] font-medium leading-[1.1] tracking-[-0.015em] text-text md:text-5xl"
+          className="mt-5 font-display font-medium leading-[1.1] tracking-[-0.015em] text-text"
+          style={{ fontSize: 'clamp(32px, 4.2vw, 54px)' }}
         >
           {t.home.finalCta.title}
         </motion.h2>
 
         <motion.p
           {...stagger(0.2)}
-          className="mt-3 max-w-[50ch] text-[14px] font-medium leading-[1.55] tracking-[0.01em] text-text-muted"
+          className="mt-4 max-w-[50ch] text-[16px] leading-[1.6] tracking-[0.005em] text-text-muted md:text-[17px]"
         >
           {t.home.finalCta.body}
         </motion.p>
@@ -53,7 +54,7 @@ export default function FinalCta() {
         <motion.div {...stagger(0.3)} className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
           <Link
             to="/impact"
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-[4px] bg-[#003D7A] px-8 py-4 text-[15px] font-semibold text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-[#0A4E97] active:scale-[0.98]"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-[4px] bg-[#003D7A] px-8 py-4 text-[15px] font-bold tracking-[0.02em] text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-[#0A4E97] active:scale-[0.98]"
           >
             {t.home.finalCta.myImpactCta}
             <ArrowRight className="h-4 w-4" />
@@ -62,7 +63,7 @@ export default function FinalCta() {
             <Link
               to="/donate"
               aria-label={t.donate.giveAria}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-[4px] border-2 border-[#003D7A] bg-transparent px-8 py-4 text-[15px] font-semibold text-[#003D7A] transition-all duration-150 ease-calm hover:bg-[#003D7A]/5 active:scale-[0.98]"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-[4px] border-2 border-[#003D7A] bg-transparent px-8 py-4 text-[15px] font-bold tracking-[0.02em] text-[#003D7A] transition-all duration-150 ease-calm hover:bg-[#003D7A]/5 active:scale-[0.98]"
             >
               <HandCoins className="h-4 w-4" />
               {t.donate.giveNow}

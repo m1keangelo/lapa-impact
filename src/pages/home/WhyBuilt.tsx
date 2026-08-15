@@ -30,33 +30,46 @@ export default function WhyBuilt() {
     <section className="border-t border-border">
       <div className="mx-auto w-full max-w-container px-5 py-20 md:px-8 md:py-28">
         <div className="max-w-[640px]">
-          <motion.h2
-            {...rise(0)}
-            className="font-display text-[28px] font-medium leading-[1.15] tracking-[-0.015em] text-text md:text-4xl"
-          >
+          {/* FINAL TYPOGRAPHY §2/§3 — eyebrow → headline → body rhythm.
+              The section label becomes the quiet tracked eyebrow… */}
+          <motion.p {...rise(0)} className="eyebrow">
             {w.title}
+          </motion.p>
+
+          {/* …and the thesis (§12) becomes the two-level serif headline:
+              line 1 smaller/reflective, line 2 lands harder. */}
+          <motion.h2
+            {...rise(0.06)}
+            className="mt-6 font-display leading-[1.12] tracking-[-0.015em] text-text"
+          >
+            <span
+              className="block font-medium"
+              style={{ fontSize: 'clamp(24px, 2.8vw, 40px)' }}
+            >
+              {w.timeMattersA}
+            </span>
+            <span
+              className="mt-1 block font-semibold"
+              style={{ fontSize: 'clamp(32px, 4.2vw, 58px)' }}
+            >
+              {w.timeMattersB}
+            </span>
           </motion.h2>
 
-          <motion.p {...rise(0.08)} className="mt-5 text-[16px] leading-[1.65] text-text-muted">
+          <motion.p {...rise(0.12)} className="mt-7 text-[17px] leading-[1.65] text-text-muted md:text-[18px]">
             {w.bodyA}
           </motion.p>
-          <motion.p {...rise(0.14)} className="mt-3 text-[16px] leading-[1.65] text-text-muted">
+          <motion.p {...rise(0.18)} className="mt-4 text-[17px] leading-[1.65] text-text-muted md:text-[18px]">
             {w.bodyB}
           </motion.p>
 
           {/* PART 42 — why speed matters */}
-          <motion.p
-            {...rise(0.08)}
-            className="mt-12 font-display text-xl font-medium tracking-[-0.01em] text-text md:text-2xl"
-          >
-            {w.timeMatters}
-          </motion.p>
-          <div className="mt-4 space-y-1.5">
+          <div className="mt-10 space-y-2">
             {w.timeLines.map((line, i) => (
               <motion.p
                 key={line}
                 {...rise(0.12 + i * 0.05)}
-                className="text-[15px] leading-[1.6] text-text-muted"
+                className="text-[16px] leading-[1.6] text-text-muted md:text-[17px]"
               >
                 {line}
               </motion.p>
@@ -66,16 +79,17 @@ export default function WhyBuilt() {
           {/* PART 43 — the differentiation peak (dark ink, not blue: PART 34) */}
           <motion.p
             {...rise(0.08)}
-            className="mt-12 font-display text-[26px] font-medium leading-[1.18] tracking-[-0.015em] text-text md:text-4xl"
+            className="mt-14 font-display font-semibold leading-[1.18] tracking-[-0.015em] text-text"
+            style={{ fontSize: 'clamp(28px, 3.6vw, 50px)' }}
           >
             {w.peak}
           </motion.p>
-          <div className="mt-5 space-y-1">
+          <div className="mt-6 space-y-1.5">
             {w.closer.map((line, i) => (
               <motion.p
                 key={line}
                 {...rise(0.12 + i * 0.05)}
-                className="text-[15px] leading-[1.6] text-text-muted"
+                className="text-[16px] leading-[1.6] text-text-muted md:text-[17px]"
               >
                 {line}
               </motion.p>

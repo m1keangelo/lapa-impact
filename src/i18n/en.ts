@@ -133,7 +133,8 @@ export const en = {
         'Some fundraising models use scheduled or post-campaign disbursements. LAPA.Help is intentionally designed for rolling emergency response — available funds move toward real needs as soon as they have processed.',
       bodyB:
         'Processing payments has a cost, but when people need help, time matters too.',
-      timeMatters: 'In an emergency, time matters.',
+      timeMattersA: 'In an emergency,',
+      timeMattersB: 'time matters.',
       timeLines: [
         'A roof before the next rain.',
         'Water before it runs out.',
@@ -170,7 +171,10 @@ export const en = {
       remember: 'We remember where we came from.',
       knowA: 'We know what it took to get here.',
       knowB: "We know we didn't get here alone.",
-      purpose: 'Our roots are Latino. Our mission is human.',
+      purposeA1: 'Our roots ',
+      purposeA2: 'are Latino.',
+      purposeB1: 'Our mission ',
+      purposeB2: 'is human.',
       roots: "Our roots don't stop at a border.",
       responsibility: 'Neither does our responsibility.',
       sign: 'LAPA.Help',

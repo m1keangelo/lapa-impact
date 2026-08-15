@@ -114,10 +114,13 @@ export default function FeedPreview() {
               <span className="inline-block h-px w-4 bg-amber" aria-hidden />
               {t.home.feedPreview.eyebrow}
             </p>
-            <h2 className="mt-3 font-display text-2xl font-medium leading-[1.2] tracking-[-0.01em] text-text md:text-[32px]">
+            <h2
+              className="mt-4 font-sans font-bold leading-[1.12] tracking-[-0.02em] text-text"
+              style={{ fontSize: 'clamp(30px, 3.6vw, 48px)' }}
+            >
               {t.home.feedPreview.title}
             </h2>
-            <p className="mt-2 max-w-[52ch] text-[13px] font-medium leading-[1.4] tracking-[0.01em] text-text-muted">
+            <p className="mt-3 max-w-[52ch] text-[16px] leading-[1.55] tracking-[0.005em] text-text-muted md:text-[17px]">
               {t.home.feedPreview.body}
             </p>
           </div>
@@ -146,7 +149,7 @@ export default function FeedPreview() {
               />
             ) : (
               <motion.div
-                className="flex flex-col gap-3"
+                className="flex flex-col gap-4"
                 initial="hidden"
                 animate={inView ? 'show' : 'hidden'}
                 variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}

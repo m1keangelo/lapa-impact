@@ -30,31 +30,35 @@ export default function WhoWeAre() {
       <div className="mx-auto max-w-[800px] text-center">
         <motion.p
           {...rise(0)}
-          className="flex items-center justify-center gap-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted"
+          className="flex items-center justify-center gap-3 text-[12px] font-bold uppercase tracking-[0.14em] text-text-muted"
         >
           <span className="inline-block h-px w-4 bg-[#003D7A]" aria-hidden />
           {w.eyebrow}
           <span className="inline-block h-px w-4 bg-[#003D7A]" aria-hidden />
         </motion.p>
 
-        {/* The identity statement — 48px lines, final line one step down
-            with "de los dos." punctuated in LAPA blue (FIN §5). */}
-        <div className="mt-10 md:mt-12">
+        {/* The identity statement — LEVEL 02 primary emotional lines,
+            final line one step down with "de los dos." punctuated in
+            LAPA blue (FIN §5). */}
+        <div className="mt-12 md:mt-14">
           <motion.p
             {...rise(0.1)}
-            className="font-display text-[36px] font-medium leading-[1.2] tracking-[-0.015em] text-[#2C2C2C] md:text-[48px]"
+            className="font-display font-medium leading-[1.18] tracking-[-0.015em] text-[#2C2C2C]"
+            style={{ fontSize: 'clamp(38px, 5vw, 72px)' }}
           >
             {w.line1}
           </motion.p>
           <motion.p
             {...rise(0.2)}
-            className="font-display text-[36px] font-medium leading-[1.2] tracking-[-0.015em] text-[#2C2C2C] md:text-[48px]"
+            className="font-display font-medium leading-[1.18] tracking-[-0.015em] text-[#2C2C2C]"
+            style={{ fontSize: 'clamp(38px, 5vw, 72px)' }}
           >
             {w.line2}
           </motion.p>
           <motion.p
             {...rise(0.3)}
-            className="mt-3 font-display text-[28px] font-medium leading-[1.2] tracking-[-0.015em] text-[#2C2C2C] md:text-[36px]"
+            className="mt-4 font-display font-medium leading-[1.2] tracking-[-0.015em] text-[#2C2C2C]"
+            style={{ fontSize: 'clamp(28px, 3.6vw, 52px)' }}
           >
             {w.line3A}
             <span className="text-[#003D7A]">{w.line3B}</span>

@@ -132,7 +132,8 @@ export const es: Dictionary = {
         'Algunos modelos de recaudación entregan los fondos en fechas programadas o al cerrar la campaña. LAPA.Help está diseñado para responder de forma continua durante una emergencia — los fondos disponibles se mueven hacia necesidades reales en cuanto se procesan.',
       bodyB:
         'Procesar pagos tiene un costo, pero cuando las personas necesitan ayuda, el tiempo también importa.',
-      timeMatters: 'En una emergencia, el tiempo importa.',
+      timeMattersA: 'En una emergencia,',
+      timeMattersB: 'el tiempo importa.',
       timeLines: [
         'Un techo antes de la próxima lluvia.',
         'Agua antes de que se acabe.',
@@ -169,7 +170,10 @@ export const es: Dictionary = {
       remember: 'Recordamos de dónde venimos.',
       knowA: 'Sabemos lo que costó llegar.',
       knowB: 'Sabemos que no llegamos solos.',
-      purpose: 'Nuestras raíces son latinas. Nuestra misión es humana.',
+      purposeA1: 'Nuestras raíces ',
+      purposeA2: 'son latinas.',
+      purposeB1: 'Nuestra misión ',
+      purposeB2: 'es humana.',
       roots: 'Nuestras raíces no se detienen en una frontera.',
       responsibility: 'Nuestra responsabilidad tampoco.',
       sign: 'LAPA.Help',
