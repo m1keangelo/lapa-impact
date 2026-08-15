@@ -31,6 +31,7 @@ import {
 } from '@/lib/auth';
 import { useMyDonations } from '@/hooks/useMyDonations';
 import { usePublicFeed } from '@/hooks/usePublicFeed';
+import PreviewChip from '@/components/PreviewChip';
 import { formatMoneyShort, toMillis } from '@/lib/format';
 import type { FeedEntry } from '@/lib/types';
 
@@ -240,6 +241,13 @@ export default function Impact() {
           <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
             {t.myImpact.updatesTitle}
           </h2>
+          {/* Preview mode: the mission preview below is demo content —
+              label it clearly (final doc §6). */}
+          {feed.isDemo ? (
+            <div className="mt-3">
+              <PreviewChip />
+            </div>
+          ) : null}
           {missionPreview.length === 0 ? (
             <div className="mt-4 rounded-card border border-dashed border-border-strong bg-surface px-6 py-10 text-center">
               <p className="font-display text-lg font-medium text-text">

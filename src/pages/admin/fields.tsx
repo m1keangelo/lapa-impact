@@ -1,22 +1,13 @@
 /**
  * Shared form components for the admin workbench tabs: field wrapper,
- * dollar→cents amount field, donor-code field with live lookup status
- * line, and the submit button with save choreography (idle → saving →
- * saved). Non-component helpers live in ./formUtils.
+ * dollar→cents amount field, and the submit button with save choreography
+ * (idle → saving → saved). Non-component helpers live in ./formUtils.
  */
 import type { ReactNode } from 'react';
-import { CheckCircle2, CircleAlert, Loader2 } from 'lucide-react';
+import { CheckCircle2, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { formatMoney, privacyName } from '@/lib/format';
-import { DONOR_CODE_LENGTH } from '@/lib/session';
 import { cn } from '@/lib/utils';
-import {
-  dollarsToCents,
-  inputCls,
-  useDonorLookup,
-  type DonorLookup,
-  type SaveState,
-} from './formUtils';
+import { dollarsToCents, inputCls, type SaveState } from './formUtils';
 
 export function Field({
   label,
@@ -79,69 +70,6 @@ export function AmountField({
           {t.admin.fields.cents(cents.toLocaleString('en-US'))}
         </span>
       </div>
-    </Field>
-  );
-}
-
-/** Inline status line under a donor-code input. */
-export function DonorLookupLine({ lookup }: { lookup: DonorLookup }) {
-  const { t, lang } = useLanguage();
-  if (lookup.state === 'checking') {
-    return (
-      <p className="mt-1.5 flex items-center gap-1.5 text-[12px] font-medium text-text-muted">
-        <Loader2 className="h-3.5 w-3.5 animate-spin" /> {t.admin.fields.lookingUp}
-      </p>
-    );
-  }
-  if (lookup.state === 'found' && lookup.donor) {
-    return (
-      <p className="mt-1.5 flex items-center gap-1.5 text-[12px] font-medium text-sage">
-        <CheckCircle2 className="h-3.5 w-3.5" />
-        {t.admin.fields.foundLine(privacyName(lookup.donor.name, lang), formatMoney(lookup.donor.totalGiven))}
-      </p>
-    );
-  }
-  if (lookup.state === 'notfound') {
-    return (
-      <p className="mt-1.5 flex items-center gap-1.5 text-[12px] font-medium text-danger">
-        <CircleAlert className="h-3.5 w-3.5" /> {t.admin.fields.noDonor}
-      </p>
-    );
-  }
-  if (lookup.state === 'invalid') {
-    return (
-      <p className="mt-1.5 flex items-center gap-1.5 text-[12px] font-medium text-danger">
-        <CircleAlert className="h-3.5 w-3.5" /> {t.admin.fields.invalid}
-      </p>
-    );
-  }
-  return null;
-}
-
-export function DonorCodeField({
-  value,
-  onChange,
-  label,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  label?: string;
-}) {
-  const { t } = useLanguage();
-  const lookup = useDonorLookup(value);
-  return (
-    <Field label={label ?? t.admin.fields.donorCode}>
-      <input
-        type="text"
-        autoComplete="off"
-        spellCheck={false}
-        maxLength={DONOR_CODE_LENGTH}
-        placeholder={t.admin.fields.codePh}
-        value={value}
-        onChange={(e) => onChange(e.target.value.trim())}
-        className={cn(inputCls, 'font-mono tracking-[0.08em]')}
-      />
-      <DonorLookupLine lookup={lookup} />
     </Field>
   );
 }

@@ -14,6 +14,7 @@ import {
   type DocumentData,
 } from 'firebase/firestore';
 import { db, firebaseReady } from '@/lib/firebase';
+import { usePublicMode } from '@/hooks/usePublicMode';
 import { demoDonations, demoMedia, demoUpdates } from '@/lib/demoData';
 import type { Donation, ImpactUpdate, LiveStatus, MediaItem } from '@/lib/types';
 
@@ -86,7 +87,10 @@ export function useMedia(): MediaResult {
     return () => clearTimeout(t);
   }, [media.items, loadingMore]);
 
-  const isDemo = !firebaseReady;
+  const { mode } = usePublicMode();
+  // Preview mode serves clearly-labeled demo photos even when Firebase is
+  // live; 'live'/'paused' show real data only (final doc §6–11).
+  const isDemo = !firebaseReady || mode === 'preview';
 
   const items = useMemo(
     () =>

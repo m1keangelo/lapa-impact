@@ -7,6 +7,7 @@
 import { Link, useNavigate } from 'react-router';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useFeed } from '@/hooks/useFeed';
+import { usePublicMode } from '@/hooks/usePublicMode';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { firebaseReady } from '@/lib/firebase';
 import { demoMedia } from '@/lib/demoData';
@@ -20,12 +21,15 @@ export default function GalleryPreview() {
   const navigate = useNavigate();
   const { t, lang } = useLanguage();
   const mediaQuery = useFeed<MediaItem>('media', { limit: 5 });
+  const { mode } = usePublicMode();
+  // Preview mode shows clearly-labeled demo photos; live/paused real only.
+  const isDemo = !firebaseReady || mode === 'preview';
 
-  const photos: MediaItem[] = firebaseReady
-    ? mediaQuery.items
-    : [...demoMedia]
+  const photos: MediaItem[] = isDemo
+    ? [...demoMedia]
         .sort((a, b) => toMillis(b.timestamp) - toMillis(a.timestamp))
-        .slice(0, 5);
+        .slice(0, 5)
+    : mediaQuery.items;
 
   return (
     <section className="py-20 md:py-28">

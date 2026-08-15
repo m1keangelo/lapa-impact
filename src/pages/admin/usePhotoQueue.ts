@@ -29,11 +29,7 @@ export interface QueuedPhoto {
   result: CloudinaryUploadResult | null;
   error: string | null;
   caption: string;
-  /** donor code the photo should be linked to (optional) */
-  linkCode: string;
-  /** the code the donation link was resolved against (stale-guard) */
-  linkResolvedCode?: string;
-  /** resolved donations doc id once linked */
+  /** optional donations doc id this photo proves (picked from a list) */
   donationId?: string;
 }
 
@@ -90,7 +86,6 @@ export function usePhotoQueue() {
         result: null,
         error: null,
         caption: '',
-        linkCode: '',
       }));
       setItems((prev) => [...prev, ...queued]);
       // Kick off processing after state lands.

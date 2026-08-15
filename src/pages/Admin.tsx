@@ -36,6 +36,8 @@ import MoneyInList from './admin/MoneyInList';
 import FieldReportForm from './admin/FieldReportForm';
 import QueuePanel from './admin/QueuePanel';
 import TeamPanel from './admin/TeamPanel';
+import PublicExperiencePanel from './admin/PublicExperiencePanel';
+import ContextualHelp, { GlobalHelp } from './admin/ContextualHelp';
 import { inputCls } from './admin/formUtils';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -128,13 +130,20 @@ function AdminPanel({
 
       <div className="mx-auto w-full max-w-[760px] px-5 pb-20 pt-8 md:px-8">
         {/* Command header */}
-        <h1 className="font-display text-[24px] font-medium tracking-[-0.01em] text-text md:text-[32px]">
-          {t.admin.title}
-        </h1>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <h1 className="font-display text-[24px] font-medium tracking-[-0.01em] text-text md:text-[32px]">
+            {t.admin.title}
+          </h1>
+          {/* §66 — global HOW THIS WORKS ⓘ */}
+          <GlobalHelp />
+        </div>
         <p className="mt-1.5 text-[13px] font-medium tracking-[0.01em] text-text-muted">
           {t.admin.sub}
         </p>
         <HealthChips saveTick={saveTick} />
+
+        {/* PUBLIC EXPERIENCE — the deliberate preview/live switch (§7–12) */}
+        <PublicExperiencePanel email={email} />
 
         {/* Workbench */}
         <Tabs
@@ -142,8 +151,14 @@ function AdminPanel({
           onValueChange={(v) => setTab(v as TabId)}
           className="mt-8 rounded-card border border-border bg-surface"
         >
-          {/* Custom tab bar: amber underline animates via layoutId */}
-          <div className="flex border-b border-border px-2" role="tablist" aria-label={t.admin.tabAria}>
+          {/* §51–52 — mobile: horizontal scroll with a visible partial next
+              tab (never tiny squeezed labels). Active: blue text + subtle
+              underline + light background — no heavy boxes. */}
+          <div
+            className="flex overflow-x-auto no-scrollbar border-b border-border px-2"
+            role="tablist"
+            aria-label={t.admin.tabAria}
+          >
             {TABS.map((t) => {
               const Icon = t.icon;
               const active = tab === t.id;
@@ -155,12 +170,14 @@ function AdminPanel({
                   aria-selected={active}
                   onClick={() => setTab(t.id)}
                   className={cn(
-                    'relative flex flex-1 items-center justify-center gap-2 px-3 py-3.5 text-[14px] font-medium transition-colors duration-200 ease-calm',
-                    active ? 'text-amber' : 'text-text-muted hover:text-text',
+                    'relative flex shrink-0 items-center justify-center gap-2 px-4 py-3.5 text-[14px] font-medium transition-colors duration-200 ease-calm sm:flex-1',
+                    active
+                      ? 'bg-amber-glow/70 text-amber'
+                      : 'text-text-muted hover:text-text',
                   )}
                 >
                   <Icon className="h-4 w-4" />
-                  <span className="hidden min-[480px]:inline">{t.label}</span>
+                  <span>{t.label}</span>
                   {active && (
                     <motion.span
                       layoutId="admin-tab-underline"
@@ -180,6 +197,10 @@ function AdminPanel({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25, ease: EASE }}
               >
+                {/* one help button per panel (final doc 53-55) */}
+                <div className="mb-3 flex justify-end">
+                  <ContextualHelp area="gift" areaLabel={t.admin.tabs.gift} />
+                </div>
                 <GiftForm onSaved={onSaved} />
               </motion.div>
             </TabsContent>
@@ -189,6 +210,10 @@ function AdminPanel({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25, ease: EASE }}
               >
+                {/* one help button per panel (final doc 53-55) */}
+                <div className="mb-3 flex justify-end">
+                  <ContextualHelp area="transfer" areaLabel={t.admin.tabs.transfer} />
+                </div>
                 <TransferForm balanceCents={balanceCents} onSaved={onSaved} />
               </motion.div>
             </TabsContent>
@@ -198,6 +223,10 @@ function AdminPanel({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25, ease: EASE }}
               >
+                {/* one help button per panel (final doc 53-55) */}
+                <div className="mb-3 flex justify-end">
+                  <ContextualHelp area="update" areaLabel={t.admin.tabs.update} />
+                </div>
                 <UpdateForm onSaved={onSaved} />
               </motion.div>
             </TabsContent>
@@ -207,6 +236,10 @@ function AdminPanel({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25, ease: EASE }}
               >
+                {/* one help button per panel (final doc 53-55) */}
+                <div className="mb-3 flex justify-end">
+                  <ContextualHelp area="photos" areaLabel={t.admin.tabs.photos} />
+                </div>
                 <PhotosForm onSaved={onSaved} />
               </motion.div>
             </TabsContent>
@@ -216,6 +249,10 @@ function AdminPanel({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25, ease: EASE }}
               >
+                {/* one help button per panel (final doc 53-55) */}
+                <div className="mb-3 flex justify-end">
+                  <ContextualHelp area="queue" areaLabel={t.ops.queue.title.replace('.', '')} />
+                </div>
                 <QueuePanel reviewerName={staffName} />
               </motion.div>
             </TabsContent>
@@ -225,6 +262,10 @@ function AdminPanel({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25, ease: EASE }}
               >
+                {/* one help button per panel (final doc 53-55) */}
+                <div className="mb-3 flex justify-end">
+                  <ContextualHelp area="team" areaLabel={t.ops.team.title.replace('.', '')} />
+                </div>
                 <TeamPanel />
               </motion.div>
             </TabsContent>

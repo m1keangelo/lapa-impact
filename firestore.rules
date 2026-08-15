@@ -112,6 +112,27 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // giftEmails/{donationId} — donor emails for manually recorded gifts
+    // (final doc §58: the six-digit donor-code system is gone). The money
+    // desk can CREATE one next to a donation; nobody can read or list them
+    // from the client (PII). The linkMyDonations Cloud Function reads them
+    // server-side (Admin SDK bypasses rules) to connect gifts to accounts.
+    match /giftEmails/{donationId} {
+      allow read: if false;
+      allow create: if canWriteMoney();
+      allow update, delete: if false;
+    }
+
+    // settings/{id} — 'public' holds the launch mode (final doc §6–13):
+    // 'preview' shows clearly-labeled demo content; 'live' shows only real
+    // approved activity; 'paused' keeps showing real data while new public
+    // updates are deliberately stopped. Only an admin flips the switch —
+    // never an automatic count/amount/time trigger.
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // stripeSessions/{sessionId} — written ONLY by the stripeWebhook Cloud
     // Function (Admin SDK bypasses rules). Fully closed to clients: the
     // public lookupDonation function reads it server-side and returns only

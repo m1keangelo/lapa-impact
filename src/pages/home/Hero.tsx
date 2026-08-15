@@ -3,7 +3,7 @@
  * Full-viewport: /hero-andes.jpg with layered scrim + radial amber glow,
  * word-staggered Fraunces headline, CTA row, live counting stats tucked
  * behind a "see the numbers" toggle, and a scroll cue. The background
- * parallax is FM scroll-linked (GSAP is isolated to the Journey section).
+ * parallax is FM scroll-linked (no GSAP — the pinned journey was removed in the final pass).
  */
 import { memo, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
@@ -221,7 +221,7 @@ export default function Hero() {
             <Link
               to="/donate"
               aria-label={t.donate.giveAria}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98] sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-amber px-6 py-4 text-[16px] font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98] sm:w-auto"
             >
               <HandCoins className="h-4 w-4" />
               {t.donate.giveNow}
@@ -229,7 +229,7 @@ export default function Hero() {
           ) : null}
           <a
             href="#feed-preview"
-            className="inline-flex w-full items-center justify-center rounded-[10px] border border-white/25 px-6 py-3.5 text-[15px] font-semibold text-[#F3EAD9] transition-all duration-150 ease-calm hover:bg-white/10 active:scale-[0.98] sm:w-auto"
+            className="inline-flex w-full items-center justify-center rounded-[10px] border border-white/25 px-6 py-4 text-[16px] font-semibold text-[#F3EAD9] transition-all duration-150 ease-calm hover:bg-white/10 active:scale-[0.98] sm:w-auto"
           >
             {t.home.hero.seeImpact}
           </a>

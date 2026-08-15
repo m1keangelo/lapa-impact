@@ -3,20 +3,16 @@
  * Plain drop handlers + hidden inputs (no react-dropzone). Files are
  * compressed in the browser (≤1MB / ≤1920px) BEFORE the unsigned Cloudinary
  * upload. Per-photo queue with progress states, caption input and optional
- * link to a gift (donor-code → latest matching donations doc).
+ * link to a gift (picked from the recent donations list — no codes).
  * Publish writes media/{id} docs (cloudinaryUrl + w=400 thumbnailUrl) in
  * one batch.
  */
-import { useEffect, useRef, useState, type DragEvent } from 'react';
+import { useRef, useState, type DragEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   collection,
   doc,
-  getDocs,
-  limit as fbLimit,
-  query,
   serverTimestamp,
-  where,
   writeBatch,
 } from 'firebase/firestore';
 import {
@@ -24,7 +20,6 @@ import {
   CheckCircle2,
   CircleAlert,
   ImagePlus,
-  Link2,
   Loader2,
   RotateCcw,
   X,
@@ -33,10 +28,10 @@ import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { cloudinaryReady, cloudinaryThumb, cloudinaryUrl } from '@/lib/cloudinary';
 import { db } from '@/lib/firebase';
-import { formatMoney, toMillis } from '@/lib/format';
-import { DONOR_CODE_LENGTH, isPlausibleDonorCode } from '@/lib/session';
+import { formatMoney, privacyName, toMillis } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Donation } from '@/lib/types';
+import { useFeed } from '@/hooks/useFeed';
 import { SubmitButton } from './fields';
 import { inputCls } from './formUtils';
 import { formatBytes, usePhotoQueue, type QueuedPhoto } from './usePhotoQueue';
@@ -44,119 +39,47 @@ import { formatBytes, usePhotoQueue, type QueuedPhoto } from './usePhotoQueue';
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 /* ------------------------------------------------------------------ */
-/* Optional gift linking: donor code → most recent donation doc id      */
+/* Optional gift linking: pick from the recent donations list (§58 —    */
+/* no donor codes).                                                      */
 /* ------------------------------------------------------------------ */
 
-function PhotoLinkField({
+function DonationLinkField({
   item,
-  onCodeChange,
-  onResolved,
+  onSelect,
 }: {
   item: QueuedPhoto;
-  onCodeChange: (v: string) => void;
-  onResolved: (code: string, donationId: string) => void;
+  onSelect: (donationId: string | undefined) => void;
 }) {
-  const { t } = useLanguage();
-  const code = item.linkCode.trim();
-  const eligible = isPlausibleDonorCode(code);
-  const [result, setResult] = useState<{
-    code: string;
-    status: 'linked' | 'none';
-    label: string;
-  } | null>(null);
-  const onResolvedRef = useRef(onResolved);
-  useEffect(() => {
-    onResolvedRef.current = onResolved;
-  });
+  const { t, lang } = useLanguage();
+  const donations = useFeed<Donation>('donations', { limit: 25 });
 
-  useEffect(() => {
-    if (!eligible) return;
-    const timer = setTimeout(async () => {
-      if (!db) {
-        setResult({ code, status: 'none', label: '' });
-        return;
-      }
-      try {
-        // where + limit only (no orderBy) — avoids a composite index;
-        // pick the most recent match client-side.
-        const q = query(
-          collection(db, 'donations'),
-          where('donorCode', '==', code),
-          fbLimit(5),
-        );
-        const snap = await getDocs(q);
-        if (snap.empty) {
-          setResult({ code, status: 'none', label: '' });
-          return;
-        }
-        const donations = snap.docs
-          .map((d) => ({ id: d.id, ...(d.data() as Omit<Donation, 'id'>) }))
-          .sort((a, b) => toMillis(b.timestamp) - toMillis(a.timestamp));
-        const latest = donations[0];
-        if (!latest) {
-          setResult({ code, status: 'none', label: '' });
-          return;
-        }
-        onResolvedRef.current(code, latest.id);
-        setResult({
-          code,
-          status: 'linked',
-          label: t.admin.photosForm.linkLabel(
-            latest.donorName ?? t.admin.photosForm.donorFallback,
-            formatMoney(latest.amount),
-          ),
-        });
-      } catch (err) {
-        console.error('[PhotoLinkField] lookup failed:', err);
-        setResult({ code, status: 'none', label: '' });
-      }
-    }, 350);
-    return () => clearTimeout(timer);
-  }, [code, eligible]);
-
-  // Display state is derived during render (no sync setState in effects).
-  let status: 'idle' | 'checking' | 'linked' | 'none' = 'idle';
-  let label = '';
-  if (code.length >= DONOR_CODE_LENGTH) {
-    if (!eligible) {
-      status = 'none';
-    } else if (result && result.code === code) {
-      status = result.status;
-      label = result.label;
-    } else {
-      status = 'checking';
-    }
-  }
+  const labelFor = (d: Donation) => {
+    const name = privacyName(d.donorName ?? t.admin.photosForm.donorFallback, lang);
+    const date = new Date(toMillis(d.timestamp)).toLocaleDateString(
+      lang === 'es' ? 'es-CO' : 'en-US',
+      { month: 'short', day: 'numeric' },
+    );
+    return `${name} · ${formatMoney(d.amount)} · ${date}`;
+  };
 
   return (
     <div className="mt-2">
-      <div className="relative">
-        <Link2 className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-text-faint" />
-        <input
-          type="text"
-          maxLength={DONOR_CODE_LENGTH}
-          placeholder={t.admin.photosForm.linkPh}
-          value={item.linkCode}
-          onChange={(e) => onCodeChange(e.target.value.trim())}
-          spellCheck={false}
-          className={cn(inputCls, 'h-10 pl-9 font-mono text-[13px] tracking-[0.06em]')}
-        />
-      </div>
-      {status === 'checking' && (
-        <p className="mt-1 flex items-center gap-1.5 text-[12px] text-text-muted">
-          <Loader2 className="h-3 w-3 animate-spin" /> {t.admin.photosForm.finding}
-        </p>
-      )}
-      {status === 'linked' && (
-        <p className="mt-1 flex items-center gap-1.5 text-[12px] font-medium text-sage">
-          <CheckCircle2 className="h-3 w-3" /> {t.admin.photosForm.linkedTo(label)}
-        </p>
-      )}
-      {status === 'none' && (
-        <p className="mt-1 flex items-center gap-1.5 text-[12px] text-danger">
-          <CircleAlert className="h-3 w-3" /> {t.admin.photosForm.noGift}
-        </p>
-      )}
+      <label className="sr-only" htmlFor={`link-${item.id}`}>
+        {t.admin.photosForm.linkLabel}
+      </label>
+      <select
+        id={`link-${item.id}`}
+        value={item.donationId ?? ''}
+        onChange={(e) => onSelect(e.target.value || undefined)}
+        className={cn(inputCls, 'h-10 appearance-none text-[13px]')}
+      >
+        <option value="">{t.admin.photosForm.linkNone}</option>
+        {donations.items.map((d) => (
+          <option key={d.id} value={d.id}>
+            {labelFor(d)}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
@@ -250,12 +173,9 @@ function PhotoTile({
             onChange={(e) => onPatch({ caption: e.target.value })}
             className={cn(inputCls, 'mt-2 h-10 text-[13px]')}
           />
-          <PhotoLinkField
+          <DonationLinkField
             item={item}
-            onCodeChange={(v) => onPatch({ linkCode: v })}
-            onResolved={(code, donationId) =>
-              onPatch({ linkResolvedCode: code, donationId })
-            }
+            onSelect={(donationId) => onPatch({ donationId })}
           />
         </motion.div>
       )}
@@ -290,17 +210,12 @@ export default function PhotosForm({ onSaved }: { onSaved: () => void }) {
       const batch = writeBatch(db);
       for (const it of doneItems) {
         if (!it.result) continue;
-        // Only trust the link if the code hasn't changed since resolving.
-        const donationId =
-          it.donationId && it.linkResolvedCode === it.linkCode.trim()
-            ? it.donationId
-            : undefined;
         batch.set(doc(collection(db, 'media')), {
           cloudinaryUrl: cloudinaryUrl(it.result.secureUrl),
           thumbnailUrl: cloudinaryUrl(it.result.secureUrl, { width: 400 }),
           caption: it.caption.trim(),
           timestamp: serverTimestamp(),
-          ...(donationId ? { donationId } : {}),
+          ...(it.donationId ? { donationId: it.donationId } : {}),
         });
       }
       await batch.commit();

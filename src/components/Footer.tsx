@@ -12,9 +12,9 @@ import { CAMPAIGN } from '@/lib/campaign';
 import { cn } from '@/lib/utils';
 
 export default function Footer() {
-  const { status } = useGlobalStats();
+  const { status, isDemo } = useGlobalStats();
   const { t } = useLanguage();
-  const connected = firebaseReady && status === 'live';
+  const connected = firebaseReady && !isDemo && status === 'live';
 
   return (
     <footer className="bg-[#111111]">
@@ -93,8 +93,8 @@ export default function Footer() {
               />
             </span>
             <span className="text-[12px] font-medium tracking-[0.01em] text-[#A39E93]">
-              {!firebaseReady
-                ? t.common.demoData
+              {isDemo
+                ? t.publicMode.statusPreview
                 : connected
                   ? t.footer.connected
                   : t.footer.reconnecting}

@@ -72,12 +72,15 @@ export default function StoryTimeline({
   transfersById,
   onOpenPhoto,
   onOpenProof,
+  shareable = true,
 }: {
   entries: FeedEntry[];
   freshIds: ReadonlySet<string>;
   transfersById: Map<string, Transfer>;
   onOpenPhoto?: (media: MediaItem) => void;
   onOpenProof?: (url: string, caption: string) => void;
+  /** preview/demo content is never shareable as if it were real (§24) */
+  shareable?: boolean;
 }) {
   const { t, lang } = useLanguage();
   const today = currentMissionDay();
@@ -136,6 +139,7 @@ export default function StoryTimeline({
                 transfersById={transfersById}
                 onOpenPhoto={onOpenPhoto}
                 onOpenProof={onOpenProof}
+                shareable={shareable}
               />
             ))}
             {dayEntries.length === 0 && context.length > 0 && (

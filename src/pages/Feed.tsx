@@ -11,10 +11,11 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, use
 import { AlertTriangle, Camera, HandCoins, Inbox, Newspaper, Search, Send, X } from 'lucide-react';
 import EmptyState from '@/components/EmptyState';
 import LiveBadge from '@/components/LiveBadge';
+import PreviewChip from '@/components/PreviewChip';
 import { useLanguage, type LanguageContextValue } from '@/i18n/LanguageContext';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { usePublicFeed } from '@/hooks/usePublicFeed';
-import { formatCount, formatMoney } from '@/lib/format';
+import { formatCount, formatMoney, formatRelativeTime } from '@/lib/format';
 import type { FeedEntry, MediaItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import FeedEntryCard from './feed/FeedEntryCard';
@@ -29,8 +30,8 @@ type FilterKind = 'all' | 'donation' | 'transfer' | 'update' | 'photo';
 function buildFilters(t: LanguageContextValue['t']): { id: FilterKind; label: string; dot: string | null }[] {
   return [
     { id: 'all', label: t.feed.filters.all, dot: null },
-    { id: 'donation', label: t.feed.filters.gifts, dot: 'var(--amber)' },
-    { id: 'transfer', label: t.feed.filters.transfers, dot: 'var(--terra)' },
+    { id: 'donation', label: t.feed.filters.donations, dot: 'var(--amber)' },
+    { id: 'transfer', label: t.feed.filters.purchases, dot: 'var(--terra)' },
     { id: 'update', label: t.feed.filters.updates, dot: 'var(--sage)' },
     { id: 'photo', label: t.feed.filters.photos, dot: 'var(--text)' },
   ];
@@ -213,10 +214,14 @@ export default function Feed() {
             <span className="inline-block h-px w-4 bg-amber" aria-hidden />
             {t.feed.eyebrow}
           </motion.p>
-          <LiveBadge />
+          {feed.isDemo ? (
+            <PreviewChip />
+          ) : (
+            <LiveBadge label={t.feed.liveColombia} />
+          )}
         </div>
         <motion.h1
-          className="mt-3 font-display text-[32px] font-medium leading-[1.1] tracking-[-0.015em] text-text md:text-5xl"
+          className="mt-3 font-display text-[38px] font-medium leading-[1.08] tracking-[-0.015em] text-text md:text-5xl"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.07 }}
@@ -231,6 +236,26 @@ export default function Feed() {
         >
           {t.feed.sub}
         </motion.p>
+
+        {/* §6 — preview content is ALWAYS clearly labeled, never mistaken
+            for real campaign activity. */}
+        {feed.isDemo ? (
+          <motion.div
+            className="mt-6 max-w-[640px] rounded-card border border-amber/40 bg-amber-glow p-5"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: EASE, delay: 0.18 }}
+          >
+            <PreviewChip />
+            <p className="mt-3 font-display text-[19px] font-medium tracking-[-0.01em] text-text">
+              {t.publicMode.previewTitle}
+            </p>
+            <p className="mt-1 text-[14px] leading-[1.55] text-text-muted">
+              {t.publicMode.previewBody}
+            </p>
+          </motion.div>
+        ) : null}
+
         <motion.p
           className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] tracking-[0.01em] text-text-muted"
           initial={{ opacity: 0, y: 16 }}
@@ -247,6 +272,18 @@ export default function Feed() {
             {t.feed.entriesCount(formatCount(feed.totalLoaded))}
           </span>
         </motion.p>
+
+        {/* §18 — a quiet freshness signal, not a dashboard widget */}
+        {feed.entries[0] ? (
+          <motion.p
+            className="mt-2 text-[12px] tracking-[0.01em] text-text-faint"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.28 }}
+          >
+            {t.feed.lastUpdated(formatRelativeTime(feed.entries[0].ts, lang))}
+          </motion.p>
+        ) : null}
 
         {/* NOW vs STORY (spec §18–19): live stream ↔ day-by-day record */}
         <motion.div
@@ -392,6 +429,7 @@ export default function Feed() {
               transfersById={transfersById}
               onOpenPhoto={openMediaLightbox}
               onOpenProof={openProofLightbox}
+              shareable={!feed.isDemo}
             />
           ) : null}
 
@@ -459,6 +497,7 @@ export default function Feed() {
                           <div key={`${entry.kind}-${entry.id}`} id={`entry-${entry.id}`}>
                             <FeedEntryCard
                               entry={entry}
+                              shareable={!feed.isDemo}
                               fresh={feed.freshIds.has(entry.id) || flashedId === entry.id}
                               matched={
                                 entry.kind === 'photo'

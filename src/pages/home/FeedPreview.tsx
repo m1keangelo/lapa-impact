@@ -15,11 +15,10 @@ import {
 import { AlertTriangle } from 'lucide-react';
 import FeedItem from '@/components/FeedItem';
 import LiveBadge from '@/components/LiveBadge';
+import PreviewChip from '@/components/PreviewChip';
 import EmptyState from '@/components/EmptyState';
-import { useCombinedFeed, useFeed } from '@/hooks/useFeed';
+import { usePublicFeed } from '@/hooks/usePublicFeed';
 import { useLanguage, type LanguageContextValue } from '@/i18n/LanguageContext';
-import { firebaseReady } from '@/lib/firebase';
-import { demoMedia } from '@/lib/demoData';
 import { formatRelativeTime, pickLang, pickMetrics, toMillis } from '@/lib/format';
 import type { FeedEntry, MediaItem } from '@/lib/types';
 
@@ -88,8 +87,11 @@ export default function FeedPreview() {
   const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
   const { t, lang } = useLanguage();
-  const { items, status } = useCombinedFeed(6);
-  const mediaQuery = useFeed<MediaItem>('media', { limit: 1 });
+  // Mode-aware (final doc §6–11): preview mode serves clearly-labeled demo
+  // content; live/paused show real approved activity only.
+  const feed = usePublicFeed();
+  const items = feed.entries.slice(0, 6);
+  const status = feed.status;
 
   const listRef = useRef<HTMLDivElement>(null);
   const inView = useInView(listRef, { amount: 0.2, once: true });
@@ -98,9 +100,9 @@ export default function FeedPreview() {
   // slide-down + amber border flash treatment (no ref reads in render).
   const [mountedAt] = useState(() => Date.now());
 
-  const featured: MediaItem | undefined = firebaseReady
-    ? mediaQuery.items[0]
-    : [...demoMedia].sort((a, b) => toMillis(b.timestamp) - toMillis(a.timestamp))[0];
+  const featured: MediaItem | undefined = [...feed.media].sort(
+    (a, b) => toMillis(b.timestamp) - toMillis(a.timestamp),
+  )[0];
 
   return (
     <section id="feed-preview" className="scroll-mt-20 py-20 md:py-28">
@@ -119,7 +121,7 @@ export default function FeedPreview() {
               {t.home.feedPreview.body}
             </p>
           </div>
-          <LiveBadge />
+          {feed.isDemo ? <PreviewChip /> : <LiveBadge />}
         </div>
 
         {/* Content grid — min-w-0 on children so truncated feed text
@@ -192,12 +194,19 @@ export default function FeedPreview() {
               </motion.div>
             )}
 
-            <Link
-              to="/feed"
-              className="mt-6 inline-block text-sm font-semibold text-amber transition-colors hover:text-amber-soft"
-            >
-              {t.home.feedPreview.seeFull}
-            </Link>
+            {/* §3 — SEE THE LIVE FEED is a MAJOR CTA, not a text link:
+                full-width, strong contrast, impossible to miss. */}
+            <div className="mt-8">
+              <Link
+                to="/feed"
+                className="flex w-full items-center justify-center rounded-[12px] bg-amber px-6 py-4 text-center text-[16px] font-bold tracking-[0.02em] text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.99]"
+              >
+                {t.home.feedPreview.seeFeed}
+              </Link>
+              <p className="mt-3 text-[13px] leading-[1.5] tracking-[0.01em] text-text-muted">
+                {t.home.feedPreview.seeFeedSub}
+              </p>
+            </div>
           </div>
 
           {/* Featured photo card */}

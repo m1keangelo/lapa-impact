@@ -23,7 +23,8 @@ export interface Donor {
 /** donations/{id} */
 export interface Donation {
   id: string;
-  donorCode: string;
+  /** legacy six-digit code — written only by the pre-§58 gift form */
+  donorCode?: string;
   /** integer cents */
   amount: number;
   timestamp: TimestampLike;

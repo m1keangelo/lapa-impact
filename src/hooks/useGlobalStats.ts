@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db, firebaseReady } from '@/lib/firebase';
+import { usePublicMode } from '@/hooks/usePublicMode';
 import { demoStats } from '@/lib/demoData';
 import type { GlobalStats, LiveStatus } from '@/lib/types';
 
@@ -21,11 +22,15 @@ export interface GlobalStatsResult {
 const ZERO_STATS: GlobalStats = { totalIn: 0, totalOut: 0, familiesHelped: 0 };
 
 export function useGlobalStats(): GlobalStatsResult {
+  const { mode } = usePublicMode();
+  // Preview mode serves the bundled demo stats — clearly labeled — even
+  // when Firebase is live (final doc §6–13). 'live'/'paused' show real.
+  const isDemo = !firebaseReady || mode === 'preview';
   const [stats, setStats] = useState<GlobalStats>(
-    firebaseReady ? ZERO_STATS : demoStats,
+    isDemo ? demoStats : ZERO_STATS,
   );
   const [status, setStatus] = useState<LiveStatus>(
-    firebaseReady ? 'loading' : 'live',
+    isDemo ? 'live' : 'loading',
   );
   // Bumped whenever a live value changes — lets consumers flash a pulse.
   const [revision, setRevision] = useState(0);
@@ -33,6 +38,12 @@ export function useGlobalStats(): GlobalStatsResult {
 
   useEffect(() => {
     if (!firebaseReady || !db) return;
+    if (mode === 'preview') {
+      // Back to clearly-labeled demo content; detach from real stats.
+      setStats(demoStats);
+      setStatus('live');
+      return;
+    }
     const ref = doc(db, 'stats', 'global');
     const unsub = onSnapshot(
       ref,
@@ -59,7 +70,7 @@ export function useGlobalStats(): GlobalStatsResult {
       },
     );
     return unsub;
-  }, []);
+  }, [mode]);
 
-  return { stats, status, isDemo: !firebaseReady, revision };
+  return { stats, status, isDemo, revision };
 }

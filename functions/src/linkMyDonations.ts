@@ -31,9 +31,18 @@ export const linkMyDonations = onCall(async (request) => {
   const uid = request.auth.uid;
   const firestore = db();
 
+  const normalized = email.toLowerCase();
+
   const sessions = await firestore
     .collection('stripeSessions')
     .where('email', '==', email)
+    .get();
+
+  // giftEmails — the rules-closed sidecar written by the admin Gift form
+  // (final doc §58: no six-digit codes; the email connects the gift).
+  const giftEmails = await firestore
+    .collection('giftEmails')
+    .where('email', '==', normalized)
     .get();
 
   let linked = 0;
@@ -45,6 +54,16 @@ export const linkMyDonations = onCall(async (request) => {
     };
     if (!data.donationId || data.donorUid === uid) continue;
     batch.update(firestore.collection('donations').doc(data.donationId), {
+      donorUid: uid,
+    });
+    batch.update(docSnap.ref, { donorUid: uid });
+    linked += 1;
+  }
+  for (const docSnap of giftEmails.docs) {
+    const data = docSnap.data() as { donorUid?: string };
+    if (data.donorUid === uid) continue;
+    // The giftEmails doc id IS the donation id (written in the same batch).
+    batch.update(firestore.collection('donations').doc(docSnap.id), {
       donorUid: uid,
     });
     batch.update(docSnap.ref, { donorUid: uid });

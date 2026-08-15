@@ -9,15 +9,11 @@ import {
   type FieldValue,
   type Firestore,
 } from 'firebase/firestore';
-import { customAlphabet } from 'nanoid';
 
 /** stats/global — every money/impact write touches this doc (merge-safe). */
 export function statsGlobalRef(db: Firestore): DocumentReference {
   return doc(db, 'stats', 'global');
 }
-
-/** Donor codes are 6 numeric digits — matches lib/session. */
-export const generateDonorCode = customAlphabet('0123456789', 6);
 
 /**
  * The workbench datetime field defaults to "now". When the admin leaves it

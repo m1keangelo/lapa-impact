@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRightToLine,
   Camera,
+  Check,
   ChevronDown,
   FileCheck,
   HandCoins,
@@ -17,6 +18,7 @@ import {
   MapPin,
   Newspaper,
   Receipt,
+  Share2,
   type LucideIcon,
 } from 'lucide-react';
 import { cloudinaryUrl } from '@/lib/cloudinary';
@@ -53,6 +55,8 @@ interface FeedEntryCardProps {
   transfersById?: Map<string, Transfer>;
   onOpenPhoto?: (media: MediaItem) => void;
   onOpenProof?: (url: string, caption: string) => void;
+  /** preview/demo content is never shareable as if it were real (§24) */
+  shareable?: boolean;
 }
 
 export default function FeedEntryCard({
@@ -62,10 +66,36 @@ export default function FeedEntryCard({
   transfersById,
   onOpenPhoto,
   onOpenProof,
+  shareable = true,
 }: FeedEntryCardProps) {
   const [open, setOpen] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const { t, lang } = useLanguage();
   const { icon: Icon, color } = VARIANT_ICON[entry.kind];
+
+  // §22–24 — every story has its own deep-link URL (opens directly on this
+  // entry); share carries the proof message. Preview/demo entries are never
+  // shared as if they were real campaign activity.
+  const shareEntry = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/feed#entry-${entry.id}`;
+    const text = t.donate.success.shareText;
+    if (typeof navigator.share === 'function') {
+      try {
+        await navigator.share({ text, url });
+      } catch {
+        /* user dismissed the sheet — fine */
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 1600);
+    } catch {
+      /* clipboard unavailable — fine */
+    }
+  };
 
   let title: ReactNode = null;
   let meta: string | null = null;
@@ -288,6 +318,21 @@ export default function FeedEntryCard({
             ) : null}
           </span>
 
+          {/* §22–24 — shareable proof: every story has its own URL */}
+          {shareable ? (
+          <button
+            type="button"
+            aria-label={t.feedEntry.shareStory}
+            onClick={shareEntry}
+            className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-text-faint transition-colors hover:bg-surface-3 hover:text-text"
+          >
+            {linkCopied ? (
+              <Check className="h-4 w-4 text-sage" strokeWidth={2} />
+            ) : (
+              <Share2 className="h-4 w-4" strokeWidth={1.75} />
+            )}
+          </button>
+          ) : null}
         </div>
 
         {/* Expanded detail */}

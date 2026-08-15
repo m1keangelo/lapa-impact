@@ -19,6 +19,7 @@ import {
   type DocumentData,
 } from 'firebase/firestore';
 import { db, firebaseReady } from '@/lib/firebase';
+import { usePublicMode } from '@/hooks/usePublicMode';
 import { toMillis } from '@/lib/format';
 import {
   demoDonations,
@@ -141,16 +142,21 @@ export function usePublicFeed(): PublicFeedResult {
     return () => clearTimeout(t);
   }, [donations.items, transfers.items, updates.items, media.items, loadingMore]);
 
+  const { mode } = usePublicMode();
+
   const status: LiveStatus = useMemo(() => {
-    if (!firebaseReady) return 'live';
+    if (!firebaseReady || mode === 'preview') return 'live';
     const states = [donations.status, transfers.status, updates.status, media.status];
     if (states.includes('error')) return 'error';
     if (states.every((s) => s === 'empty')) return 'empty';
     if (states.includes('loading')) return 'loading';
     return 'live';
-  }, [donations.status, transfers.status, updates.status, media.status]);
+  }, [mode, donations.status, transfers.status, updates.status, media.status]);
 
-  const isDemo = !firebaseReady;
+  // Preview mode serves the bundled demo content — clearly labeled as a
+  // preview — even when Firebase is live. 'live'/'paused' show real data
+  // only; demo and real are never mixed (final doc §11).
+  const isDemo = !firebaseReady || mode === 'preview';
   const donationsItems = isDemo ? demoDonations : donations.items;
   const transfersItems = isDemo ? demoTransfers : transfers.items;
   const updatesItems = isDemo ? demoUpdates : updates.items;

@@ -1,7 +1,8 @@
 /**
- * Home Section 6 — Pull quote band (home.md §Section 6).
- * Full-bleed surface band, Fraunces italic quote with word-group fade-up,
- * logo mark drawn in (stroke-dashoffset), attribution after.
+ * Home — the dark moment (final doc §33–35). One line, impossible to
+ * skim past: "You don't donate and hope. You donate and watch."
+ * Soft charcoal band + word-group fade-up; the tonal rhythm's contrast
+ * beat between warm paper sections.
  */
 import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageContext';
@@ -22,12 +23,12 @@ export default function QuoteBand() {
   const groups = groupWords(t.home.quote.text);
 
   return (
-    <section className="border-y border-border bg-surface py-20 md:py-28">
+    <section className="bg-[#191512] py-24 md:py-32">
       <div className="mx-auto flex max-w-[680px] flex-col items-center px-5 text-center md:px-8">
         {/* Logo mark, stroke draw-in */}
         <motion.svg
           viewBox="0 0 64 64"
-          className="h-10 w-10 opacity-40"
+          className="h-10 w-10 opacity-50"
           fill="none"
           aria-hidden
           initial="hidden"
@@ -59,7 +60,7 @@ export default function QuoteBand() {
           ))}
         </motion.svg>
 
-        <blockquote className="mt-8 font-display text-[28px] font-medium italic leading-[1.3] tracking-[-0.01em] text-text md:text-4xl">
+        <blockquote className="mt-10 font-display text-[34px] font-medium leading-[1.18] tracking-[-0.015em] text-[#F7F5F0] md:text-5xl">
           {groups.map((group, gi) => (
             <span key={gi} className="inline">
               {group.map((word, wi) => (
@@ -84,15 +85,6 @@ export default function QuoteBand() {
           ))}
         </blockquote>
 
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ amount: 0.3, once: true }}
-          transition={{ delay: reduceMotion ? 0 : 0.9, duration: reduceMotion ? 0 : 0.3, ease: EASE }}
-          className="mt-6 text-[13px] font-medium tracking-[0.01em] text-text-muted"
-        >
-          {t.home.quote.attribution}
-        </motion.p>
       </div>
     </section>
   );
