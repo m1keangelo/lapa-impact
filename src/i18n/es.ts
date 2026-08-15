@@ -101,11 +101,21 @@ export const es: Dictionary = {
         'Un acento que nuestros padres nunca perdieron.',
       ],
       carried: 'Crecimos cargando todo eso.',
-      left: 'Se fueron de casa para que nosotros pudiéramos construir una.',
+    },
+    generation: {
+      left: 'Ellos se fueron de casa para que nosotros pudiéramos construir la nuestra.',
       built: 'La construimos.',
-      turnTitle: 'No llegamos aquí solos.',
-      turnA: 'Alguien ayudó a nuestras familias a encontrar su camino.',
-      turnB: 'Ahora nos toca extender la mano.',
+      remember: 'Ahora recordamos de dónde venimos.',
+      notAlone: 'No llegamos aquí solos.',
+      someoneHelped: 'Alguien ayudó a nuestras familias a encontrar su camino.',
+      reachBack: 'Ahora nos toca extender la mano.',
+    },
+    memoryNow: {
+      memoryLabel: 'El recuerdo',
+      nowLabel: 'Hoy',
+      showUp: 'Nosotros llegamos.',
+      memoryAlt: 'La mesa de la cocina de una familia después de comer, con luz cálida',
+      nowAlt: 'Vecinos y equipos de rescate en la calle tras el sismo en Colombia',
     },
     intro: {
       eyebrow: 'Quiénes somos',
@@ -117,26 +127,60 @@ export const es: Dictionary = {
       mottoEn: 'Somos de allá. Somos de aquí. Y, de alguna manera, somos de los dos.',
       bordersA: 'Las fronteras cambiaron.',
       bordersB: 'Nuestras raíces, no.',
-      purpose: 'Nuestras raíces son latinas. Nuestra misión es humana.',
-      action: 'LAPA.Help es lo que pasa cuando la comunidad se convierte en acción.',
-      goWhere: 'Vamos donde nuestra gente más nos necesita.',
-      colombia: '🇨🇴 Hoy, Colombia nos necesita.',
+      manyRoots: 'Crecimos entre muchas raíces.',
     },
     path: {
       eyebrow: 'Cómo funciona',
-      title: 'Tu dinero tiene un camino.',
-      aria: 'Tú das, nosotros actuamos, tú lo ves',
-      stages: [
-        { title: 'DAS', body: '$25' },
-        { title: 'ACTUAMOS', body: 'Se compran los suministros' },
-        { title: 'LO VES', body: 'La ayuda llega — foto, detalles y prueba' },
+      title: 'Tu ayuda tiene un camino.',
+      aria: 'Tú das, el pago se procesa, juntamos los fondos, la ayuda sale, tú lo ves',
+      steps: [
+        { title: 'DAS', body: 'Eliges cuánto dar y haces tu aporte de forma segura.' },
+        {
+          title: 'EL PAGO SE PROCESA',
+          body: 'El pago se procesa. Cuando los fondos quedan disponibles para nosotros, entran al fondo de respuesta.',
+        },
+        {
+          title: 'JUNTAMOS LOS FONDOS DISPONIBLES',
+          body: 'No enviamos una transferencia por cada donación. Agrupamos fondos ya disponibles para mover cantidades útiles y evitar costos innecesarios.',
+        },
+        {
+          title: 'LA AYUDA SALE',
+          body: 'Cuando los fondos están disponibles y existe una necesidad real, compramos lo que hace falta y lo llevamos donde más se necesita.',
+        },
+        {
+          title: 'LO VES',
+          body: 'Mostramos lo que pasó: compras, fechas, lugares, fotos, actualizaciones de campo y las pruebas disponibles.',
+        },
       ] as { title: string; body: string }[],
+      lessWaste: 'Más ayuda. Menos desperdicio.',
+    },
+    whyBuilt: {
+      title: 'Por qué lo construimos así.',
+      bodyA:
+        'Algunos modelos de recaudación entregan los fondos en fechas programadas o al cerrar la campaña. LAPA.Help está diseñado para responder de forma continua durante una emergencia — los fondos disponibles se mueven hacia necesidades reales en cuanto se procesan.',
+      bodyB:
+        'Procesar pagos tiene un costo, pero cuando las personas necesitan ayuda, el tiempo también importa.',
+      timeMatters: 'En una emergencia, el tiempo importa.',
+      timeLines: [
+        'Un techo antes de la próxima lluvia.',
+        'Agua antes de que se acabe.',
+        'Comida mientras la necesidad sigue siendo urgente.',
+        'Suministros mientras todavía pueden hacer la diferencia.',
+      ],
+      peak: 'No construimos LAPA.Help para esperar. Lo construimos para responder.',
+      closer: [
+        'Los fondos se procesan.',
+        'Se agrupan.',
+        'La ayuda sale cuando existe una necesidad real.',
+        'Y te mostramos lo que pasó.',
+      ],
     },
     feedPreview: {
       eyebrow: 'Pasando ahora',
       title: 'Míralo moverse.',
       body: 'Donativos reales, entregas reales, fotos reales — todo lo de abajo acaba de pasar, en vivo.',
       seeFeed: 'VER EL REGISTRO EN VIVO →',
+      giveActSee: 'Tú das → Actuamos → Tú lo ves',
       seeFeedSub:
         'Sigue donativos, compras, entregas, reportes y fotos a medida que pasan.',
       errorTitle: 'El registro tuvo un tropiezo.',
@@ -157,11 +201,16 @@ export const es: Dictionary = {
     quote: {
       text: 'Aquí no donas y esperas. Donas y lo ves.',
     },
+    bridge: {
+      action: 'LAPA.Help es lo que pasa cuando la comunidad se convierte en acción.',
+      goWhere: 'Vamos donde nuestra gente más nos necesita.',
+      colombia: '🇨🇴 Hoy, ese lugar es Colombia.',
+    },
     closing: {
       remember: 'Recordamos de dónde venimos.',
       knowA: 'Sabemos lo que costó llegar.',
       knowB: 'Sabemos que no llegamos solos.',
-      showUp: 'Por eso, cuando nuestra gente nos necesita, ahí estamos.',
+      purpose: 'Nuestras raíces son latinas. Nuestra misión es humana.',
       roots: 'Nuestras raíces no se detienen en una frontera.',
       responsibility: 'Nuestra responsabilidad tampoco.',
       sign: 'LAPA.Help',
@@ -265,14 +314,24 @@ export const es: Dictionary = {
     ticketTitle: 'Tiquete solidario',
     ticketChip: 'Tiquete',
     ticketBody:
-      'Cada tiquete se suma al fondo para Colombia — el mismo fondo público que puedes ver aquí.',
+      'Los ingresos netos de los tiquetes apoyan la respuesta en Colombia — el mismo fondo público que puedes ver aquí.',
     getTicket: 'Consigue tu tiquete',
     donateCta: 'Donar',
-    emotionTitle: 'Ven por la noche. Quédate por algo más grande.',
+    emotionTitle: 'Ven por la fiesta. Quédate por la misión.',
     emotionBody:
       'Esto es más que un evento. Lo que se recaude va al mismo fondo compartido de este sitio — cada dólar que entra, cada dólar que sale, en público.',
-    bizTitle: 'Negocios que están llegando',
-    bizSub: 'Así se ve la comunidad.',
+    whatTitle: 'Qué habrá en la noche',
+    bizTitle: 'Negocios que se suman',
+    bizSub: 'Decenas de negocios locales se están sumando.',
+    waysTitle: 'Formas de ayudar',
+    ways: [
+      'Ven — y trae a tu gente.',
+      'Dona — cualquier monto se suma al mismo fondo.',
+      'Comparte — mándaselo a alguien que debería estar ahí.',
+      'Súmate — tu negocio también puede aparecer aquí.',
+    ],
+    seeWhere: 'Mira a dónde va la ayuda →',
+    grow: 'Crecemos porque damos. Y porque damos, crecemos.',
   },
 
   impact: {
@@ -590,6 +649,18 @@ export const es: Dictionary = {
         donorsSee: 'Nada — la lista del equipo es privada.',
         example: '',
       },
+      events: {
+        title: 'Edita el evento',
+        does: 'Esta es la página pública del evento — nombre, fecha, lugar, tiquete, artistas, negocios.',
+        enter: [
+          'Solo datos confirmados — nunca inventes artistas, patrocinadores ni premios',
+          'Cada campo tiene su versión en inglés y en español',
+          'Nada cambia al público hasta que pulses Publicar',
+        ],
+        next: 'Publica — y la página del evento se actualiza en vivo en un segundo.',
+        donorsSee: 'Exactamente lo que publicas aquí: la noche, el lugar, el tiquete y quién se está sumando.',
+        example: 'Gran inauguración y recaudación · Sábado, 22 de agosto de 2026 · La Loca, Washington DC',
+      },
     } as Record<
       string,
       { title: string; does: string; enter: string[]; next: string; donorsSee: string; example: string }
@@ -601,6 +672,7 @@ export const es: Dictionary = {
       transfer: 'Transferencia',
       update: 'Reporte',
       photos: 'Fotos',
+      events: 'Evento',
     },
     tabAria: 'Mesa de trabajo del administrador',
     offlineBanner: 'Estás sin conexión — los registros fallarán hasta que te reconectes.',
@@ -634,6 +706,52 @@ export const es: Dictionary = {
       dateTime: 'Fecha / hora',
       cents: (n: string) => `→ ${n} centavos`,
       savedLive: 'Registrado · ya en vivo',
+    },
+    ev: {
+      readOnlyTitle: 'Solo lectura para ti.',
+      readOnlyNote:
+        'Solo el organizador principal puede editar y publicar el evento. Aquí puedes revisar cada campo.',
+      claimNote:
+        'Aún no hay un organizador principal. Como admin, puedes reclamar ese rol una vez.',
+      claimCta: 'Hacerme organizador principal',
+      claiming: 'Reclamando…',
+      sections: {
+        basics: 'Básico',
+        datePlace: 'Fecha y lugar',
+        ticket: 'Tiquete y donación',
+        performers: 'Artistas y anfitriones',
+        features: 'Qué habrá',
+        businesses: 'Negocios y patrocinadores',
+        media: 'Medios',
+        publishing: 'Publicación',
+      },
+      titleEn: 'Nombre del evento (inglés)',
+      titleEs: 'Nombre del evento (español)',
+      dateEn: 'Fecha (inglés)',
+      dateEs: 'Fecha (español)',
+      timeEn: 'Hora (inglés)',
+      timeEs: 'Hora (español)',
+      venue: 'Lugar',
+      address: 'Dirección',
+      price: 'Precio del tiquete',
+      ticketUrl: 'Enlace del tiquete (Stripe)',
+      image: 'URL de foto o póster del evento',
+      imageHint: 'Déjalo vacío hasta que exista una foto o póster real.',
+      name: 'Nombre',
+      roleEn: 'Rol (inglés)',
+      roleEs: 'Rol (español)',
+      featureEn: 'Elemento (inglés)',
+      featureEs: 'Elemento (español)',
+      givesEn: 'Qué aporta (inglés)',
+      givesEs: 'Qué aporta (español)',
+      kindEn: 'Etiqueta (inglés)',
+      kindEs: 'Etiqueta (español)',
+      add: 'Añadir',
+      remove: 'Quitar',
+      publish: 'Publicar evento',
+      publishing: 'Publicando…',
+      published: 'Publicado — la página del evento se actualizó en vivo.',
+      publishNote: 'Nada cambia al público hasta que pulses Publicar.',
     },
     giftForm: {
       donorName: 'Nombre del donante',
@@ -736,7 +854,6 @@ export const es: Dictionary = {
       opening: 'Abriendo el pago seguro…',
       checkoutError:
         'No pudimos abrir el pago seguro. Inténtalo de nuevo en un momento.',
-      grow: 'Crecemos porque damos. Y porque damos, crecemos.',
       secureNote: 'Pago seguro con Stripe · Tarjetas, Apple Pay, Google Pay',
     },
     success: {
@@ -744,12 +861,12 @@ export const es: Dictionary = {
       confirmingBody:
         'Un momento — Stripe nos está avisando que tu donativo llegó. Suele tardar unos segundos; no cierres esta pestaña.',
       inBody:
-        'Tu donativo acaba de sumarse al fondo para Colombia — el mismo fondo que puedes ver moverse en el registro en vivo.',
+        'Tu aporte ya es parte de la respuesta — el mismo fondo que puedes ver moverse en el registro en vivo.',
       createAccountHint:
         'Usa el mismo correo con el que donaste — una cuenta, creada una sola vez, y la misión siempre te espera aquí.',
-      goToMyImpact: 'Ir a Mi impacto',
+      goToMyImpact: 'Mira tu impacto →',
       skipForNow: 'Por ahora no — ver el registro',
-      confirmedTitle: 'Ya estás dentro.',
+      confirmedTitle: 'Tú llegaste.',
       confirmedBody:
         'Gracias por sumarte. Tu donativo se unió a un solo fondo — que se despliega donde más hace falta. Este código es tu ventana a la misión:',
       yourCode: 'Tu código privado',
@@ -760,7 +877,7 @@ export const es: Dictionary = {
       shareCta: 'Comparte la prueba',
       shareText: 'Doné. Lo vi. Aquí llegó la ayuda. — LAPA.Help · Colombia · 2026',
       copied: 'Enlace copiado',
-      watchFeed: 'Ver el registro en vivo',
+      watchFeed: 'Mira lo que pasa después →',
       timeoutTitle: 'Aún confirmando…',
       timeoutBody:
         'Stripe está tardando más de lo normal en confirmar tu donativo. Si tu pago se procesó, tu código está en camino — contáctanos y lo resolvemos.',

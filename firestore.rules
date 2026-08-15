@@ -36,6 +36,11 @@ service cloud.firestore {
     function canWriteMoney() {
       return isStaff() && staffDoc().role in ['admin', 'finance'];
     }
+    // The primary organizer (FINAL(2) PART 69/109): an admin whose staff
+    // doc carries primary == true. Only they can publish the event.
+    function isPrimaryAdmin() {
+      return isAdmin() && staffDoc().primary == true;
+    }
 
     // staff/{uid} — roles. Self-read (role routing), admin lists the team.
     // Self-create is the bootstrap claim (admin role only, own uid only);
@@ -131,6 +136,14 @@ service cloud.firestore {
     match /settings/{id} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // events/{id} — 'current' holds the public fundraiser event (FINAL(2)
+    // PART 54/70): everyone reads it (the /event page is public); only the
+    // primary admin can publish or change it — other staff see it read-only.
+    match /events/{id} {
+      allow read: if true;
+      allow write: if isPrimaryAdmin();
     }
 
     // stripeSessions/{sessionId} — written ONLY by the stripeWebhook Cloud

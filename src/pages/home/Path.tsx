@@ -1,21 +1,24 @@
 /**
- * Home — "YOUR MONEY HAS A PATH." (final doc §2/§44).
+ * Home — "YOUR HELP HAS A PATH." (final master PART 36–38).
  *
- * The thin journey line — YOU GIVE → WE ACT → YOU SEE — with small
- * semantic line icons (hand/heart, package, eye). Icons are never larger
- * than the words: visual reinforcement, not decoration. No pinned scroll,
- * no photography — the feed itself carries the proof.
+ * The real process, five public steps: YOU GIVE → YOUR PAYMENT CLEARS →
+ * WE GROUP CLEARED FUNDS → HELP GOES OUT → YOU SEE IT. A thin vertical
+ * journey line with numbered nodes — words carry the meaning, numbers
+ * keep it honest. Visual weight follows the doc: 01 strong, 02 quiet,
+ * 03 operational (+ "More help. Less waste."), 04 strong, 05 strongest.
  */
 import { motion } from 'framer-motion';
-import { Eye, HeartHandshake, Package } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { cn } from '@/lib/utils';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-const ICONS = [HeartHandshake, Package, Eye];
+
+/** PART 38 — visual weight per step. */
+const WEIGHT = ['strong', 'quiet', 'operational', 'strong', 'strongest'] as const;
 
 export default function Path() {
   const { t } = useLanguage();
-  const stages = t.home.path.stages;
+  const steps = t.home.path.steps;
 
   return (
     <section aria-label={t.home.path.aria} className="py-20 md:py-28">
@@ -31,7 +34,7 @@ export default function Path() {
           {t.home.path.eyebrow}
         </motion.p>
         <motion.h2
-          className="mt-3 font-display text-[28px] font-medium leading-[1.15] tracking-[-0.01em] text-text md:text-[36px]"
+          className="mt-3 font-display text-[30px] font-medium leading-[1.15] tracking-[-0.01em] text-text md:text-[38px]"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.8 }}
@@ -40,36 +43,59 @@ export default function Path() {
           {t.home.path.title}
         </motion.h2>
 
-        {/* The thin journey line: small nodes, words carry the meaning. */}
-        <div className="relative mt-12">
-          {/* connector line */}
+        {/* The thin journey line: numbered nodes, words carry the meaning. */}
+        <div className="relative mt-12 max-w-[640px]">
           <span
             aria-hidden
-            className="absolute left-[27px] top-6 bottom-6 w-px bg-border-strong md:left-6 md:right-6 md:top-[27px] md:bottom-auto md:h-px md:w-auto"
+            className="absolute bottom-6 left-[21px] top-6 w-px bg-border-strong"
           />
-          <ol className="flex flex-col gap-10 md:grid md:grid-cols-3 md:gap-8">
-            {stages.map((s, i) => {
-              const Icon = ICONS[i] ?? HeartHandshake;
+          <ol className="flex flex-col gap-9">
+            {steps.map((s, i) => {
+              const weight = WEIGHT[i] ?? 'operational';
               return (
                 <motion.li
                   key={s.title}
-                  className="relative flex items-start gap-5 md:flex-col md:gap-0"
+                  className="relative flex items-start gap-5"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.6 }}
-                  transition={{ duration: 0.5, ease: EASE, delay: i * 0.12 }}
+                  transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }}
                 >
-                  {/* node */}
-                  <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-surface">
-                    <Icon className="h-5 w-5 text-amber" strokeWidth={1.5} />
+                  {/* numbered node */}
+                  <span
+                    className={cn(
+                      'relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border bg-surface font-mono text-[13px] font-semibold',
+                      weight === 'strongest'
+                        ? 'border-amber/60 text-amber'
+                        : 'border-border text-text-muted',
+                    )}
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
+                  >
+                    {String(i + 1).padStart(2, '0')}
                   </span>
-                  <div className="pt-1 md:mt-5 md:pt-0">
-                    <h3 className="font-display text-[20px] font-medium tracking-[0.01em] text-text md:text-[22px]">
+                  <div className="pt-1.5">
+                    <h3
+                      className={cn(
+                        'font-display font-medium tracking-[0.01em]',
+                        weight === 'quiet'
+                          ? 'text-[17px] text-text-muted'
+                          : weight === 'operational'
+                            ? 'text-[19px] text-text'
+                            : weight === 'strongest'
+                              ? 'text-[21px] text-amber md:text-[22px]'
+                              : 'text-[20px] text-text md:text-[21px]',
+                      )}
+                    >
                       {s.title}
                     </h3>
-                    <p className="mt-1.5 max-w-[30ch] text-[15px] leading-[1.55] text-text-muted">
+                    <p className="mt-1.5 max-w-[52ch] text-[15px] leading-[1.6] text-text-muted">
                       {s.body}
                     </p>
+                    {i === 2 ? (
+                      <p className="mt-2.5 inline-flex rounded-full border border-amber/50 bg-amber-glow px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-amber">
+                        {t.home.path.lessWaste}
+                      </p>
+                    ) : null}
                   </div>
                 </motion.li>
               );

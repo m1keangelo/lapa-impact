@@ -1,7 +1,9 @@
 /**
- * Home — Closing (final copy pass §26). The last emotional beat before the
- * final CTA: "We remember where we came from." → "So when our people need
- * us, we show up." → roots / responsibility → signed "LAPA.Help".
+ * Home — Closing (final master PART 16/104/107). The last emotional beat
+ * before the final CTA: "We remember where we came from." → the human
+ * invitation ("Our roots are Latino. Our mission is human.") → the
+ * signature closing: "Our roots don't stop at a border. Neither does our
+ * responsibility." — signed "LAPA.Help". One crescendo, one peak.
  */
 import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageContext';
@@ -47,13 +49,15 @@ export default function Closing() {
           {c.knowB}
         </motion.p>
 
+        {/* PART 104 — the human invitation */}
         <motion.p
           {...rise(0.08)}
-          className="mt-14 font-display text-[26px] font-medium leading-[1.18] tracking-[-0.015em] text-text md:mt-16 md:text-4xl"
+          className="mt-14 font-display text-[24px] font-medium leading-[1.2] tracking-[-0.015em] text-text md:mt-16 md:text-3xl"
         >
-          {c.showUp}
+          {c.purpose}
         </motion.p>
 
+        {/* PART 16 — the signature closing moment */}
         <motion.p
           {...rise(0.08)}
           className="mt-14 text-[16px] leading-[1.65] text-text-muted md:mt-16 md:text-[17px]"
@@ -62,7 +66,7 @@ export default function Closing() {
         </motion.p>
         <motion.p
           {...rise(0.16)}
-          className="mt-1.5 font-display text-2xl font-medium tracking-[-0.01em] text-text md:text-3xl"
+          className="mt-1.5 font-display text-[26px] font-medium leading-[1.18] tracking-[-0.015em] text-text md:text-4xl"
         >
           {c.responsibility}
         </motion.p>

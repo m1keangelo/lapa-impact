@@ -1,9 +1,10 @@
 /**
- * Event — /event (master §40–44). The fundraiser night for Colombia:
- * name/date/time/location render as clearly-marked PENDING chips until the
- * organizer confirms them (§44 — never fabricated), the $25 solidarity
- * ticket links to Stripe, and "Businesses showing up" celebrates the local
- * businesses carrying the night — only confirmed ones, ever.
+ * Event — /event (FINAL(2) PART 54/70/96). The fundraiser night for
+ * Colombia, driven by the Firestore `events/current` document — nothing
+ * hard-coded. Flow: NAME → DATE/LOCATION → WHY → WHAT'S HAPPENING →
+ * TICKET/DONATE → BUSINESSES → WAYS TO HELP → SEE WHERE THE HELP GOES.
+ * Before the first admin publish the page renders SEED_EVENT, which holds
+ * only confirmed organizer-supplied facts (PART 61/112 — never invented).
  */
 import { Link } from 'react-router';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -13,11 +14,12 @@ import {
   Clock,
   HandCoins,
   MapPin,
+  Mic2,
+  Sparkles,
   Ticket,
 } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { EVENT } from '@/lib/campaign';
-import { STRIPE_PAYMENT_LINK } from '@/lib/donate';
+import { useEvent } from '@/hooks/useEvent';
 import { formatMoneyShort } from '@/lib/format';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -25,6 +27,7 @@ const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 export default function Event() {
   const reduceMotion = useReducedMotion();
   const { t, lang } = useLanguage();
+  const { event } = useEvent();
 
   const rise = (delay: number) => ({
     initial: { opacity: 0, y: reduceMotion ? 0 : 24 },
@@ -43,20 +46,28 @@ export default function Event() {
     </span>
   );
 
+  const locationValue = event.venueName
+    ? `${event.venueName} · ${event.address}`
+    : null;
+
   const metaRows = [
     {
       icon: CalendarDays,
       label: t.event.dateLabel,
-      value: EVENT.dateLabel ? EVENT.dateLabel[lang] : null,
+      value: event.dateLabel ? event.dateLabel[lang] : null,
     },
-    { icon: Clock, label: t.event.timeLabel, value: EVENT.timeLabel },
-    { icon: MapPin, label: t.event.locationLabel, value: EVENT.locationLabel },
+    {
+      icon: Clock,
+      label: t.event.timeLabel,
+      value: event.timeLabel ? event.timeLabel[lang] : null,
+    },
+    { icon: MapPin, label: t.event.locationLabel, value: locationValue },
   ];
 
   return (
     <div className="relative">
       <div className="mx-auto w-full max-w-container px-5 pb-24 pt-12 md:px-8 md:pt-16">
-        {/* ── Header ─────────────────────────────────────────────── */}
+        {/* ── NAME ───────────────────────────────────────────────── */}
         <header className="max-w-[720px]">
           <motion.p
             {...rise(0)}
@@ -68,10 +79,22 @@ export default function Event() {
             {...rise(0.08)}
             className="mt-4 font-display text-[36px] font-medium leading-[1.08] tracking-[-0.015em] text-text md:text-6xl"
           >
-            {EVENT.title ?? t.event.fallbackTitle}
+            {event.title ? event.title[lang] : t.event.fallbackTitle}
           </motion.h1>
 
-          {/* Date / time / location — pending until confirmed (§44) */}
+          {/* Real event photo or poster once one exists (PART 70). */}
+          {event.image ? (
+            <motion.figure {...rise(0.12)} className="mt-8">
+              <img
+                src={event.image}
+                alt={event.title ? event.title[lang] : t.event.fallbackTitle}
+                className="w-full rounded-card border border-border object-cover"
+                loading="lazy"
+              />
+            </motion.figure>
+          ) : null}
+
+          {/* ── DATE / TIME / LOCATION ───────────────────────────── */}
           <motion.ul {...rise(0.16)} className="mt-8 space-y-3">
             {metaRows.map((row) => (
               <li key={row.label} className="flex items-center gap-3">
@@ -91,10 +114,48 @@ export default function Event() {
           </motion.ul>
         </header>
 
-        {/* ── Ticket card ────────────────────────────────────────── */}
+        {/* ── WHY ────────────────────────────────────────────────── */}
+        <motion.section {...rise(0)} className="mt-16 max-w-[680px]">
+          <h2 className="font-display text-[28px] font-medium leading-[1.15] tracking-[-0.015em] text-text md:text-4xl">
+            {t.event.emotionTitle}
+          </h2>
+          <p className="mt-4 text-[15px] leading-[1.65] text-text-muted">
+            {t.event.emotionBody}
+          </p>
+        </motion.section>
+
+        {/* ── WHAT'S HAPPENING ───────────────────────────────────── */}
+        <motion.section {...rise(0)} className="mt-16" aria-label={t.event.whatTitle}>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber">
+            {t.event.whatTitle}
+          </p>
+          <div className="mt-5 flex flex-wrap items-center gap-2.5">
+            {event.performers.map((p) => (
+              <span
+                key={p.name}
+                className="inline-flex items-center gap-2 rounded-full border border-amber/40 bg-amber-glow px-3.5 py-2 text-[13px] font-semibold tracking-[0.01em] text-text"
+              >
+                <Mic2 className="h-3.5 w-3.5 text-amber" aria-hidden />
+                {p.name}
+                <span className="font-medium text-text-muted">· {p.role[lang]}</span>
+              </span>
+            ))}
+            {event.features.map((f) => (
+              <span
+                key={f.en}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-2 text-[13px] font-medium tracking-[0.01em] text-text-muted"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-text-faint" aria-hidden />
+                {f[lang]}
+              </span>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* ── TICKET / DONATE ────────────────────────────────────── */}
         <motion.section
           {...rise(0.1)}
-          className="mt-12 rounded-card border border-amber/40 bg-surface p-6 md:p-8"
+          className="mt-16 rounded-card border border-amber/40 bg-surface p-6 md:p-8"
           aria-label={t.event.ticketTitle}
         >
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -107,7 +168,7 @@ export default function Event() {
               </span>
               <div>
                 <h2 className="font-display text-2xl font-medium tracking-[-0.01em] text-text">
-                  {formatMoneyShort(EVENT.ticketPriceCents)} {t.event.ticketTitle}
+                  {formatMoneyShort(event.ticketPriceCents)} {t.event.ticketTitle}
                 </h2>
                 <p className="mt-2 max-w-[46ch] text-[14px] font-medium leading-[1.55] tracking-[0.01em] text-text-muted">
                   {t.event.ticketBody}
@@ -115,9 +176,9 @@ export default function Event() {
               </div>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row md:flex-col lg:flex-row">
-              {STRIPE_PAYMENT_LINK ? (
+              {event.ticketUrl ? (
                 <a
-                  href={STRIPE_PAYMENT_LINK}
+                  href={event.ticketUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
@@ -137,51 +198,75 @@ export default function Event() {
           </div>
         </motion.section>
 
-        {/* ── Emotional beat ─────────────────────────────────────── */}
-        <motion.section {...rise(0)} className="mt-20 max-w-[680px]">
-          <h2 className="font-display text-[28px] font-medium leading-[1.15] tracking-[-0.015em] text-text md:text-4xl">
-            {t.event.emotionTitle}
-          </h2>
-          <p className="mt-4 text-[15px] leading-[1.65] text-text-muted">
-            {t.event.emotionBody}
-          </p>
-        </motion.section>
+        {/* ── BUSINESSES SHOWING UP ──────────────────────────────── */}
+        {event.businesses.length > 0 ? (
+          <motion.section {...rise(0)} className="mt-20" aria-label={t.event.bizTitle}>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber">
+              {t.event.bizTitle}
+            </p>
+            <h2 className="mt-3 font-display text-[28px] font-medium leading-[1.15] tracking-[-0.015em] text-text md:text-4xl">
+              {t.event.bizSub}
+            </h2>
+            <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {event.businesses.map((biz, i) => (
+                <motion.li
+                  key={biz.name}
+                  initial={{ opacity: 0, y: reduceMotion ? 0 : 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{
+                    delay: reduceMotion ? 0 : 0.05 * i,
+                    duration: reduceMotion ? 0 : 0.45,
+                    ease: EASE,
+                  }}
+                  className="rounded-card border border-border bg-surface p-5"
+                >
+                  <p className="font-display text-[17px] font-semibold tracking-[0.02em] text-text">
+                    {biz.name}
+                  </p>
+                  <p className="mt-1.5 text-[13px] font-medium leading-[1.45] tracking-[0.01em] text-text-muted">
+                    {biz.gives[lang]}
+                  </p>
+                  <span className="mt-3 inline-flex rounded-full border border-border bg-surface-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-text-faint">
+                    {biz.kind[lang]}
+                  </span>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.section>
+        ) : null}
 
-        {/* ── Businesses showing up (§43) ────────────────────────── */}
-        <motion.section {...rise(0)} className="mt-20" aria-label={t.event.bizTitle}>
+        {/* ── WAYS TO HELP ───────────────────────────────────────── */}
+        <motion.section {...rise(0)} className="mt-20 max-w-[680px]" aria-label={t.event.waysTitle}>
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber">
-            {t.event.bizTitle}
+            {t.event.waysTitle}
           </p>
-          <h2 className="mt-3 font-display text-[28px] font-medium leading-[1.15] tracking-[-0.015em] text-text md:text-4xl">
-            {t.event.bizSub}
-          </h2>
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {EVENT.businesses.map((biz, i) => (
-              <motion.li
-                key={biz.name}
-                initial={{ opacity: 0, y: reduceMotion ? 0 : 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.4 }}
-                transition={{
-                  delay: reduceMotion ? 0 : 0.05 * i,
-                  duration: reduceMotion ? 0 : 0.45,
-                  ease: EASE,
-                }}
-                className="rounded-card border border-border bg-surface p-5"
+          <ul className="mt-5 space-y-2.5">
+            {t.event.ways.map((way) => (
+              <li
+                key={way}
+                className="flex items-baseline gap-3 text-[16px] font-medium leading-[1.5] tracking-[0.01em] text-text"
               >
-                <p className="font-display text-[17px] font-semibold tracking-[0.02em] text-text">
-                  {biz.name}
-                </p>
-                <p className="mt-1.5 text-[13px] font-medium leading-[1.45] tracking-[0.01em] text-text-muted">
-                  {biz.gives[lang]}
-                </p>
-                <span className="mt-3 inline-flex rounded-full border border-border bg-surface-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-text-faint">
-                  {biz.kind[lang]}
-                </span>
-              </motion.li>
+                <span className="h-1.5 w-1.5 shrink-0 translate-y-[-2px] rounded-full bg-amber" aria-hidden />
+                {way}
+              </li>
             ))}
           </ul>
+          <Link
+            to="/feed"
+            className="mt-6 inline-flex items-center gap-2 text-[14px] font-semibold tracking-[0.01em] text-amber transition-colors hover:text-amber-soft"
+          >
+            {t.event.seeWhere}
+          </Link>
         </motion.section>
+
+        {/* ── Closer (PART 14 — the giving line lives here) ──────── */}
+        <motion.p
+          {...rise(0)}
+          className="mt-20 max-w-[680px] font-display text-[22px] font-medium leading-[1.3] tracking-[-0.01em] text-text md:text-3xl"
+        >
+          {t.event.grow}
+        </motion.p>
       </div>
     </div>
   );

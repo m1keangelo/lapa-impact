@@ -197,6 +197,10 @@ export default function FeedPreview() {
             {/* §3 — SEE THE LIVE FEED is a MAJOR CTA, not a text link:
                 full-width, strong contrast, impossible to miss. */}
             <div className="mt-8">
+              {/* PART 44 — the transparency promise as a compact visual */}
+              <p className="mb-3 text-center text-[12px] font-bold uppercase tracking-[0.16em] text-text-muted">
+                {t.home.feedPreview.giveActSee}
+              </p>
               <Link
                 to="/feed"
                 className="flex w-full items-center justify-center rounded-[12px] bg-amber px-6 py-4 text-center text-[16px] font-bold tracking-[0.02em] text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.99]"

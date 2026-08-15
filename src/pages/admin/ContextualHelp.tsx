@@ -12,7 +12,7 @@ import Modal from '@/components/Modal';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { cn } from '@/lib/utils';
 
-export type HelpArea = 'gift' | 'transfer' | 'update' | 'photos' | 'queue' | 'team';
+export type HelpArea = 'gift' | 'transfer' | 'update' | 'photos' | 'queue' | 'team' | 'events';
 
 function HelpBody({ area }: { area: HelpArea | 'global' }) {
   const { t } = useLanguage();

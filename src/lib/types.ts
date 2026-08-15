@@ -108,6 +108,12 @@ export interface StaffUser {
   name: string;
   role: StaffRole;
   active: boolean;
+  /**
+   * Primary organizer (FINAL(2) PART 69/109) — exactly one admin carries
+   * this flag; only they can publish/edit the public event. The bootstrap
+   * (first) admin gets it automatically.
+   */
+  primary?: boolean;
   email?: string;
   createdAt?: TimestampLike;
 }

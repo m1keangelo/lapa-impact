@@ -79,7 +79,7 @@ export const CONTEXT_MILESTONES: ContextMilestone[] = [
       'Los equipos de rescate trabajan los edificios colapsados sin pausa. La UNGRD reporta 176 fallecidos, más de 2.500 heridos y 1.136 viviendas destruidas — cifras aún en aumento. La ONU empieza a evaluar necesidades en el terreno.',
     sourceName: 'UNGRD · ONU',
     sourceUrl: 'https://news.un.org/es/story/2026/08/1541792',
-    photo: '/manizales-noche.jpg',
+    photo: '/quake-3.jpg',
     photoCredit: 'World Central Kitchen, CC BY 4.0',
   },
   {

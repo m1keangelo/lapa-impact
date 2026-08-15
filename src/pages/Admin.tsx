@@ -12,7 +12,7 @@
  */
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Camera, CircleAlert, ClipboardCheck, HandCoins, Newspaper, Send, Users } from 'lucide-react';
+import { CalendarDays, Camera, CircleAlert, ClipboardCheck, HandCoins, Newspaper, Send, Users } from 'lucide-react';
 import { Toaster } from 'sonner';
 import type { User } from 'firebase/auth';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
@@ -36,6 +36,7 @@ import MoneyInList from './admin/MoneyInList';
 import FieldReportForm from './admin/FieldReportForm';
 import QueuePanel from './admin/QueuePanel';
 import TeamPanel from './admin/TeamPanel';
+import EventEditor from './admin/EventEditor';
 import PublicExperiencePanel from './admin/PublicExperiencePanel';
 import ContextualHelp, { GlobalHelp } from './admin/ContextualHelp';
 import { inputCls } from './admin/formUtils';
@@ -48,12 +49,13 @@ function buildTabs(t: LanguageContextValue['t']) {
     { id: 'transfer', label: t.admin.tabs.transfer, icon: Send },
     { id: 'update', label: t.admin.tabs.update, icon: Newspaper },
     { id: 'photos', label: t.admin.tabs.photos, icon: Camera },
+    { id: 'events', label: t.admin.tabs.events, icon: CalendarDays },
     { id: 'queue', label: t.ops.queue.title.replace('.', ''), icon: ClipboardCheck },
     { id: 'team', label: t.ops.team.title.replace('.', ''), icon: Users },
   ] as const;
 }
 
-type TabId = 'gift' | 'transfer' | 'update' | 'photos' | 'queue' | 'team';
+type TabId = 'gift' | 'transfer' | 'update' | 'photos' | 'events' | 'queue' | 'team';
 
 function useOnlineStatus(): boolean {
   const [online, setOnline] = useState(() => navigator.onLine);
@@ -99,10 +101,14 @@ function FirebaseNotice() {
 function AdminPanel({
   email,
   staffName,
+  staff,
+  uid,
   onSignOut,
 }: {
   email: string;
   staffName: string;
+  staff: StaffUser;
+  uid: string;
   onSignOut: () => void;
 }) {
   const [tab, setTab] = useState<TabId>('gift');
@@ -241,6 +247,19 @@ function AdminPanel({
                   <ContextualHelp area="photos" areaLabel={t.admin.tabs.photos} />
                 </div>
                 <PhotosForm onSaved={onSaved} />
+              </motion.div>
+            </TabsContent>
+            <TabsContent value="events" className="mt-0">
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, ease: EASE }}
+              >
+                {/* one help button per panel (final doc 53-55) */}
+                <div className="mb-3 flex justify-end">
+                  <ContextualHelp area="events" areaLabel={t.admin.tabs.events} />
+                </div>
+                <EventEditor staff={staff} uid={uid} email={email} />
               </motion.div>
             </TabsContent>
             <TabsContent value="queue" className="mt-0">
@@ -478,6 +497,8 @@ export default function Admin() {
             <AdminPanel
               email={user.email ?? 'admin'}
               staffName={staff.staff?.name ?? user.email ?? 'admin'}
+              staff={staff.staff as StaffUser}
+              uid={user.uid}
               onSignOut={() => void signOut()}
             />
           )

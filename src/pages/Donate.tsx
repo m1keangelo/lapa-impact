@@ -205,9 +205,6 @@ export default function Donate() {
         <p className="mt-5 text-center text-[14px] font-medium leading-[1.55] text-text">
           {t.donate.page.supportLine}
         </p>
-        <p className="mt-4 text-center font-display text-[15px] italic leading-[1.5] text-text-muted">
-          {t.donate.page.grow}
-        </p>
         <p className="mt-3 text-center text-[12px] font-medium tracking-[0.01em] text-text-faint">
           {t.donate.page.secureNote}
         </p>

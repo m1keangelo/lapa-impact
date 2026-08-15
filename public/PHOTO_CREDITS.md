@@ -25,4 +25,8 @@ except where a source file was itself a published crop (noted below).
 License references:
 - CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
 - USGS public-domain policy: https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
+
+Note: `memory-table.jpg` is NOT a documentary photograph — it is an
+AI-generated illustrative image used only for the nostalgic "Memory" beat
+of the MEMORY → NOW transition. It is never presented as field evidence.
 | `quake-6.jpg` | Street in Cali with collapsed building rubble; World Central Kitchen delivered debris-removal tools (picks, shovels, helmets, vests, sacks, masks, gloves), 13 Aug 2026 | https://commons.wikimedia.org/wiki/File:Cali_after_the_earthquake_-_WCK.jpg | CC BY 4.0 | Photo: World Central Kitchen, CC BY 4.0, via Wikimedia Commons |

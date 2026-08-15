@@ -103,11 +103,21 @@ export const en = {
         'An accent our parents never lost.',
       ],
       carried: 'We grew up carrying all of it.',
+    },
+    generation: {
       left: 'They left home so we could build one.',
       built: 'We built it.',
-      turnTitle: "We didn't get here alone.",
-      turnA: 'Someone helped our families find their footing.',
-      turnB: "Now it's our turn to reach back.",
+      remember: 'Now we remember where we came from.',
+      notAlone: "We didn't get here alone.",
+      someoneHelped: 'Someone helped our families find their footing.',
+      reachBack: "Now it's our turn to reach back.",
+    },
+    memoryNow: {
+      memoryLabel: 'Memory',
+      nowLabel: 'Now',
+      showUp: 'We show up.',
+      memoryAlt: 'A family kitchen table after a meal, in warm lamplight',
+      nowAlt: 'Neighbors and rescue crews in the street after the earthquake in Colombia',
     },
     intro: {
       eyebrow: 'Who we are',
@@ -119,26 +129,60 @@ export const en = {
       mottoEn: "We're from there. We're from here. And somehow, we're from both.",
       bordersA: 'The borders changed.',
       bordersB: "Our roots didn't.",
-      purpose: 'Our roots are Latino. Our mission is human.',
-      action: 'LAPA.Help is what happens when community becomes action.',
-      goWhere: 'We go where our people need us most.',
-      colombia: '🇨🇴 Today, Colombia needs us.',
+      manyRoots: 'We grew up among many roots.',
     },
     path: {
       eyebrow: 'How it works',
-      title: 'Your money has a path.',
-      aria: 'You give, we act, you see',
-      stages: [
-        { title: 'YOU GIVE', body: '$25' },
-        { title: 'WE ACT', body: 'Supplies are purchased' },
-        { title: 'YOU SEE', body: 'Help is delivered — photo, details, proof' },
+      title: 'Your help has a path.',
+      aria: 'You give, your payment clears, we group cleared funds, help goes out, you see it',
+      steps: [
+        { title: 'YOU GIVE', body: 'You choose your amount and give securely.' },
+        {
+          title: 'YOUR PAYMENT CLEARS',
+          body: 'Your payment is processed. Once the funds are cleared and available to us, they enter the response fund.',
+        },
+        {
+          title: 'WE GROUP CLEARED FUNDS',
+          body: "We don't send a separate transfer for every donation. We group cleared funds into practical amounts and avoid unnecessary costs.",
+        },
+        {
+          title: 'HELP GOES OUT',
+          body: 'When funds are available and a real need exists, we purchase what is needed and move it where it can help most.',
+        },
+        {
+          title: 'YOU SEE IT',
+          body: 'We show what happened: purchases, dates, locations, field updates, photos and available proof.',
+        },
       ] as { title: string; body: string }[],
+      lessWaste: 'More help. Less waste.',
+    },
+    whyBuilt: {
+      title: 'Why we built it this way.',
+      bodyA:
+        'Some fundraising models use scheduled or post-campaign disbursements. LAPA.Help is intentionally designed for rolling emergency response — available funds move toward real needs as soon as they have processed.',
+      bodyB:
+        'Processing payments has a cost, but when people need help, time matters too.',
+      timeMatters: 'In an emergency, time matters.',
+      timeLines: [
+        'A roof before the next rain.',
+        'Water before it runs out.',
+        'Food while the need is still urgent.',
+        'Supplies while they can still make a difference.',
+      ],
+      peak: "We didn't build LAPA.Help to wait. We built it to respond.",
+      closer: [
+        'Funds are processed.',
+        'They are grouped.',
+        'Help moves when a real need exists.',
+        'And we show you what happened.',
+      ],
     },
     feedPreview: {
       eyebrow: 'Happening now',
       title: 'Watch it move.',
       body: 'Real gifts, real deliveries, real photos — everything below just happened, and updates live.',
       seeFeed: 'SEE THE LIVE FEED →',
+      giveActSee: 'You give → We act → You see',
       seeFeedSub:
         'Follow donations, purchases, deliveries, updates and photos as they happen.',
       errorTitle: 'The ledger hiccuped.',
@@ -159,11 +203,16 @@ export const en = {
     quote: {
       text: "You don't donate and hope. You donate and watch.",
     },
+    bridge: {
+      action: 'LAPA.Help is what happens when community becomes action.',
+      goWhere: 'We go where our people need us most.',
+      colombia: '🇨🇴 Today, that is Colombia.',
+    },
     closing: {
       remember: 'We remember where we came from.',
       knowA: 'We know what it took to get here.',
       knowB: "We know we didn't get here alone.",
-      showUp: 'So when our people need us, we show up.',
+      purpose: 'Our roots are Latino. Our mission is human.',
       roots: "Our roots don't stop at a border.",
       responsibility: 'Neither does our responsibility.',
       sign: 'LAPA.Help',
@@ -268,14 +317,24 @@ export const en = {
     ticketTitle: 'Solidarity Ticket',
     ticketChip: 'Ticket',
     ticketBody:
-      'Every ticket joins the Colombia response fund — the same public fund you can watch here.',
+      'Net ticket proceeds support the Colombia response — the same public fund you can watch here.',
     getTicket: 'Get your ticket',
     donateCta: 'Donate',
-    emotionTitle: 'Come for the night. Show up for something bigger.',
+    emotionTitle: 'Come for the party. Stay for the mission.',
     emotionBody:
       'This is more than an event. What the night raises goes to the same shared fund on this site — every dollar in, every dollar out, in public.',
+    whatTitle: "What's happening",
     bizTitle: 'Businesses showing up',
-    bizSub: 'This is what community looks like.',
+    bizSub: 'Dozens of local businesses are showing up.',
+    waysTitle: 'Ways to help',
+    ways: [
+      'Come — and bring your people.',
+      'Donate — any amount joins the same fund.',
+      'Share — send this night to someone who should be there.',
+      'Partner — your business can show up too.',
+    ],
+    seeWhere: 'See where the help goes →',
+    grow: 'We grow because we give. And because we give, we grow.',
   },
 
   impact: {
@@ -592,6 +651,18 @@ export const en = {
         donorsSee: 'Nothing — the team list is private.',
         example: '',
       },
+      events: {
+        title: 'Edit the event',
+        does: 'This is the public event page — name, date, place, ticket, performers, businesses.',
+        enter: [
+          'Only confirmed facts — never invent performers, sponsors or prizes',
+          'Every field has an English and a Spanish side',
+          'Nothing changes publicly until you press Publish',
+        ],
+        next: 'Publish — and the event page updates live within a second.',
+        donorsSee: 'Exactly what you publish here: the night, the place, the ticket and who is showing up.',
+        example: 'Grand Opening & Fundraiser · Saturday, August 22, 2026 · La Loca, Washington DC',
+      },
     } as Record<
       string,
       { title: string; does: string; enter: string[]; next: string; donorsSee: string; example: string }
@@ -603,6 +674,7 @@ export const en = {
       transfer: 'Transfer',
       update: 'Update',
       photos: 'Photos',
+      events: 'Event',
     },
     tabAria: 'Admin workbench',
     offlineBanner: "You're offline — writes will fail until reconnected.",
@@ -636,6 +708,52 @@ export const en = {
       dateTime: 'Date / time',
       cents: (n: string) => `→ ${n} cents`,
       savedLive: 'Recorded · live now',
+    },
+    ev: {
+      readOnlyTitle: 'Read-only for you.',
+      readOnlyNote:
+        'Only the primary organizer can edit and publish the event. You can review every field here.',
+      claimNote:
+        'No primary organizer is set yet. As an admin, you can claim that role once.',
+      claimCta: 'Make me the primary organizer',
+      claiming: 'Claiming…',
+      sections: {
+        basics: 'Basics',
+        datePlace: 'Date & place',
+        ticket: 'Ticket & donation',
+        performers: 'Performers & hosts',
+        features: 'Features',
+        businesses: 'Businesses & sponsors',
+        media: 'Media',
+        publishing: 'Publishing',
+      },
+      titleEn: 'Event name (English)',
+      titleEs: 'Event name (Spanish)',
+      dateEn: 'Date (English)',
+      dateEs: 'Date (Spanish)',
+      timeEn: 'Time (English)',
+      timeEs: 'Time (Spanish)',
+      venue: 'Venue',
+      address: 'Address',
+      price: 'Ticket price',
+      ticketUrl: 'Ticket link (Stripe)',
+      image: 'Event photo or poster URL',
+      imageHint: 'Leave empty until a real photo or poster exists.',
+      name: 'Name',
+      roleEn: 'Role (English)',
+      roleEs: 'Role (Spanish)',
+      featureEn: 'Feature (English)',
+      featureEs: 'Feature (Spanish)',
+      givesEn: 'What they give (English)',
+      givesEs: 'What they give (Spanish)',
+      kindEn: 'Tag (English)',
+      kindEs: 'Tag (Spanish)',
+      add: 'Add',
+      remove: 'Remove',
+      publish: 'Publish event',
+      publishing: 'Publishing…',
+      published: 'Published — the event page updated live.',
+      publishNote: 'Nothing changes publicly until you press Publish.',
     },
     giftForm: {
       donorName: 'Donor name',
@@ -738,14 +856,13 @@ export const en = {
       opening: 'Opening secure checkout…',
       checkoutError:
         'We could not open secure checkout. Please try again in a moment.',
-      grow: 'We grow because we give. And because we give, we grow.',
       secureNote: 'Secure checkout by Stripe · Cards, Apple Pay, Google Pay',
     },
     success: {
       confirmingTitle: 'Confirming your gift with Stripe…',
       confirmingBody:
         'Hang tight — Stripe is telling us your gift landed. This usually takes a few seconds; keep this tab open.',
-      confirmedTitle: 'You’re in.',
+      confirmedTitle: 'You showed up.',
       confirmedBody:
         'Thank you for showing up. Your gift joined one shared fund — deployed where the need is greatest. This code is your window into the mission:',
       yourCode: 'Your private code',
@@ -754,16 +871,16 @@ export const en = {
       copyCode: 'Copy code',
       seeMyImpact: 'See my impact',
       inBody:
-        'Your gift just joined the Colombia response fund — the same fund you can watch move on the live feed.',
+        'Your contribution is now part of the response — the same fund you can watch move on the live feed.',
       createAccountHint:
         'Use the same email you gave with — one account, created once, and the mission is always waiting for you here.',
-      goToMyImpact: 'Go to My Impact',
+      goToMyImpact: 'See your impact →',
       skipForNow: 'Skip for now — watch the feed',
       shareCta: 'Share the proof',
       shareText:
         'I gave. I watched. This is where the help went. — LAPA.Help · Colombia · 2026',
       copied: 'Link copied',
-      watchFeed: 'Watch the live feed',
+      watchFeed: 'See what happens next →',
       timeoutTitle: 'Still confirming…',
       timeoutBody:
         'Stripe is taking longer than usual to confirm your gift. If your payment went through, your code is on its way — contact us and we’ll sort it out.',

@@ -61,6 +61,8 @@ export function useStaff(user: User | null): StaffState {
         name: name.trim() || user.email?.split('@')[0] || 'Admin',
         role: 'admin' satisfies StaffRole,
         active: true,
+        // The first (bootstrap) admin is the primary organizer (PART 69).
+        primary: true,
         email: user.email ?? undefined,
         createdAt: serverTimestamp() as never,
       };
