@@ -739,6 +739,8 @@ export const en = {
       ticketUrl: 'Ticket link (Stripe)',
       image: 'Event photo or poster URL',
       imageHint: 'Leave empty until a real photo or poster exists.',
+      uploadPoster: 'Upload poster or photo',
+      uploadError: 'Upload failed — paste a direct image URL instead.',
       name: 'Name',
       roleEn: 'Role (English)',
       roleEs: 'Role (Spanish)',

@@ -737,6 +737,8 @@ export const es: Dictionary = {
       ticketUrl: 'Enlace del tiquete (Stripe)',
       image: 'URL de foto o póster del evento',
       imageHint: 'Déjalo vacío hasta que exista una foto o póster real.',
+      uploadPoster: 'Subir póster o foto',
+      uploadError: 'Falló la subida — pega una URL directa de imagen.',
       name: 'Nombre',
       roleEn: 'Rol (inglés)',
       roleEs: 'Rol (español)',

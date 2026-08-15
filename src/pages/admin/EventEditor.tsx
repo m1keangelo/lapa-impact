@@ -7,8 +7,9 @@
  * publish; every other role sees the same fields read-only. If no primary
  * organizer exists yet, an admin can claim the role once, right here.
  */
-import { useEffect, useMemo, useState } from 'react';
-import { ChevronDown, Lock, Plus, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ChevronDown, ImagePlus, Lock, Plus, Trash2 } from 'lucide-react';
+import imageCompression from 'browser-image-compression';
 import {
   collection,
   doc,
@@ -21,6 +22,7 @@ import { useLanguage } from '@/i18n/LanguageContext';
 import { db } from '@/lib/firebase';
 import { SEED_EVENT, type EventDoc } from '@/lib/eventData';
 import { useEvent } from '@/hooks/useEvent';
+import { cloudinaryReady, uploadToCloudinary } from '@/lib/cloudinary';
 import type { StaffUser } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Field } from './fields';
@@ -89,6 +91,9 @@ export default function EventEditor({
   const [busy, setBusy] = useState(false);
   const [claimBusy, setClaimBusy] = useState(false);
   const [hasPrimary, setHasPrimary] = useState<boolean | null>(null);
+  const [posterBusy, setPosterBusy] = useState(false);
+  const [posterError, setPosterError] = useState(false);
+  const posterInput = useRef<HTMLInputElement>(null);
 
   const isPrimary = staff.role === 'admin' && staff.primary === true;
   const canEdit = isPrimary;
@@ -132,6 +137,28 @@ export default function EventEditor({
       console.warn('[EventEditor] claim failed:', err);
     } finally {
       setClaimBusy(false);
+    }
+  };
+
+  /** Poster/photo upload: pick → compress in-browser → Cloudinary → draft. */
+  const onPosterFile = async (file: File | null) => {
+    if (!file || posterBusy) return;
+    setPosterError(false);
+    setPosterBusy(true);
+    try {
+      const compressed = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      });
+      const result = await uploadToCloudinary(compressed, { folder: 'lapa-event' });
+      patch((d) => ((d.image = result.secureUrl), d));
+    } catch (err) {
+      console.warn('[EventEditor] poster upload failed:', err);
+      setPosterError(true);
+    } finally {
+      setPosterBusy(false);
+      if (posterInput.current) posterInput.current.value = '';
     }
   };
 
@@ -357,6 +384,29 @@ export default function EventEditor({
 
       {/* ── MEDIA ────────────────────────────────────────────────── */}
       <Section title={ev.sections.media} open={openSections.includes('media')} onToggle={() => toggle('media')}>
+        {canEdit && cloudinaryReady ? (
+          <>
+            <input
+              ref={posterInput}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => void onPosterFile(e.target.files?.[0] ?? null)}
+            />
+            <button
+              type="button"
+              disabled={posterBusy}
+              onClick={() => posterInput.current?.click()}
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-[10px] border border-border-strong px-5 text-[14px] font-semibold text-text transition-colors hover:bg-surface-2/60 disabled:opacity-60"
+            >
+              <ImagePlus className="h-4 w-4 text-amber" aria-hidden />
+              {posterBusy ? t.admin.photosForm.uploading : ev.uploadPoster}
+            </button>
+            {posterError ? (
+              <p className="text-[13px] font-medium text-danger">{ev.uploadError}</p>
+            ) : null}
+          </>
+        ) : null}
         <Field label={ev.image} hint={ev.imageHint}>
           <input
             disabled={disabled}
