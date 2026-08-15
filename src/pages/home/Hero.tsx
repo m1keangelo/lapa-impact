@@ -30,8 +30,10 @@ import { ChevronDown, HandCoins } from 'lucide-react';
 import LiveBadge from '@/components/LiveBadge';
 import PreviewChip from '@/components/PreviewChip';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
+import { useHeroImages } from '@/hooks/useHeroImages';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { campaignEyebrow } from '@/lib/campaign';
+import { cloudinaryUrl } from '@/lib/cloudinary';
 import { CHECKOUT_AVAILABLE } from '@/lib/donate';
 import { formatCount, formatMoneyShort } from '@/lib/format';
 
@@ -138,6 +140,23 @@ export default function Hero() {
   const flash = useAnimationControls();
   const [showNumbers, setShowNumbers] = useState(false);
 
+  /* Rotating backgrounds: admin-managed photos (settings/hero) crossfade
+     over the bundled default — each holds 4s, then a 1.2s fade. With zero
+     or one remote photo (or reduced motion) the hero stays still. */
+  const { images: heroImages } = useHeroImages();
+  const imagesKey = heroImages.join('|');
+  const [slide, setSlide] = useState(0);
+  useEffect(() => setSlide(0), [imagesKey]);
+  useEffect(() => {
+    if (reduceMotion || heroImages.length <= 1) return;
+    const id = window.setInterval(
+      () => setSlide((s) => (s + 1) % heroImages.length),
+      4000,
+    );
+    return () => window.clearInterval(id);
+  }, [heroImages.length, reduceMotion]);
+  const activeSlide = heroImages.length > 0 ? slide % heroImages.length : 0;
+
   // Background parallax: 0.4× scroll speed, fading to bg by end of hero.
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -167,7 +186,9 @@ export default function Hero() {
       className="relative flex items-center justify-center overflow-hidden"
       style={{ minHeight: 'max(100dvh, 640px)' }}
     >
-      {/* Background: responsive image + parallax */}
+      {/* Background: responsive default photo + admin-managed slideshow
+          crossfading on top (4s hold, 1.2s fade). The default stays as the
+          base layer so first paint is always instant. */}
       <motion.div style={{ y: bgY, opacity: bgOpacity }} className="absolute inset-0">
         <picture>
           <source
@@ -192,6 +213,18 @@ export default function Hero() {
             className="h-full w-full object-cover"
           />
         </picture>
+        {heroImages.map((src, i) => (
+          <img
+            key={src}
+            src={cloudinaryUrl(src, { width: 1920 })}
+            alt=""
+            aria-hidden
+            loading={i === 0 ? 'eager' : 'lazy'}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-out ${
+              i === activeSlide ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        ))}
       </motion.div>
 
       {/* Scrims: base linear + radial readability gradient centered on the

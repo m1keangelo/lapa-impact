@@ -618,6 +618,18 @@ export const es: Dictionary = {
         donorsSee: 'Exactamente lo que publicas aquí: la noche, el lugar, el tiquete y quién se está sumando.',
         example: 'Gran inauguración y recaudación · Sábado, 22 de agosto de 2026 · La Loca, Washington DC',
       },
+      hero: {
+        title: 'Rota las fotos del encabezado',
+        does: 'La foto grande detrás del titular principal puede rotar entre varias de tus fotos.',
+        enter: [
+          'Fotos horizontales fuertes — gente real, momentos reales',
+          'El orden que ves aquí es el orden de rotación',
+          'Quita la última foto para volver a la imagen predeterminada',
+        ],
+        next: 'Cada foto se muestra 4 segundos y luego se desvanece en la siguiente — automáticamente.',
+        donorsSee: 'Tus fotos rotando detrás del titular en la portada.',
+        example: '',
+      },
     } as Record<
       string,
       { title: string; does: string; enter: string[]; next: string; donorsSee: string; example: string }
@@ -630,6 +642,17 @@ export const es: Dictionary = {
       update: 'Reporte',
       photos: 'Fotos',
       events: 'Evento',
+      hero: 'Portada',
+    },
+    heroForm: {
+      title: 'Fotos del encabezado principal',
+      sub: 'Estas fotos rotan detrás del titular principal. Cada una se muestra 4 segundos y luego se desvanece en la siguiente. El orden de abajo es el orden de rotación.',
+      uploadCta: 'Agregar fotos',
+      uploading: 'Subiendo…',
+      empty: 'Aún no hay fotos adicionales — la portada muestra solo la foto predeterminada.',
+      removeAria: 'Quitar esta foto',
+      readOnly: 'Solo un administrador puede cambiar las fotos del encabezado.',
+      saved: 'Fotos del encabezado actualizadas.',
     },
     tabAria: 'Mesa de trabajo del administrador',
     offlineBanner: 'Estás sin conexión — los registros fallarán hasta que te reconectes.',

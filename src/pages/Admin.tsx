@@ -12,7 +12,7 @@
  */
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarDays, Camera, CircleAlert, ClipboardCheck, HandCoins, Newspaper, Send, Users } from 'lucide-react';
+import { CalendarDays, Camera, CircleAlert, ClipboardCheck, HandCoins, Images, Newspaper, Send, Users } from 'lucide-react';
 import { Toaster } from 'sonner';
 import type { User } from 'firebase/auth';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
@@ -37,6 +37,7 @@ import FieldReportForm from './admin/FieldReportForm';
 import QueuePanel from './admin/QueuePanel';
 import TeamPanel from './admin/TeamPanel';
 import EventEditor from './admin/EventEditor';
+import HeroEditor from './admin/HeroEditor';
 import PublicExperiencePanel from './admin/PublicExperiencePanel';
 import ContextualHelp, { GlobalHelp } from './admin/ContextualHelp';
 import { inputCls } from './admin/formUtils';
@@ -50,12 +51,13 @@ function buildTabs(t: LanguageContextValue['t']) {
     { id: 'update', label: t.admin.tabs.update, icon: Newspaper },
     { id: 'photos', label: t.admin.tabs.photos, icon: Camera },
     { id: 'events', label: t.admin.tabs.events, icon: CalendarDays },
+    { id: 'hero', label: t.admin.tabs.hero, icon: Images },
     { id: 'queue', label: t.ops.queue.title.replace('.', ''), icon: ClipboardCheck },
     { id: 'team', label: t.ops.team.title.replace('.', ''), icon: Users },
   ] as const;
 }
 
-type TabId = 'gift' | 'transfer' | 'update' | 'photos' | 'events' | 'queue' | 'team';
+type TabId = 'gift' | 'transfer' | 'update' | 'photos' | 'events' | 'hero' | 'queue' | 'team';
 
 function useOnlineStatus(): boolean {
   const [online, setOnline] = useState(() => navigator.onLine);
@@ -260,6 +262,18 @@ function AdminPanel({
                   <ContextualHelp area="events" areaLabel={t.admin.tabs.events} />
                 </div>
                 <EventEditor staff={staff} uid={uid} email={email} />
+              </motion.div>
+            </TabsContent>
+            <TabsContent value="hero" className="mt-0">
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, ease: EASE }}
+              >
+                <div className="mb-3 flex justify-end">
+                  <ContextualHelp area="hero" areaLabel={t.admin.tabs.hero} />
+                </div>
+                <HeroEditor staff={staff} email={email} />
               </motion.div>
             </TabsContent>
             <TabsContent value="queue" className="mt-0">

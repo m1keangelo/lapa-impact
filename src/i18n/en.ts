@@ -619,6 +619,18 @@ export const en = {
         donorsSee: 'Exactly what you publish here: the night, the place, the ticket and who is showing up.',
         example: 'Grand Opening & Fundraiser · Saturday, August 22, 2026 · La Loca, Washington DC',
       },
+      hero: {
+        title: 'Rotate the hero photos',
+        does: 'The big photo behind the main headline can rotate through several of your photos.',
+        enter: [
+          'Strong horizontal photos — real people, real moments',
+          'The order you see here is the rotation order',
+          'Remove the last photo to return to the default image',
+        ],
+        next: 'Each photo shows for 4 seconds, then fades into the next — automatically.',
+        donorsSee: 'Your photos rotating behind the headline on the homepage.',
+        example: '',
+      },
     } as Record<
       string,
       { title: string; does: string; enter: string[]; next: string; donorsSee: string; example: string }
@@ -631,6 +643,17 @@ export const en = {
       update: 'Update',
       photos: 'Photos',
       events: 'Event',
+      hero: 'Hero',
+    },
+    heroForm: {
+      title: 'Homepage hero photos',
+      sub: 'These photos rotate behind the main headline. Each one shows for 4 seconds, then fades into the next. The order below is the rotation order.',
+      uploadCta: 'Add photos',
+      uploading: 'Uploading…',
+      empty: 'No extra photos yet — the homepage shows the default photo only.',
+      removeAria: 'Remove this photo',
+      readOnly: 'Only an admin can change the hero photos.',
+      saved: 'Hero photos updated.',
     },
     tabAria: 'Admin workbench',
     offlineBanner: "You're offline — writes will fail until reconnected.",
