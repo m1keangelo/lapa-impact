@@ -33,6 +33,10 @@ export interface Donation {
   email?: string;
   /** denormalized privacy-safe display name, e.g. "Maria G." */
   donorName?: string;
+  /** Firebase Auth uid of the donor's account, stamped server-side (§35–37). */
+  donorUid?: string;
+  /** 'ticket' for event tickets, otherwise stripe checkout */
+  source?: string;
 }
 
 /** transfers/{id} — money out to the field. */

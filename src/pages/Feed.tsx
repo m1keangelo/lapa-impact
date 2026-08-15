@@ -414,6 +414,15 @@ export default function Feed() {
 
           {view === 'now' && status !== 'loading' && status !== 'error' ? (
             visibleEntries.length === 0 ? (
+              /* §53 — when the whole ledger is still empty, the empty state
+                 IS the message: the mission is just beginning. */
+              status === 'empty' && !search && filter === 'all' ? (
+                <EmptyState
+                  icon={Inbox}
+                  title={t.feed.missionEmptyTitle}
+                  body={t.feed.missionEmptyBody}
+                />
+              ) : (
               <EmptyState
                 icon={filter === 'photo' ? Camera : filter === 'donation' ? HandCoins : filter === 'transfer' ? Send : filter === 'update' ? Newspaper : Inbox}
                 title={t.feed.emptyTitle}
@@ -423,6 +432,7 @@ export default function Feed() {
                     : t.feed.emptyFilter(filterLabel)
                 }
               />
+              )
             ) : (
               <div className="space-y-8">
                 {groups.map((group) => (

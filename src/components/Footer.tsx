@@ -23,7 +23,7 @@ export default function Footer() {
           {/* 1 — Mission */}
           <div>
             <Link to="/" className="flex items-center gap-2.5">
-              <img src="/logo.svg" alt="" className="h-6 w-6" />
+              <img src="/logo-mark.png" alt="" className="h-7 w-7 rounded-full" />
               <span className="font-display text-[17px] font-medium text-[#F7F5F0]">
                 LAPA.Help
               </span>
@@ -45,8 +45,9 @@ export default function Footer() {
             <ul className="mt-4 space-y-2.5">
               {[
                 { to: '/feed', label: t.footer.liveFeed },
+                { to: '/event', label: t.nav.event },
                 { to: '/gallery', label: t.footer.photoGallery },
-                { to: '/login', label: t.footer.enterCode },
+                { to: '/impact', label: t.nav.myImpact },
               ].map((l) => (
                 <li key={l.to}>
                   <Link

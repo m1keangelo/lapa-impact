@@ -67,3 +67,76 @@ export function campaignEyebrow(lang: 'en' | 'es'): string {
   const country = lang === 'es' ? CAMPAIGN.countryEs : CAMPAIGN.country;
   return `${CAMPAIGN.flag} ${country} · ${CAMPAIGN.campaignYear}`;
 }
+
+/* ─── Fundraiser event (master §40–44) ─────────────────────────────── */
+
+export interface EventBusiness {
+  name: string;
+  /** What they're contributing, bilingual. */
+  gives: { en: string; es: string };
+  /** Category tag, bilingual (Service/Prize, Marketing, Venue + Proceeds…). */
+  kind: { en: string; es: string };
+}
+
+export interface MissionEvent {
+  /**
+   * Null until the organizer confirms — the page renders a clearly marked
+   * PENDING chip instead of ever inventing details (§44).
+   */
+  title: string | null;
+  dateLabel: { en: string; es: string } | null;
+  timeLabel: string | null;
+  locationLabel: string | null;
+  /** Solidarity ticket price, integer cents (§41: $25). */
+  ticketPriceCents: number;
+  /**
+   * Confirmed local businesses (§43). A business only appears here once
+   * the organizer confirms it — this list is the source of truth.
+   */
+  businesses: EventBusiness[];
+}
+
+export const EVENT: MissionEvent = {
+  title: null, // PENDING — event name to be confirmed
+  dateLabel: null, // PENDING — date to be confirmed
+  timeLabel: null, // PENDING — time to be confirmed
+  locationLabel: null, // PENDING — location to be confirmed
+  ticketPriceCents: 2500,
+  businesses: [
+    {
+      name: 'BETO AUTO REPAIR',
+      gives: { en: 'A year of oil changes for five winners', es: 'Un año de cambios de aceite para cinco ganadores' },
+      kind: { en: 'Service · Prize', es: 'Servicio · Premio' },
+    },
+    {
+      name: 'THINK LOGIC',
+      gives: { en: 'Event shirts', es: 'Camisetas del evento' },
+      kind: { en: 'Merchandise · In-kind', es: 'Mercancía · En especie' },
+    },
+    {
+      name: 'CASA REAL',
+      gives: { en: 'Marketing', es: 'Marketing' },
+      kind: { en: 'Marketing', es: 'Marketing' },
+    },
+    {
+      name: 'M STREET MORTGAGE',
+      gives: { en: 'Event hosting', es: 'Anfitrión del evento' },
+      kind: { en: 'Event · Hosting', es: 'Evento · Anfitrión' },
+    },
+    {
+      name: 'DJ FLACO',
+      gives: { en: 'Promotion', es: 'Promoción' },
+      kind: { en: 'Marketing · Promotion', es: 'Marketing · Promoción' },
+    },
+    {
+      name: 'DJ DANNY',
+      gives: { en: 'Promotion', es: 'Promoción' },
+      kind: { en: 'Marketing · Promotion', es: 'Marketing · Promoción' },
+    },
+    {
+      name: 'LA LOCO',
+      gives: { en: 'Venue + proceeds', es: 'Lugar + recaudación' },
+      kind: { en: 'Venue · Proceeds', es: 'Lugar · Recaudación' },
+    },
+  ],
+};

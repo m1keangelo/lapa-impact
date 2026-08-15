@@ -14,6 +14,7 @@ import { onRequest } from 'firebase-functions/v2/https';
 import { defineSecret } from 'firebase-functions/params';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
 import { customAlphabet } from 'nanoid';
 import Stripe from 'stripe';
 
@@ -26,6 +27,23 @@ const newDonorCode = customAlphabet('0123456789', 6);
 function db() {
   if (getApps().length === 0) initializeApp();
   return getFirestore();
+}
+
+/**
+ * If the donor already has a LAPA.Help account under this email, link the
+ * gift to their uid so it appears in My Impact immediately (§35–37).
+ */
+async function donorUidForEmail(
+  email: string | undefined,
+): Promise<string | null> {
+  if (!email) return null;
+  try {
+    if (getApps().length === 0) initializeApp();
+    const user = await getAuth().getUserByEmail(email);
+    return user.uid;
+  } catch {
+    return null; // no account yet — linkMyDonations picks it up later
+  }
 }
 
 export const stripeWebhook = onRequest(
@@ -81,6 +99,7 @@ export const stripeWebhook = onRequest(
     const name =
       session.customer_details?.name?.trim() || 'Friend of LAPA';
     const amount = session.amount_total ?? 0; // integer cents already
+    const donorUid = await donorUidForEmail(email);
 
     // (b) Find an existing donor by email, or mint a new code.
     let donorCode: string | null = null;
@@ -128,7 +147,9 @@ export const stripeWebhook = onRequest(
       donorCode,
       amount,
       timestamp: FieldValue.serverTimestamp(),
-      ...(email ? { email } : {}),
+      // PII stays out of this public-read doc — email lives only in
+      // donors/ + stripeSessions/ (rules-closed); the account link is the uid.
+      ...(donorUid ? { donorUid } : {}),
       donorName: name,
       stripeSessionId: session.id,
       source: session.metadata?.type === 'ticket' ? 'ticket' : 'stripe',
@@ -147,6 +168,9 @@ export const stripeWebhook = onRequest(
     batch.set(sessionRef, {
       code: donorCode,
       status: 'confirmed',
+      donationId: donationRef.id,
+      ...(email ? { email } : {}),
+      ...(donorUid ? { donorUid } : {}),
       createdAt: FieldValue.serverTimestamp(),
     });
 

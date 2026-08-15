@@ -1,8 +1,9 @@
 /**
- * Navbar (design.md §7.1) — sticky top, translucent bg + backdrop-blur,
- * 1px bottom border, 60px tall. Routes: / (logo), /feed, /gallery, /login,
- * and /impact ("My Impact") when a donor code is in sessionStorage.
- * The admin route is intentionally NOT linked here.
+ * Navbar (master §39) — sticky top, translucent bg + backdrop-blur, 60px.
+ * Desktop links: Mission / Give / Live / Event / My Impact. Mobile chrome is
+ * only Logo + Give + Menu; everything else lives in the sheet. The gallery
+ * moves to the menu + footer; the admin route is never linked here.
+ * LAPA↗ stays hidden until the real LAPA site URL exists (§39).
  *
  * Positioning contract: sticky in normal flow — Layout and pages add no
  * nav-height offset (see react-dev.md).
@@ -14,7 +15,6 @@ import { Menu, HandCoins } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { CAMPAIGN } from '@/lib/campaign';
 import { CHECKOUT_AVAILABLE } from '@/lib/donate';
-import { getDonorCode } from '@/lib/session';
 import { cn } from '@/lib/utils';
 import LanguageToggle from './LanguageToggle';
 import {
@@ -29,14 +29,6 @@ export default function Navbar() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { t } = useLanguage();
 
-  const NAV_LINKS = [
-    { to: '/feed', label: t.nav.feed },
-    { to: '/gallery', label: t.nav.gallery },
-  ];
-
-  // Re-check the donor session on every navigation.
-  const donorCode = getDonorCode();
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -47,14 +39,28 @@ export default function Navbar() {
 
   const amberBtn =
     'rounded-[10px] bg-amber px-4 py-2 text-sm font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]';
-  const secondaryBtn =
-    'rounded-[10px] border border-border-strong px-4 py-2 text-sm font-semibold text-text transition-all duration-150 ease-calm hover:bg-surface-2/60 active:scale-[0.98]';
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
       'rounded-[10px] px-3 py-2 text-sm font-medium transition-colors duration-200 ease-calm',
       isActive ? 'text-amber' : 'text-text-muted hover:text-text',
     );
+
+  // §39 — the whole public site in five words.
+  const desktopLinks = [
+    { to: '/', label: t.nav.mission, end: true },
+    { to: '/feed', label: t.nav.live, end: false },
+    { to: '/event', label: t.nav.event, end: false },
+    { to: '/impact', label: t.nav.myImpact, end: false },
+  ];
+
+  const sheetLinks = [
+    { to: '/', label: t.nav.mission },
+    { to: '/feed', label: t.nav.live },
+    { to: '/event', label: t.nav.event },
+    { to: '/impact', label: t.nav.myImpact },
+    { to: '/gallery', label: t.nav.gallery },
+  ];
 
   return (
     <header
@@ -68,7 +74,7 @@ export default function Navbar() {
       <div className="mx-auto flex h-full w-full max-w-container items-center justify-between px-5 md:px-8">
         {/* Brand */}
         <Link to="/" className="flex items-center gap-2.5" aria-label={t.nav.brandHome}>
-          <img src="/logo.svg" alt="" className="h-6 w-6" />
+          <img src="/logo-mark.png" alt="" className="h-7 w-7 rounded-full" />
           <span className="font-display text-[17px] font-medium tracking-[-0.01em] text-text">
             LAPA.Help
           </span>
@@ -82,34 +88,13 @@ export default function Navbar() {
 
         {/* Desktop right cluster */}
         <nav className="hidden items-center gap-1 md:flex" aria-label={t.nav.primaryAria}>
-          {NAV_LINKS.map((l) => (
-            <NavLink key={l.to} to={l.to} className={linkClass}>
+          {desktopLinks.map((l) => (
+            <NavLink key={l.to} to={l.to} end={l.end} className={linkClass}>
               {l.label}
             </NavLink>
           ))}
-          {donorCode ? (
-            <NavLink to="/impact" className={linkClass}>
-              {t.nav.myImpact}
-            </NavLink>
-          ) : null}
 
           <LanguageToggle className="ml-1" />
-
-          {donorCode ? (
-            <Link
-              to="/impact"
-              className={cn('ml-2', CHECKOUT_AVAILABLE ? secondaryBtn : amberBtn)}
-            >
-              {t.nav.myImpact}
-            </Link>
-          ) : (
-            <Link
-              to="/login"
-              className={cn('ml-2', CHECKOUT_AVAILABLE ? secondaryBtn : amberBtn)}
-            >
-              {t.nav.enterCode}
-            </Link>
-          )}
 
           {CHECKOUT_AVAILABLE ? (
             <Link
@@ -118,14 +103,23 @@ export default function Navbar() {
               className={cn(amberBtn, 'ml-2 inline-flex items-center gap-1.5')}
             >
               <HandCoins className="h-4 w-4" />
-              {t.donate.button}
+              {t.nav.give}
             </Link>
           ) : null}
         </nav>
 
-        {/* Mobile: language toggle + hamburger sheet */}
-        <div className="flex items-center gap-1 md:hidden">
-          <LanguageToggle />
+        {/* Mobile: Give + hamburger only (§39) */}
+        <div className="flex items-center gap-2 md:hidden">
+          {CHECKOUT_AVAILABLE ? (
+            <Link
+              to="/donate"
+              aria-label={t.donate.giveAria}
+              className={cn(amberBtn, 'inline-flex items-center gap-1.5 px-3.5')}
+            >
+              <HandCoins className="h-4 w-4" />
+              {t.nav.give}
+            </Link>
+          ) : null}
           <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
             <SheetTrigger asChild>
               <button
@@ -145,11 +139,7 @@ export default function Navbar() {
                 <AnimatePresence>
                   {sheetOpen && (
                     <nav className="flex flex-col gap-2" aria-label={t.nav.mobileAria}>
-                      {[
-                        { to: '/', label: t.nav.home },
-                        ...NAV_LINKS,
-                        ...(donorCode ? [{ to: '/impact', label: t.nav.myImpact }] : []),
-                      ].map((l, i) => (
+                      {sheetLinks.map((l, i) => (
                         <motion.div
                           key={l.to}
                           initial={{ opacity: 0, x: 24 }}
@@ -162,6 +152,7 @@ export default function Navbar() {
                         >
                           <NavLink
                             to={l.to}
+                            onClick={closeSheet}
                             className={({ isActive }) =>
                               cn(
                                 'block rounded-card px-4 py-4 font-display text-2xl font-medium transition-colors',
@@ -178,7 +169,7 @@ export default function Navbar() {
                           initial={{ opacity: 0, x: 24 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{
-                            delay: 0.06 * (donorCode ? 4 : 3),
+                            delay: 0.06 * sheetLinks.length,
                             duration: 0.35,
                             ease: [0.22, 1, 0.36, 1],
                           }}
@@ -191,7 +182,7 @@ export default function Navbar() {
                             className="flex items-center justify-center gap-2 rounded-[10px] bg-amber px-4 py-3.5 text-center text-base font-semibold text-white transition-all active:scale-[0.98]"
                           >
                             <HandCoins className="h-5 w-5" />
-                            {t.donate.button}
+                            {t.nav.give}
                           </Link>
                         </motion.div>
                       ) : null}
@@ -201,32 +192,7 @@ export default function Navbar() {
                         transition={{
                           delay:
                             0.06 *
-                            ((donorCode ? 4 : 3) + (CHECKOUT_AVAILABLE ? 1 : 0)),
-                          duration: 0.35,
-                          ease: [0.22, 1, 0.36, 1],
-                        }}
-                        className={CHECKOUT_AVAILABLE ? 'mt-3' : 'mt-6'}
-                      >
-                        <Link
-                          to={donorCode ? '/impact' : '/login'}
-                          onClick={closeSheet}
-                          className={cn(
-                            'block rounded-[10px] px-4 py-3.5 text-center text-base font-semibold transition-all active:scale-[0.98]',
-                            CHECKOUT_AVAILABLE
-                              ? 'border border-border-strong text-text'
-                              : 'bg-amber text-white',
-                          )}
-                        >
-                          {donorCode ? t.nav.openMyImpact : t.nav.enterYourDonorCode}
-                        </Link>
-                      </motion.div>
-                      <motion.div
-                        initial={{ opacity: 0, x: 24 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{
-                          delay:
-                            0.06 *
-                            ((donorCode ? 5 : 4) + (CHECKOUT_AVAILABLE ? 1 : 0)),
+                            (sheetLinks.length + (CHECKOUT_AVAILABLE ? 1 : 0)),
                           duration: 0.35,
                           ease: [0.22, 1, 0.36, 1],
                         }}

@@ -1,47 +1,33 @@
 /**
- * Donor Login — /login (login.md). Quiet single-card page floating over a
- * dimmed login-bg.jpg: intro block, the signature CodeInput, validation
- * sequences (checking / found / not-found) and low-key secondary links.
- *
- * Valid codes: Firestore getDoc(donors/{code}) when configured; in demo
- * mode any donorCode present in demoData (e.g. X7kQ2mPv9Rt4) is accepted.
- * On success the code is persisted via session helpers and we route to
- * /impact. Supports a prefilled code via location.state.code or ?code= —
- * validation auto-fires after 400ms (login.md "Page transition").
+ * Donor sign-in — /login (master §35–37). Email + password accounts replace
+ * the old 6-digit code: DONATE → EMAIL → ACCOUNT → MY IMPACT. One quiet card
+ * over the dimmed login-bg: sign in by default, flip to create-account,
+ * forgot-password reset via email. Field team routes to /admin instead.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Link,
-  Navigate,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from 'react-router';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { doc, getDoc } from 'firebase/firestore';
-import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
+import { useEffect, useState, type FormEvent } from 'react';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Toaster, toast } from 'sonner';
-import CodeInput, { type CodeInputStatus } from '@/components/CodeInput';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { db, firebaseReady } from '@/lib/firebase';
-import { demoDonations } from '@/lib/demoData';
+import { firebaseReady } from '@/lib/firebase';
 import {
-  DONOR_CODE_LENGTH,
-  getDonorCode,
-  isPlausibleDonorCode,
-  setDonorCode,
-} from '@/lib/session';
+  authErrorKey,
+  resetDonorPassword,
+  signInDonor,
+  signUpDonor,
+  useAuthUser,
+} from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-type Phase = 'idle' | 'checking' | 'found' | 'notfound';
-
-const DEMO_HINT_CODE = demoDonations[0]?.donorCode ?? '';
+type Mode = 'in' | 'up';
 
 interface LocationState {
-  code?: string;
   from?: string;
+  email?: string;
+  mode?: Mode;
 }
 
 export default function Login() {
@@ -49,23 +35,23 @@ export default function Login() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const location = useLocation();
-  const [searchParams] = useSearchParams();
-
-  const [code, setCode] = useState('');
-  const [phase, setPhase] = useState<Phase>('idle');
-  const [errorMsg, setErrorMsg] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [kbOpen, setKbOpen] = useState(false);
-  const busy = phase === 'checking' || phase === 'found';
-  const timers = useRef<number[]>([]);
+  const { user, loading } = useAuthUser();
 
   const state = (location.state ?? {}) as LocationState;
+  const [mode, setMode] = useState<Mode>(state.mode === 'up' ? 'up' : 'in');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState(state.email ?? '');
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [resetSent, setResetSent] = useState(false);
+  const [kbOpen, setKbOpen] = useState(false);
 
   // Gentle toast when redirected here from /impact without a session.
   useEffect(() => {
     if (state.from === 'impact') {
       toast(t.login.toastFromImpact, {
-        icon: <ArrowRight className="h-4 w-4 text-amber" />,
+        icon: <ArrowLeft className="h-4 w-4 rotate-180 text-amber" />,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,76 +66,53 @@ export default function Login() {
     return () => vv.removeEventListener('resize', onResize);
   }, []);
 
-  useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), []);
-
-  const after = (ms: number, fn: () => void) => {
-    timers.current.push(window.setTimeout(fn, ms));
+  const switchMode = (next: Mode) => {
+    setMode(next);
+    setErrorMsg('');
+    setResetSent(false);
   };
 
-  const fail = useCallback((message: string) => {
-    setErrorMsg(message);
-    setPhase('notfound');
-  }, []);
-
-  const submit = useCallback(
-    async (rawCode: string) => {
-      const candidate = rawCode.trim();
-      if (!isPlausibleDonorCode(candidate) || phase === 'checking' || phase === 'found') return;
-      setErrorMsg('');
-      setPhase('checking');
-
-      if (!firebaseReady || !db) {
-        // Demo mode: accept any donor code present in the bundled demo data.
-        await new Promise((r) => setTimeout(r, 650)); // let "checking" breathe
-        const gift = demoDonations.find((d) => d.donorCode === candidate);
-        if (gift) {
-          const name = gift.donorName ?? t.login.friend;
-          setFirstName(name.split(' ')[0] ?? name);
-          setPhase('found');
-          setDonorCode(candidate);
-          after(1000, () => navigate('/impact'));
-        } else {
-          fail(t.login.errNotFound);
-        }
-        return;
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (busy) return;
+    setErrorMsg('');
+    setResetSent(false);
+    setBusy(true);
+    try {
+      if (mode === 'up') {
+        await signUpDonor(name, email, password);
+      } else {
+        await signInDonor(email, password);
       }
+      navigate('/impact');
+    } catch (err) {
+      console.error('[login] auth failed:', err);
+      setErrorMsg(t.auth[authErrorKey(err)]);
+    } finally {
+      setBusy(false);
+    }
+  };
 
-      try {
-        const snap = await getDoc(doc(db, 'donors', candidate));
-        if (snap.exists()) {
-          const name = (snap.data().name as string | undefined) ?? t.login.friend;
-          setFirstName(name.trim().split(/\s+/)[0] ?? t.login.friend);
-          setPhase('found');
-          setDonorCode(candidate);
-          after(1000, () => navigate('/impact'));
-        } else {
-          fail(t.login.errNotFound);
-        }
-      } catch (err) {
-        console.error('[login] donor lookup failed:', err);
-        fail(t.login.errConnection);
-      }
-    },
-    [phase, fail, navigate, t],
-  );
+  const forgot = async () => {
+    if (busy || !email.trim()) {
+      setErrorMsg(t.auth.errInvalidEmail);
+      return;
+    }
+    setErrorMsg('');
+    setBusy(true);
+    try {
+      await resetDonorPassword(email);
+      setResetSent(true);
+    } catch (err) {
+      console.error('[login] reset failed:', err);
+      setErrorMsg(t.auth[authErrorKey(err)]);
+    } finally {
+      setBusy(false);
+    }
+  };
 
-  // Prefilled code (from home CTA or ?code=): ripple-fill then auto-validate after 400ms.
-  useEffect(() => {
-    const prefill = (state.code ?? searchParams.get('code') ?? '').trim();
-    if (!prefill || !isPlausibleDonorCode(prefill)) return;
-    setCode(prefill);
-    const t = window.setTimeout(() => void submit(prefill), 400);
-    return () => window.clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const codeStatus: CodeInputStatus =
-    phase === 'checking' ? 'checking' : phase === 'found' ? 'success' : phase === 'notfound' ? 'error' : 'idle';
-
-  const complete = code.length === DONOR_CODE_LENGTH;
-
-  // Already signed in → straight to the dashboard (after all hooks).
-  if (getDonorCode() && phase === 'idle' && !state.from) {
+  // Already signed in → straight to My Impact (after all hooks).
+  if (!loading && user) {
     return <Navigate to="/impact" replace />;
   }
 
@@ -162,6 +125,9 @@ export default function Login() {
       ease: EASE,
     },
   });
+
+  const fieldClass =
+    'h-12 w-full rounded-[10px] border border-border-strong bg-surface px-4 text-[15px] font-medium text-text placeholder:text-text-faint transition-colors focus:border-amber focus:outline-none';
 
   return (
     <div className="relative flex min-h-full flex-col overflow-hidden">
@@ -176,7 +142,7 @@ export default function Login() {
         }}
       />
 
-      {/* Dimmed bokeh background + lantern glow (login.md) */}
+      {/* Dimmed bokeh background + lantern glow */}
       <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
         <img
           src="/login-bg.jpg"
@@ -198,140 +164,160 @@ export default function Login() {
             className="inline-flex items-center gap-1.5 text-[13px] font-medium tracking-[0.01em] text-text-muted transition-colors hover:text-text"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            {t.login.back}
+            {t.auth.back}
           </Link>
         </div>
 
         {/* Intro block */}
         <motion.img
-          src="/logo.svg"
+          src="/logo-mark.png"
           alt=""
           initial={reduceMotion ? false : { opacity: 0, scale: 0.7 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: reduceMotion ? 0 : 0.8, ease: EASE }}
-          className="h-10 w-10"
+          className="h-14 w-14 rounded-full"
         />
         <motion.h1
           {...introStagger(1)}
           className="mt-5 text-center font-display text-2xl font-medium leading-[1.2] tracking-[-0.01em] text-text md:text-[32px]"
         >
-          {t.login.title}
+          {mode === 'up' ? t.auth.signUpTitle : t.auth.signInTitle}
         </motion.h1>
         {!kbOpen && (
           <motion.p
-            {...introStagger(3)}
+            {...introStagger(2)}
             className="mt-3 max-w-[40ch] text-center text-[13px] font-medium leading-[1.4] tracking-[0.01em] text-text-muted"
           >
-            {t.login.intro}
+            {mode === 'up' ? t.auth.signUpIntro : t.auth.signInIntro}
           </motion.p>
         )}
 
-        {/* Code input */}
-        <motion.div
+        {/* Email + password form */}
+        <motion.form
+          onSubmit={(e) => void submit(e)}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: reduceMotion ? 0 : 0.3, duration: 0.4 }}
-          className="mt-9 flex flex-col items-center"
+          className="mt-8 flex w-full flex-col items-stretch gap-3"
         >
-          <CodeInput
-            value={code}
-            onChange={(c) => {
-              setCode(c);
-              if (phase === 'notfound') {
-                setPhase('idle');
-                setErrorMsg('');
-              }
-            }}
-            status={codeStatus}
-            disabled={busy}
-            autoFocus
-            onSubmitCode={(c) => void submit(c)}
-          />
-          <p className="mt-3 text-center text-[12px] font-medium tracking-[0.01em] text-text-faint">
-            {t.login.codeHint}
-          </p>
+          {mode === 'up' ? (
+            <label className="block">
+              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+                {t.auth.nameLabel}
+              </span>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t.auth.namePh}
+                autoComplete="given-name"
+                required
+                className={fieldClass}
+              />
+            </label>
+          ) : null}
 
-          {/* Inline error, slides down */}
-          <AnimatePresence initial={false}>
-            {phase === 'notfound' && errorMsg ? (
-              <motion.div
-                key="error"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.25, ease: EASE }}
-                className="overflow-hidden"
-              >
-                <p className="mt-3 max-w-[42ch] text-center text-[12px] font-medium leading-[1.4] tracking-[0.01em] text-danger">
-                  {errorMsg}
-                </p>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+          <label className="block">
+            <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+              {t.auth.emailLabel}
+            </span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t.auth.emailPh}
+              autoComplete="email"
+              inputMode="email"
+              required
+              autoFocus={mode === 'in'}
+              className={fieldClass}
+            />
+          </label>
 
-          {/* Submit */}
-          <motion.button
-            type="button"
-            onClick={() => void submit(code)}
-            disabled={!complete || busy}
-            initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: reduceMotion ? 0 : 0.7, duration: 0.4, ease: EASE }}
+          <label className="block">
+            <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+              {t.auth.passwordLabel}
+            </span>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={t.auth.passwordPh}
+              autoComplete={mode === 'up' ? 'new-password' : 'current-password'}
+              minLength={6}
+              required
+              className={fieldClass}
+            />
+          </label>
+
+          {errorMsg ? (
+            <p className="text-center text-[12px] font-medium leading-[1.4] tracking-[0.01em] text-danger">
+              {errorMsg}
+            </p>
+          ) : null}
+          {resetSent ? (
+            <p className="text-center text-[12px] font-medium leading-[1.4] tracking-[0.01em] text-sage">
+              {t.auth.resetSent}
+            </p>
+          ) : null}
+
+          <button
+            type="submit"
+            disabled={busy || !firebaseReady}
             className={cn(
-              'mt-6 flex h-12 w-full min-w-[280px] items-center justify-center gap-2 rounded-[10px] text-[15px] font-semibold transition-all duration-200 ease-calm active:scale-[0.98] md:min-w-[340px]',
-              phase === 'found'
-                ? 'bg-sage text-white'
-                : 'bg-amber text-white hover:bg-amber-soft',
-              (!complete || busy) && phase !== 'found' && 'cursor-not-allowed opacity-50',
-              phase === 'found' && 'cursor-default',
+              'mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-amber text-[15px] font-semibold text-white transition-all duration-200 ease-calm hover:bg-amber-soft active:scale-[0.98]',
+              (busy || !firebaseReady) && 'cursor-not-allowed opacity-50',
             )}
           >
-            {phase === 'checking' ? (
+            {busy ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                {t.login.checking}
+                {t.auth.working}
               </>
-            ) : phase === 'found' ? (
-              <>
-                {t.login.welcome(firstName)}
-                <ArrowRight className="h-4 w-4" />
-              </>
+            ) : mode === 'up' ? (
+              t.auth.signUpCta
             ) : (
-              t.login.seeMyImpact
+              t.auth.signInCta
             )}
-          </motion.button>
+          </button>
 
-          {!firebaseReady && DEMO_HINT_CODE ? (
+          <div className="mt-1 flex items-center justify-between text-[12px] font-medium tracking-[0.01em]">
             <button
               type="button"
-              onClick={() => {
-                setCode(DEMO_HINT_CODE);
-                after(400, () => void submit(DEMO_HINT_CODE));
-              }}
-              className="mt-4 font-mono text-[12px] tracking-[0.01em] text-text-faint transition-colors hover:text-amber"
+              onClick={() => switchMode(mode === 'up' ? 'in' : 'up')}
+              className="text-amber transition-colors hover:text-amber-soft"
             >
-              {t.login.demoHint(DEMO_HINT_CODE)}
+              {mode === 'up' ? t.auth.switchToIn : t.auth.switchToUp}
             </button>
-          ) : null}
-        </motion.div>
+            {mode === 'in' ? (
+              <button
+                type="button"
+                onClick={() => void forgot()}
+                className="text-text-faint transition-colors hover:text-text-muted"
+              >
+                {t.auth.forgot}
+              </button>
+            ) : null}
+          </div>
+        </motion.form>
 
         {/* Secondary links — fade in last */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: reduceMotion ? 0 : 1, duration: 0.5 }}
+          transition={{ delay: reduceMotion ? 0 : 0.8, duration: 0.5 }}
           className="mt-12 flex flex-col items-center gap-2.5 text-center text-[13px] font-medium tracking-[0.01em] text-text-muted"
         >
           <p>
-            {t.login.visiting}{' '}
+            {t.auth.visiting}{' '}
             <Link to="/feed" className="text-amber transition-colors hover:text-amber-soft">
-              {t.login.watchFeed}
+              {t.auth.watchFeed}
             </Link>
           </p>
           <p className="text-text-faint">
-            {t.login.fieldTeam}{' '}
+            {t.auth.fieldTeam}{' '}
             <Link to="/admin" className="transition-colors hover:text-text-muted">
-              {t.login.adminSignIn}
+              {t.auth.teamSignIn}
             </Link>
           </p>
         </motion.div>

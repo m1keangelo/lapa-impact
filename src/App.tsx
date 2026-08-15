@@ -8,6 +8,7 @@ import Gallery from './pages/Gallery';
 import Admin from './pages/Admin';
 import Donate from './pages/Donate';
 import DonateSuccess from './pages/DonateSuccess';
+import Event from './pages/Event';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="login" element={<Login />} />
         <Route path="impact" element={<Impact />} />
         <Route path="feed" element={<Feed />} />
+        <Route path="event" element={<Event />} />
         <Route path="gallery" element={<Gallery />} />
         <Route path="admin" element={<Admin />} />
         <Route path="donate" element={<Donate />} />

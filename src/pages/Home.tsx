@@ -9,6 +9,7 @@ import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Hero from './home/Hero';
+import Intro from './home/Intro';
 import TrustStrip from './home/TrustStrip';
 import Journey from './home/Journey';
 import FeedPreview from './home/FeedPreview';
@@ -43,6 +44,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <Intro />
       <TrustStrip />
       <Journey />
       <FeedPreview />
