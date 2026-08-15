@@ -99,6 +99,7 @@ export const en = {
     eventSpot: {
       eyebrow: 'Now in Colombia',
       tileCta: 'See the event',
+      viewFull: 'See the full flyer',
     },
     path: {
       eyebrow: 'How it works',
@@ -275,6 +276,7 @@ export const en = {
     ticketBody:
       'Net ticket proceeds support the Colombia response — the same public fund you can watch here.',
     getTicket: 'Get your ticket',
+    viewFull: 'See the full flyer',
     donateCta: 'Donate',
     emotionTitle: 'Come for the party. Stay for the mission.',
     emotionBody:

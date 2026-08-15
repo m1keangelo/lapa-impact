@@ -6,13 +6,15 @@
  * Admin → Evento shows up here automatically. When no poster exists yet,
  * the image side becomes a LAPA-blue date tile — never a broken image.
  */
+import { useState } from 'react';
 import { Link } from 'react-router';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Ticket } from 'lucide-react';
+import { Calendar, Clock, Expand, MapPin, Ticket } from 'lucide-react';
 import { useEvent } from '@/hooks/useEvent';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { eventImageFor } from '@/lib/eventData';
 import { formatMoneyShort } from '@/lib/format';
+import FlyerViewer from '@/components/FlyerViewer';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -35,6 +37,7 @@ export default function EventSpotlight() {
 
   const title = event.title?.[lang] ?? t.event.fallbackTitle;
   const poster = eventImageFor(event, lang);
+  const [flyerOpen, setFlyerOpen] = useState(false);
 
   return (
     <section className="mx-auto w-full max-w-container px-5 pb-24 md:px-8 md:pb-32">
@@ -45,13 +48,24 @@ export default function EventSpotlight() {
         {/* ── Image (55%) — poster in the visitor's language when
             published, blue date tile until then ── */}
         {poster ? (
-          <figure className="overflow-hidden rounded-card border border-border">
-            <img
-              src={poster}
-              alt={title}
-              loading="lazy"
-              className="aspect-[4/5] w-full object-cover sm:aspect-[5/4]"
-            />
+          <figure className="relative overflow-hidden rounded-card border border-border">
+            <button
+              type="button"
+              onClick={() => setFlyerOpen(true)}
+              aria-label={s.viewFull}
+              className="group block w-full cursor-zoom-in"
+            >
+              <img
+                src={poster}
+                alt={title}
+                loading="lazy"
+                className="aspect-[4/5] w-full object-cover sm:aspect-[5/4]"
+              />
+              <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-[12px] font-medium text-white opacity-90 transition-opacity group-hover:opacity-100">
+                <Expand className="h-3.5 w-3.5" aria-hidden />
+                {s.viewFull}
+              </span>
+            </button>
           </figure>
         ) : (
           <div
@@ -128,6 +142,9 @@ export default function EventSpotlight() {
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Tap the poster → the full-size flyer */}
+      <FlyerViewer src={flyerOpen ? poster : null} alt={title} onClose={() => setFlyerOpen(false)} />
     </section>
   );
 }

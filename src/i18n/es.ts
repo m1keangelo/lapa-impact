@@ -98,6 +98,7 @@ export const es: Dictionary = {
     eventSpot: {
       eyebrow: 'Ahora en Colombia',
       tileCta: 'Ver el evento',
+      viewFull: 'Ver el afiche completo',
     },
     path: {
       eyebrow: 'Cómo funciona',
@@ -273,6 +274,7 @@ export const es: Dictionary = {
     ticketBody:
       'Los ingresos netos de los tiquetes apoyan la respuesta en Colombia — el mismo fondo público que puedes ver aquí.',
     getTicket: 'Consigue tu tiquete',
+    viewFull: 'Ver el afiche completo',
     donateCta: 'Donar',
     emotionTitle: 'Ven por la fiesta. Quédate por la misión.',
     emotionBody:

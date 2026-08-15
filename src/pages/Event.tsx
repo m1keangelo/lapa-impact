@@ -6,6 +6,7 @@
  * Before the first admin publish the page renders SEED_EVENT, which holds
  * only confirmed organizer-supplied facts (PART 61/112 — never invented).
  */
+import { useState } from 'react';
 import { Link } from 'react-router';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
@@ -22,6 +23,7 @@ import { useLanguage } from '@/i18n/LanguageContext';
 import { useEvent } from '@/hooks/useEvent';
 import { eventImageFor } from '@/lib/eventData';
 import { formatMoneyShort } from '@/lib/format';
+import FlyerViewer from '@/components/FlyerViewer';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -29,6 +31,8 @@ export default function Event() {
   const reduceMotion = useReducedMotion();
   const { t, lang } = useLanguage();
   const { event } = useEvent();
+  const [flyerOpen, setFlyerOpen] = useState(false);
+  const poster = eventImageFor(event, lang);
 
   const rise = (delay: number) => ({
     initial: { opacity: 0, y: reduceMotion ? 0 : 24 },
@@ -84,15 +88,25 @@ export default function Event() {
           </motion.h1>
 
           {/* Real event photo or poster once one exists (PART 70) —
-              the visitor's language side first. */}
-          {eventImageFor(event, lang) ? (
-            <motion.figure {...rise(0.12)} className="mt-8">
-              <img
-                src={eventImageFor(event, lang)!}
-                alt={event.title ? event.title[lang] : t.event.fallbackTitle}
-                className="w-full rounded-card border border-border object-cover"
-                loading="lazy"
-              />
+              the visitor's language side first. Tap → full-size flyer. */}
+          {poster ? (
+            <motion.figure {...rise(0.12)} className="relative mt-8">
+              <button
+                type="button"
+                onClick={() => setFlyerOpen(true)}
+                aria-label={t.event.viewFull}
+                className="group relative block w-full cursor-zoom-in"
+              >
+                <img
+                  src={poster}
+                  alt={event.title ? event.title[lang] : t.event.fallbackTitle}
+                  className="w-full rounded-card border border-border object-cover"
+                  loading="lazy"
+                />
+                <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-[12px] font-medium text-white opacity-90 transition-opacity group-hover:opacity-100">
+                  {t.event.viewFull}
+                </span>
+              </button>
             </motion.figure>
           ) : null}
 
@@ -270,6 +284,13 @@ export default function Event() {
           {t.event.grow}
         </motion.p>
       </div>
+
+      {/* Tap the poster → the full-size flyer */}
+      <FlyerViewer
+        src={flyerOpen ? poster : null}
+        alt={event.title ? event.title[lang] : t.event.fallbackTitle}
+        onClose={() => setFlyerOpen(false)}
+      />
     </div>
   );
 }
