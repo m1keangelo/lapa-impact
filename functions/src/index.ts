@@ -2,6 +2,7 @@ import { stripeWebhook } from './stripeWebhook';
 import { lookupDonation } from './lookupDonation';
 import { createCheckoutSession } from './createCheckoutSession';
 import { linkMyDonations } from './linkMyDonations';
+import { inviteStaffMember } from './inviteStaffMember';
 import {
   translateDonation,
   translateTransfer,
@@ -14,6 +15,7 @@ export {
   lookupDonation,
   createCheckoutSession,
   linkMyDonations,
+  inviteStaffMember,
   translateDonation,
   translateTransfer,
   translateUpdate,
