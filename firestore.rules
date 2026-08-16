@@ -242,6 +242,26 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // campaigns/{id} — mini-campaigns ("a roof for Doña María"): the
+    // public one-pager reads active ones live; any money-desk role can
+    // manage them. Money is integer cents; imagery bounded https or a
+    // bundled local path.
+    match /campaigns/{id} {
+      allow read: if true;
+      allow write: if canWriteMoney()
+        && boundedStr(request.resource.data.title, 120)
+        && boundedStr(request.resource.data.titleEs, 120)
+        && boundedStr(request.resource.data.story, 600)
+        && boundedStr(request.resource.data.storyEs, 600)
+        && validAmount(request.resource.data.goalCents)
+        && request.resource.data.raisedCents is int
+        && request.resource.data.raisedCents >= 0
+        && request.resource.data.status in ['active', 'completed']
+        && (validImageUrl(request.resource.data.get('imageUrl', null))
+            || (request.resource.data.get('imageUrl', '') is string
+                && request.resource.data.get('imageUrl', '').matches('^/[a-zA-Z0-9._-]{1,100}$')));
+    }
+
     // stripeSessions/{sessionId} — written ONLY by the stripeWebhook Cloud
     // Function (Admin SDK bypasses rules). Fully closed to clients: the
     // public lookupDonation function reads it server-side and returns only

@@ -183,3 +183,24 @@ export type FeedEntry =
 
 /** Shared async state for every live surface (design.md §8: 4 states). */
 export type LiveStatus = 'loading' | 'empty' | 'error' | 'live';
+
+/** campaigns/{id} — a named mini-campaign ("a roof for Doña María").
+ *  Money is integer cents; raisedCents is managed by the money desk as
+ *  the single fund is allocated to each need. */
+export interface Campaign {
+  id: string;
+  title: string;
+  titleEs: string;
+  story: string;
+  storyEs: string;
+  /** integer cents */
+  goalCents: number;
+  /** integer cents */
+  raisedCents: number;
+  /** https (Cloudinary) or bundled local path like /quake-2.jpg */
+  imageUrl?: string;
+  status: 'active' | 'completed';
+  /** smaller shows first */
+  order?: number;
+  createdAt?: TimestampLike;
+}

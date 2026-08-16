@@ -15,6 +15,7 @@ import Lenis from 'lenis';
 import Hero from './home/Hero';
 import OneNeed from './home/OneNeed';
 import OneFunds from './home/OneFunds';
+import CampaignsSection from './home/CampaignsSection';
 import FeedPreview from './home/FeedPreview';
 import GiveSection from './home/GiveSection';
 import Closing from './home/Closing';
@@ -43,6 +44,7 @@ export default function Home() {
       <Hero />
       <OneNeed />
       <OneFunds />
+      <CampaignsSection />
       <FeedPreview />
       <GiveSection />
       <Closing />

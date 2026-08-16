@@ -10,6 +10,7 @@ import type {
   ImpactUpdate,
   MediaItem,
   GlobalStats,
+  Campaign,
 } from './types';
 
 const MIN = 60 * 1000;
@@ -234,5 +235,55 @@ export const demoMedia: MediaItem[] = [
     caption: 'Escombros de un edificio colapsado tras el terremoto de Colombia de 2026.',
     timestamp: now - 2 * DAY,
     donationId: 'demo-don-5',
+  },
+];
+
+/** Demo mini-campaigns — clearly labeled preview content (PreviewChip)
+ *  until real needs are created in the admin. */
+export const demoCampaigns: Campaign[] = [
+  {
+    id: 'demo-camp-1',
+    title: 'A roof for Doña María',
+    titleEs: 'Un techo para Doña María',
+    story:
+      'Her home in San José del Palmar lost its roof in the quake. Materials are ready — we need the last stretch to put it up before the rains.',
+    storyEs:
+      'Su casa en San José del Palmar perdió el techo en el sismo. Los materiales están listos — falta el último tramo para levantarlo antes de las lluvias.',
+    goalCents: 40000,
+    raisedCents: 15600,
+    imageUrl: '/quake-2.jpg',
+    status: 'active',
+    order: 1,
+    createdAt: now - 1 * DAY,
+  },
+  {
+    id: 'demo-camp-2',
+    title: 'Formula for baby Samir',
+    titleEs: 'Fórmula para el bebé Samir',
+    story:
+      'A two-month-old in Quibdó needs formula for the next month. Every can counts while the roads reopen.',
+    storyEs:
+      'Un bebé de dos meses en Quibdó necesita fórmula para el próximo mes. Cada lata cuenta mientras se reabren las vías.',
+    goalCents: 12000,
+    raisedCents: 8450,
+    imageUrl: '/quake-4.jpg',
+    status: 'active',
+    order: 2,
+    createdAt: now - 2 * DAY,
+  },
+  {
+    id: 'demo-camp-3',
+    title: 'Water filters for Alto Bonito',
+    titleEs: 'Filtros de agua para Alto Bonito',
+    story:
+      'Fourteen families in one vereda drinking unsafe water. $25 puts a filter in a home.',
+    storyEs:
+      'Catorce familias en una vereda tomando agua no segura. $25 ponen un filtro en un hogar.',
+    goalCents: 35000,
+    raisedCents: 35000,
+    imageUrl: '/quake-6.jpg',
+    status: 'completed',
+    order: 3,
+    createdAt: now - 4 * DAY,
   },
 ];
