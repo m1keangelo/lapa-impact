@@ -248,6 +248,9 @@ export default function Feed() {
             transition={{ duration: 0.5, ease: EASE, delay: 0.18 }}
           >
             <PreviewChip />
+            <p className="mt-2 text-[12px] font-bold uppercase tracking-[0.14em] text-amber">
+              {t.publicMode.demoDataLabel}
+            </p>
             <p className="mt-3 font-display text-[19px] font-medium tracking-[-0.01em] text-text">
               {t.publicMode.previewTitle}
             </p>

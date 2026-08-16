@@ -63,6 +63,16 @@ export default function WhyBuilt() {
             {w.bodyB}
           </motion.p>
 
+          {/* The cost thesis as two standalone beats (red-team §05) */}
+          <motion.div {...rise(0.2)} className="mt-8 space-y-1">
+            <p className="font-sans text-[16px] font-bold uppercase tracking-[0.04em] text-text md:text-[17px]">
+              {w.costA}
+            </p>
+            <p className="font-sans text-[16px] font-bold uppercase tracking-[0.04em] text-text md:text-[17px]">
+              {w.costB}
+            </p>
+          </motion.div>
+
           {/* PART 42 — why speed matters */}
           <div className="mt-10 space-y-2">
             {w.timeLines.map((line, i) => (
@@ -76,13 +86,26 @@ export default function WhyBuilt() {
             ))}
           </div>
 
-          {/* PART 43 — the differentiation peak (dark ink, not blue: PART 34) */}
+          {/* PART 43 — the ESPERAR / RESPONDER contrast, kept extremely
+              simple: two words, one quiet, one strong (red-team §05/§10) */}
+          <motion.div {...rise(0.06)} className="mt-14">
+            <p className="font-sans text-[15px] font-semibold uppercase tracking-[0.14em] text-text-faint">
+              {w.waitWord}
+            </p>
+            <p className="mt-1 font-sans text-[22px] font-bold uppercase tracking-[0.06em] text-text md:text-[24px]">
+              {w.respondWord}
+            </p>
+          </motion.div>
+
+          {/* The differentiation peak (dark ink, not blue: PART 34) —
+              two lines: the rejection, then the answer landing harder. */}
           <motion.p
             {...rise(0.08)}
-            className="mt-14 font-display font-semibold leading-[1.18] tracking-[-0.015em] text-text"
+            className="mt-8 font-display leading-[1.18] tracking-[-0.015em]"
             style={{ fontSize: 'clamp(28px, 3.6vw, 50px)' }}
           >
-            {w.peak}
+            <span className="block font-medium text-text-muted">{w.peakA}</span>
+            <span className="block font-semibold text-text">{w.peakB}</span>
           </motion.p>
           <div className="mt-6 space-y-1.5">
             {w.closer.map((line, i) => (

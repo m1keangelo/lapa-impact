@@ -71,9 +71,9 @@ export const en = {
       somosB: 'from here.',
       raicesA: 'Our roots',
       raicesB: 'are from there.',
-      centerpiece: "We don't have to choose.",
-      payoffA: 'And when our people need help,',
-      payoffB: 'we show up.',
+      pero: '…but…',
+      payoffA: 'When our people need us,',
+      payoffB: "we're there.",
       mission: 'LAPA connects our strength here with the people who need help there.',
       flagsAria:
         'Flags of Colombia, Mexico, Bolivia, Venezuela, Peru, Ecuador, Argentina, Chile, Puerto Rico, the Dominican Republic, Guatemala, El Salvador, Honduras, Nicaragua, Costa Rica, Panama, Paraguay, Uruguay, Cuba and Brazil',
@@ -93,7 +93,6 @@ export const en = {
       line3B: 'both.',
       support: [
         'We grew up among many roots.',
-        'Someone helped us find our way.',
         "Now it's our turn to reach out.",
       ],
     },
@@ -135,13 +134,18 @@ export const en = {
         'Processing payments has a cost, but when people need help, time matters too.',
       timeMattersA: 'In an emergency,',
       timeMattersB: 'time matters.',
+      costA: 'Processing payments has a cost.',
+      costB: 'So does time.',
       timeLines: [
         'A roof before the next rain.',
         'Water before it runs out.',
         'Food while the need is still urgent.',
-        'Supplies while they can still make a difference.',
+        'Medicine while it can still make a difference.',
       ],
-      peak: "We didn't build LAPA.Help to wait. We built it to respond.",
+      waitWord: 'Waiting.',
+      respondWord: 'Responding.',
+      peakA: "We didn't build LAPA.Help to wait.",
+      peakB: 'We built it to respond.',
       closer: [
         'Funds are processed.',
         'They are grouped.',
@@ -168,16 +172,10 @@ export const en = {
       loadingAria: 'Loading the live ledger',
     },
     closing: {
-      remember: 'We remember where we came from.',
-      knowA: 'We know what it took to get here.',
-      knowB: "We know we didn't get here alone.",
       purposeA1: 'Our roots ',
       purposeA2: 'are Latino.',
       purposeB1: 'Our mission ',
       purposeB2: 'is human.',
-      roots: "Our roots don't stop at a border.",
-      responsibility: 'Neither does our responsibility.',
-      sign: 'LAPA.Help',
     },
     finalCta: {
       eyebrow: 'My Impact',
@@ -471,6 +469,7 @@ export const en = {
   publicMode: {
     /** Public PREVIEW labeling (final doc §6) */
     previewChip: 'PREVIEW — SEE HOW IT WORKS',
+    demoDataLabel: 'DEMONSTRATION DATA',
     previewTitle: 'SEE HOW THE HELP WILL APPEAR.',
     previewBody:
       "This is a preview of what you'll see when the mission is live.",

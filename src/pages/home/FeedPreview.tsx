@@ -124,7 +124,16 @@ export default function FeedPreview() {
               {t.home.feedPreview.body}
             </p>
           </div>
-          {feed.isDemo ? <PreviewChip /> : <LiveBadge />}
+          {feed.isDemo ? (
+            <div className="flex flex-col items-start gap-2 sm:items-end">
+              <PreviewChip />
+              <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-amber">
+                {t.publicMode.demoDataLabel}
+              </span>
+            </div>
+          ) : (
+            <LiveBadge />
+          )}
         </div>
 
         {/* Content grid — min-w-0 on children so truncated feed text

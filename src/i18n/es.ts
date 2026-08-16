@@ -70,9 +70,9 @@ export const es: Dictionary = {
       somosB: 'de aquí.',
       raicesA: 'Nuestras raíces',
       raicesB: 'son de allá.',
-      centerpiece: 'No tenemos que elegir.',
-      payoffA: 'Y cuando los nuestros necesitan ayuda,',
-      payoffB: 'estamos ahí.',
+      pero: '…pero…',
+      payoffA: 'Cuando los nuestros nos necesitan,',
+      payoffB: 'ahí estamos.',
       mission: 'LAPA conecta nuestra fuerza aquí con quienes necesitan ayuda allá.',
       flagsAria:
         'Banderas de Colombia, México, Bolivia, Venezuela, Perú, Ecuador, Argentina, Chile, Puerto Rico, República Dominicana, Guatemala, El Salvador, Honduras, Nicaragua, Costa Rica, Panamá, Paraguay, Uruguay, Cuba y Brasil',
@@ -92,7 +92,6 @@ export const es: Dictionary = {
       line3B: 'de los dos.',
       support: [
         'Crecimos entre muchas raíces.',
-        'Alguien nos ayudó a encontrar nuestro camino.',
         'Ahora nos toca extender la mano.',
       ],
     },
@@ -134,13 +133,18 @@ export const es: Dictionary = {
         'Procesar pagos tiene un costo, pero cuando las personas necesitan ayuda, el tiempo también importa.',
       timeMattersA: 'En una emergencia,',
       timeMattersB: 'el tiempo importa.',
+      costA: 'Procesar pagos tiene un costo.',
+      costB: 'El tiempo también.',
       timeLines: [
         'Un techo antes de la próxima lluvia.',
         'Agua antes de que se acabe.',
         'Comida mientras la necesidad sigue siendo urgente.',
-        'Suministros mientras todavía pueden hacer la diferencia.',
+        'Medicinas mientras todavía pueden hacer la diferencia.',
       ],
-      peak: 'No construimos LAPA.Help para esperar. Lo construimos para responder.',
+      waitWord: 'Esperar.',
+      respondWord: 'Responder.',
+      peakA: 'No construimos LAPA.Help para esperar.',
+      peakB: 'Lo construimos para responder.',
       closer: [
         'Los fondos se procesan.',
         'Se agrupan.',
@@ -167,16 +171,10 @@ export const es: Dictionary = {
       loadingAria: 'Cargando el registro en vivo',
     },
     closing: {
-      remember: 'Recordamos de dónde venimos.',
-      knowA: 'Sabemos lo que costó llegar.',
-      knowB: 'Sabemos que no llegamos solos.',
       purposeA1: 'Nuestras raíces ',
       purposeA2: 'son latinas.',
       purposeB1: 'Nuestra misión ',
       purposeB2: 'es humana.',
-      roots: 'Nuestras raíces no se detienen en una frontera.',
-      responsibility: 'Nuestra responsabilidad tampoco.',
-      sign: 'LAPA.Help',
     },
     finalCta: {
       eyebrow: 'Mi impacto',
@@ -469,6 +467,7 @@ export const es: Dictionary = {
   publicMode: {
     /** Public PREVIEW labeling (final doc §6) */
     previewChip: 'VISTA PREVIA — MIRA CÓMO FUNCIONA',
+    demoDataLabel: 'DATOS DE DEMOSTRACIÓN',
     previewTitle: 'ASÍ APARECERÁ LA AYUDA.',
     previewBody:
       'Esto es una vista previa de lo que verás cuando la misión esté en vivo.',

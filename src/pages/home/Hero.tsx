@@ -5,8 +5,8 @@
  *
  *   🇺🇸 SOMOS DE AQUÍ.            (large, clean, flag set into the type)
  *   [flags] NUESTRAS RAÍCES SON DE ALLÁ. [flags]  (constellation, not a string)
- *   NO TENEMOS QUE ELEGIR.        (the emotional centerpiece — biggest)
- *   Y CUANDO LOS NUESTROS NECESITAN AYUDA, ESTAMOS AHÍ.  (the payoff)
+ *   …pero…                        (the quiet hinge — small italic serif)
+ *   CUANDO LOS NUESTROS NOS NECESITAN, AHÍ ESTAMOS.  (the payoff — L01 summit)
  *   + one-line mission, CTAs, numbers-on-tap.
  *
  * Flags are real image elements (public/flags/*.png) — never emoji, which
@@ -233,7 +233,7 @@ export default function Hero() {
 
         {/* Screen-reader summary of the whole statement */}
         <h1 className="sr-only">
-          {h.somosA} {h.somosB} {h.raicesA} {h.raicesB} {h.centerpiece} {h.payoffA}{' '}
+          {h.somosA} {h.somosB} {h.raicesA} {h.raicesB} {h.pero} {h.payoffA}{' '}
           {h.payoffB}
         </h1>
 
@@ -298,38 +298,27 @@ export default function Hero() {
           ))}
         </div>
 
-        {/* Beat 4 — NO TENEMOS QUE ELEGIR. (2.9s, word by word) — the
-            emotional centerpiece. Nothing decorates it; the type does
-            the work. */}
+        {/* Beat 4 — …pero… (2.9s) — the quiet hinge between roots and
+            response. Small italic serif: a pivot, not a statement. */}
         <p
           aria-hidden
-          className="mt-20 font-display font-semibold uppercase leading-[1.06] tracking-[-0.01em] text-[#F5F1E8] [text-wrap:balance] md:mt-24"
-          style={{ fontSize: 'clamp(44px, 6vw, 88px)' }}
+          className="hero-seq-word mt-16 font-display font-normal italic leading-[1.1] text-[#F5F1E8]/75 md:mt-20"
+          style={{ fontSize: 'clamp(24px, 3vw, 42px)', animationDelay: '2.9s' }}
         >
-          {h.centerpiece.split(' ').map((word, i, arr) => (
-            <span
-              key={i}
-              className="hero-seq-word inline-block"
-              style={{
-                animationDelay: `${2.9 + i * 0.28}s`,
-                marginRight: i < arr.length - 1 ? '0.26em' : undefined,
-              }}
-            >
-              {word}
-            </span>
-          ))}
+          {h.pero}
         </p>
 
-        {/* Beat 5 — the payoff (4.6s). ESTAMOS AHÍ. is LEVEL 01, the
+        {/* Beat 5 — the payoff (3.6s). CUANDO LOS NUESTROS NOS NECESITAN,
+            sets it up at medium weight; AHÍ ESTAMOS. is LEVEL 01, the
             typographic summit of the homepage (clamp 64–120px): the
             largest type on the page — nothing else imitates its scale. */}
         <p
           aria-hidden
-          className="hero-seq-payoff mt-24 font-display uppercase leading-[1.12] tracking-[0.01em] md:mt-32"
+          className="hero-seq-payoff mt-14 font-display uppercase leading-[1.12] tracking-[0.01em] md:mt-20"
         >
           <span
-            className="block font-medium text-[#F5F1E8]/90"
-            style={{ fontSize: 'clamp(22px, 3vw, 44px)' }}
+            className="block font-medium text-[#F5F1E8]/90 [text-wrap:balance]"
+            style={{ fontSize: 'clamp(26px, 3.6vw, 52px)' }}
           >
             {h.payoffA}
           </span>
