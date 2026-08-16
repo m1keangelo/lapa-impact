@@ -8,7 +8,7 @@
  */
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { Calendar, Clock, Expand, MapPin, Ticket } from 'lucide-react';
 import { useEvent } from '@/hooks/useEvent';
 import { useLanguage } from '@/i18n/LanguageContext';
@@ -41,10 +41,7 @@ export default function EventSpotlight() {
 
   return (
     <section className="mx-auto w-full max-w-container px-5 pb-24 md:px-8 md:pb-32">
-      <motion.div
-        {...rise(0)}
-        className="grid items-center gap-8 lg:grid-cols-[55fr_45fr] lg:gap-12"
-      >
+      <div className="grid items-center gap-8 lg:grid-cols-[55fr_45fr] lg:gap-12">
         {/* ── Image (55%) — poster in the visitor's language when
             published, blue date tile until then ── */}
         {poster ? (
@@ -84,27 +81,27 @@ export default function EventSpotlight() {
 
         {/* ── Details (45%) ── */}
         <div className="text-center lg:text-left">
-          <motion.p
+          <m.p
             {...rise(0.05)}
             className="text-[14px] font-semibold uppercase tracking-[0.14em] text-[#003D7A]"
           >
             {s.eyebrow}
-          </motion.p>
+          </m.p>
 
-          <motion.h2
+          <m.h2
             {...rise(0.1)}
             className="mt-3 font-display font-medium leading-[1.15] tracking-[-0.015em] text-text"
             style={{ fontSize: 'clamp(30px, 3.6vw, 48px)' }}
           >
             {title}
-          </motion.h2>
+          </m.h2>
 
-          <motion.p {...rise(0.16)} className="mt-3 text-[18px] leading-[1.5] text-text-muted">
+          <m.p {...rise(0.16)} className="mt-3 text-[18px] leading-[1.5] text-text-muted">
             {t.event.emotionTitle}
-          </motion.p>
+          </m.p>
 
           {/* Date / time / location — 16px, organized clearly (FIN §8) */}
-          <motion.ul {...rise(0.22)} className="mt-6 space-y-3 text-[16px]">
+          <m.ul {...rise(0.22)} className="mt-6 space-y-3 text-[16px]">
             <li className="flex items-center justify-center gap-3 lg:justify-start">
               <Calendar className="h-4 w-4 shrink-0 text-[#003D7A]" aria-hidden />
               <span className="font-medium text-text">{event.dateLabel[lang]}</span>
@@ -120,13 +117,11 @@ export default function EventSpotlight() {
                 <span className="block text-[14px] text-text-muted">{event.address}</span>
               </span>
             </li>
-          </motion.ul>
+          </m.ul>
 
-          {/* CTAs — primary blue ticket button, subordinate donate outline (FIN §9) */}
-          <motion.div
-            {...rise(0.28)}
-            className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start"
-          >
+          {/* CTAs — primary blue ticket button, subordinate donate outline (FIN §9).
+              Static: buttons never animate (TYPOGRAPHIC MOTION ONLY). */}
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
             <Link
               to="/event"
               className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[4px] bg-[#003D7A] px-8 py-4 text-[16px] font-bold tracking-[0.01em] text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-[#0A4E97] active:scale-[0.98] sm:w-auto"
@@ -140,9 +135,9 @@ export default function EventSpotlight() {
             >
               {t.donate.giveNow}
             </Link>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Tap the poster → the full-size flyer */}
       <FlyerViewer src={flyerOpen ? poster : null} alt={title} onClose={() => setFlyerOpen(false)} />

@@ -1,5 +1,5 @@
 /**
- * Navbar (master §39) — sticky top, translucent bg + backdrop-blur, 60px.
+ * Navbar (master §39) — sticky top, solid paper bg, 60px.
  * Desktop links: Mission / Give / Live / Event / My Impact. Mobile chrome is
  * only Logo + Give + Menu; everything else lives in the sheet. The gallery
  * moves to the menu + footer; the admin route is never linked here.
@@ -10,7 +10,7 @@
  */
 import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { Menu, HandCoins } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { CAMPAIGN } from '@/lib/campaign';
@@ -65,10 +65,10 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 h-[60px] border-b backdrop-blur-md transition-all duration-200 ease-calm',
-        scrolled
-          ? 'border-border bg-bg/95'
-          : 'border-transparent bg-bg/85',
+        // Solid paper background — no glassmorphism: nav text must read
+        // over any photograph (TEXT OVER PHOTOGRAPHY rule).
+        'sticky top-0 z-50 h-[60px] border-b bg-bg transition-colors duration-200 ease-calm',
+        scrolled ? 'border-border' : 'border-transparent',
       )}
     >
       <div className="mx-auto flex h-full w-full max-w-container items-center justify-between px-5 md:px-8">
@@ -140,7 +140,7 @@ export default function Navbar() {
                   {sheetOpen && (
                     <nav className="flex flex-col gap-2" aria-label={t.nav.mobileAria}>
                       {sheetLinks.map((l, i) => (
-                        <motion.div
+                        <m.div
                           key={l.to}
                           initial={{ opacity: 0, x: 24 }}
                           animate={{ opacity: 1, x: 0 }}
@@ -162,10 +162,10 @@ export default function Navbar() {
                           >
                             {l.label}
                           </NavLink>
-                        </motion.div>
+                        </m.div>
                       ))}
                       {CHECKOUT_AVAILABLE ? (
-                        <motion.div
+                        <m.div
                           initial={{ opacity: 0, x: 24 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{
@@ -184,9 +184,9 @@ export default function Navbar() {
                             <HandCoins className="h-5 w-5" />
                             {t.nav.give}
                           </Link>
-                        </motion.div>
+                        </m.div>
                       ) : null}
-                      <motion.div
+                      <m.div
                         initial={{ opacity: 0, x: 24 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{
@@ -202,7 +202,7 @@ export default function Navbar() {
                           {t.nav.langLabel}
                         </span>
                         <LanguageToggle className="border-border bg-surface" />
-                      </motion.div>
+                      </m.div>
                     </nav>
                   )}
                 </AnimatePresence>

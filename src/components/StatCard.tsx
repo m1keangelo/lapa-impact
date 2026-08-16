@@ -1,16 +1,9 @@
 /**
  * StatCard (design.md §7.3) — surface card, eyebrow label, big mono number
- * that counts up, optional delta line and a tiny 40px sparkline on desktop.
+ * (static — numbers never animate, TYPOGRAPHIC MOTION ONLY), optional
+ * delta line and a tiny 40px sparkline on desktop.
  * Variants: `in` (amber), `out` (terra), `impact` (sage).
  */
-import { useEffect } from 'react';
-import {
-  animate,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useTransform,
-} from 'framer-motion';
 import { formatCount, formatMoney, formatMoneyShort } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
@@ -67,26 +60,12 @@ export default function StatCard({
   sparkline,
   className,
 }: StatCardProps) {
-  const reduceMotion = useReducedMotion();
-  const mv = useMotionValue(reduceMotion ? value : 0);
-
-  useEffect(() => {
-    if (reduceMotion) {
-      mv.set(value);
-      return;
-    }
-    const controls = animate(mv, value, {
-      duration: 1.4,
-      ease: [0.22, 1, 0.36, 1],
-    });
-    return () => controls.stop();
-  }, [value, reduceMotion, mv]);
-
-  const text = useTransform(mv, (v) => {
-    const rounded = Math.round(v);
-    if (format === 'count') return formatCount(rounded);
-    return abbreviate ? formatMoneyShort(rounded) : formatMoney(rounded);
-  });
+  const text =
+    format === 'count'
+      ? formatCount(value)
+      : abbreviate
+        ? formatMoneyShort(value)
+        : formatMoney(value);
 
   const color = VARIANT_COLOR[variant];
 
@@ -106,12 +85,12 @@ export default function StatCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="eyebrow">{label}</p>
-          <motion.p
+          <p
             className="mt-2 font-mono text-2xl font-medium leading-[1.1] text-text md:text-[28px]"
             style={{ fontVariantNumeric: 'tabular-nums' }}
           >
             {text}
-          </motion.p>
+          </p>
           {delta ? (
             <p className="mt-2 text-[12px] font-medium tracking-[0.01em] text-sage">{delta}</p>
           ) : null}

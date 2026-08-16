@@ -5,7 +5,6 @@
  * Gift-matched photos get a sage chip top-left.
  */
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Link2 } from 'lucide-react';
 import { cloudinaryUrl } from '@/lib/cloudinary';
 import { useLanguage } from '@/i18n/LanguageContext';
@@ -24,7 +23,7 @@ export default function GalleryTile({ media, matched, onOpen }: GalleryTileProps
   const { t, lang } = useLanguage();
 
   return (
-    <motion.button
+    <button
       type="button"
       onClick={onOpen}
       aria-label={media.caption ? t.common.openPhotoCaption(media.caption) : t.common.openPhoto}
@@ -32,10 +31,6 @@ export default function GalleryTile({ media, matched, onOpen }: GalleryTileProps
         'group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-[12px] border border-border text-left',
         'cursor-zoom-in transition-colors duration-200 ease-calm hover:border-border-strong',
       )}
-      initial={{ opacity: 0, y: 24, scale: 0.97 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     >
       {/* Skeleton behind the image until it loads */}
       <div
@@ -62,7 +57,7 @@ export default function GalleryTile({ media, matched, onOpen }: GalleryTileProps
 
       {/* Gift-matched chip */}
       {matched ? (
-        <span className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border border-sage/50 bg-bg/80 px-2 py-0.5 text-[10px] font-semibold text-sage backdrop-blur-sm">
+        <span className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border border-sage/50 bg-bg/90 px-2 py-0.5 text-[10px] font-semibold text-sage">
           <Link2 className="h-2.5 w-2.5" />
           {t.gallery.giftMatched}
         </span>
@@ -84,6 +79,6 @@ export default function GalleryTile({ media, matched, onOpen }: GalleryTileProps
           {formatRelativeTime(media.timestamp, lang)}
         </span>
       </span>
-    </motion.button>
+    </button>
   );
 }

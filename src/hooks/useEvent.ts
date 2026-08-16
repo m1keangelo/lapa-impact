@@ -5,10 +5,11 @@
  * does not exist yet (nobody has pressed Publish in Admin → Events), the
  * hook falls back to SEED_EVENT — which contains only confirmed,
  * organizer-supplied facts, so the page is never wrong and never empty.
+ *
+ * SDK loads lazily (firebaseCore) — the homepage bundle stays light (§44).
  */
 import { useEffect, useState } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { firebaseReady, getDb } from '@/lib/firebaseCore';
 import { SEED_EVENT, type EventDoc } from '@/lib/eventData';
 
 export interface EventState {
@@ -23,30 +24,42 @@ export function useEvent(): EventState {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!db) {
+    if (!firebaseReady) {
       setLoading(false);
       return;
     }
-    const unsub = onSnapshot(
-      doc(db, 'events', 'current'),
-      (snap) => {
-        if (snap.exists()) {
-          const data = snap.data() as Partial<EventDoc>;
-          // Merge over the seed so a partially-filled doc never breaks
-          // the public page — missing fields keep their confirmed values.
-          setRemote({ ...SEED_EVENT, ...data, status: 'published' });
-        } else {
+    let cancelled = false;
+    let unsub: (() => void) | undefined;
+    void (async () => {
+      const [db, fs] = await Promise.all([getDb(), import('firebase/firestore')]);
+      if (cancelled || !db) {
+        if (!cancelled) setLoading(false);
+        return;
+      }
+      unsub = fs.onSnapshot(
+        fs.doc(db, 'events', 'current'),
+        (snap) => {
+          if (snap.exists()) {
+            const data = snap.data() as Partial<EventDoc>;
+            // Merge over the seed so a partially-filled doc never breaks
+            // the public page — missing fields keep their confirmed values.
+            setRemote({ ...SEED_EVENT, ...data, status: 'published' });
+          } else {
+            setRemote(null);
+          }
+          setLoading(false);
+        },
+        (err) => {
+          console.warn('[useEvent] listener failed:', err);
           setRemote(null);
-        }
-        setLoading(false);
-      },
-      (err) => {
-        console.warn('[useEvent] listener failed:', err);
-        setRemote(null);
-        setLoading(false);
-      },
-    );
-    return unsub;
+          setLoading(false);
+        },
+      );
+    })();
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
   }, []);
 
   return {

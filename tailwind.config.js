@@ -21,7 +21,7 @@ module.exports = {
         amber: {
           DEFAULT: "var(--amber)",
           soft: "var(--amber-soft)",
-          glow: "rgba(23,105,255,0.10)",
+          glow: "rgba(0,61,122,0.10)",
         },
         terra: "var(--terra)",
         sage: "var(--sage)",

@@ -80,23 +80,11 @@ export default function MatchedPhotos({
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
-            {shown.map((m, i) => (
-              <motion.button
+            {shown.map((m) => (
+              <button
                 key={m.id}
                 type="button"
                 onClick={() => setActive(m)}
-                initial={
-                  reducedMotion
-                    ? { opacity: 0 }
-                    : { opacity: 0, clipPath: 'inset(12% 12% 12% 12%)' }
-                }
-                whileInView={{ opacity: 1, clipPath: 'inset(0% 0% 0% 0%)' }}
-                viewport={{ amount: 0.15, once: true }}
-                transition={{
-                  delay: reducedMotion ? 0 : i * 0.09,
-                  duration: reducedMotion ? 0.2 : 0.5,
-                  ease: EASE,
-                }}
                 aria-label={t.common.openPhotoCaption(pickLang(m, 'caption', lang))}
                 className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface-2"
               >
@@ -111,7 +99,7 @@ export default function MatchedPhotos({
                     {pickLang(m, 'caption', lang)}
                   </span>
                 </span>
-              </motion.button>
+              </button>
             ))}
           </div>
         )}
@@ -126,7 +114,7 @@ export default function MatchedPhotos({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: reducedMotion ? 0.1 : 0.25 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-5 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-5"
             onClick={() => setActive(null)}
             role="dialog"
             aria-modal="true"

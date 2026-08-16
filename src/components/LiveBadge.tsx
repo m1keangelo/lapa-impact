@@ -1,6 +1,7 @@
 /**
- * LiveBadge (design.md §7.6) — sage pulsing dot + caption, shown wherever
- * an onSnapshot listener is active.
+ * LiveBadge (design.md §7.6) — sage dot + caption, shown wherever an
+ * onSnapshot listener is active. Static dot: icons never animate
+ * (TYPOGRAPHIC MOTION ONLY).
  */
 import { useLanguage } from '@/i18n/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -8,11 +9,14 @@ import { cn } from '@/lib/utils';
 interface LiveBadgeProps {
   label?: string;
   className?: string;
+  /** Lighter sage for dark photographic backdrops (hero). */
+  onDark?: boolean;
 }
 
-export default function LiveBadge({ label, className }: LiveBadgeProps) {
+export default function LiveBadge({ label, className, onDark }: LiveBadgeProps) {
   const { t } = useLanguage();
   const text = label ?? t.common.live;
+  const tone = onDark ? '#8FBE9F' : undefined;
   return (
     <span
       className={cn(
@@ -20,11 +24,15 @@ export default function LiveBadge({ label, className }: LiveBadgeProps) {
         className,
       )}
     >
-      <span className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-sage" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-sage" />
-      </span>
-      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sage">
+      <span
+        className="inline-flex h-2 w-2 rounded-full bg-sage"
+        style={tone ? { backgroundColor: tone } : undefined}
+        aria-hidden
+      />
+      <span
+        className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sage"
+        style={tone ? { color: tone } : undefined}
+      >
         {text}
       </span>
     </span>

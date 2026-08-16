@@ -1,17 +1,11 @@
 /**
  * Home Section 4 — Live feed preview (home.md §Section 4).
  * Left: 6 most recent mixed FeedItems from the bounded onSnapshot queries.
- * Right: featured photo card (latest media item). Live inserts slide down
- * with a temporary amber left border that fades over 2s.
+ * Right: featured photo card (latest media item). TYPOGRAPHIC MOTION ONLY:
+ * the section header text rises gently; cards and photographs stay still.
  */
-import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useReducedMotion,
-} from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { AlertTriangle } from 'lucide-react';
 import FeedItem from '@/components/FeedItem';
 import LiveBadge from '@/components/LiveBadge';
@@ -93,12 +87,17 @@ export default function FeedPreview() {
   const items = feed.entries.slice(0, 6);
   const status = feed.status;
 
-  const listRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(listRef, { amount: 0.2, once: true });
-
-  // Items timestamped after mount are live inserts — they get the
-  // slide-down + amber border flash treatment (no ref reads in render).
-  const [mountedAt] = useState(() => Date.now());
+  // Typography-only scroll reveal: fade + subtle 16px lift, once, then stop.
+  const rise = (delay: number) => ({
+    initial: { opacity: 0, y: reduceMotion ? 0 : 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { amount: 0.3, once: true } as const,
+    transition: {
+      delay: reduceMotion ? 0 : delay,
+      duration: reduceMotion ? 0 : 0.5,
+      ease: EASE,
+    },
+  });
 
   const featured: MediaItem | undefined = [...feed.media].sort(
     (a, b) => toMillis(b.timestamp) - toMillis(a.timestamp),
@@ -107,22 +106,26 @@ export default function FeedPreview() {
   return (
     <section id="feed-preview" className="scroll-mt-20 py-20 md:py-28">
       <div className="mx-auto w-full max-w-container px-5 md:px-8">
-        {/* Header */}
+        {/* Header — typography-only reveal; badges and cards stay static */}
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="eyebrow flex items-center gap-3">
+            <m.p {...rise(0)} className="eyebrow flex items-center gap-3">
               <span className="inline-block h-px w-4 bg-amber" aria-hidden />
               {t.home.feedPreview.eyebrow}
-            </p>
-            <h2
+            </m.p>
+            <m.h2
+              {...rise(0.08)}
               className="mt-4 font-sans font-bold leading-[1.12] tracking-[-0.02em] text-text"
               style={{ fontSize: 'clamp(30px, 3.6vw, 48px)' }}
             >
               {t.home.feedPreview.title}
-            </h2>
-            <p className="mt-3 max-w-[52ch] text-[16px] leading-[1.55] tracking-[0.005em] text-text-muted md:text-[17px]">
+            </m.h2>
+            <m.p
+              {...rise(0.16)}
+              className="mt-3 max-w-[52ch] text-[16px] leading-[1.55] tracking-[0.005em] text-text-muted md:text-[17px]"
+            >
               {t.home.feedPreview.body}
-            </p>
+            </m.p>
           </div>
           {feed.isDemo ? (
             <div className="flex flex-col items-start gap-2 sm:items-end">
@@ -139,8 +142,8 @@ export default function FeedPreview() {
         {/* Content grid — min-w-0 on children so truncated feed text
             can never force the track wider than the viewport */}
         <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-12">
-          {/* Feed list */}
-          <div ref={listRef} className="min-w-0 lg:col-span-7">
+          {/* Feed list — cards render statically (TYPOGRAPHIC MOTION ONLY) */}
+          <div className="min-w-0 lg:col-span-7">
             {status === 'loading' ? (
               <FeedSkeleton />
             ) : status === 'error' ? (
@@ -157,53 +160,22 @@ export default function FeedPreview() {
                 body={t.home.feedPreview.emptyBody}
               />
             ) : (
-              <motion.div
-                className="flex flex-col gap-4"
-                initial="hidden"
-                animate={inView ? 'show' : 'hidden'}
-                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
-              >
-                <AnimatePresence initial={false} mode="popLayout">
-                  {items.map((entry) => {
-                    const key = `${entry.kind}:${entry.id}`;
-                    const isNew = entry.ts > mountedAt + 1000;
-                    const p = entryToProps(entry, t, lang);
-                    return (
-                      <motion.div
-                        key={key}
-                        layout="position"
-                        custom={isNew}
-                        variants={{
-                          hidden: (n: boolean) => ({
-                            opacity: 0,
-                            y: reduceMotion ? 0 : n ? -16 : 24,
-                          }),
-                          show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } },
-                        }}
-                        exit={{ opacity: 0 }}
-                        className="relative"
-                      >
-                        {/* live-insert amber left-border flash */}
-                        <motion.span
-                          aria-hidden
-                          initial={{ opacity: isNew && !reduceMotion ? 1 : 0 }}
-                          animate={{ opacity: 0 }}
-                          transition={{ duration: 2, ease: 'easeOut' }}
-                          className="absolute inset-y-0 left-0 z-10 w-[3px] rounded-l-card bg-amber"
-                        />
-                        <FeedItem
-                          variant={p.variant}
-                          title={p.title}
-                          meta={p.meta}
-                          amount={p.amount}
-                          detail={p.detail}
-                          timestamp={entry.ts}
-                        />
-                      </motion.div>
-                    );
-                  })}
-                </AnimatePresence>
-              </motion.div>
+              <div className="flex flex-col gap-4">
+                {items.map((entry) => {
+                  const p = entryToProps(entry, t, lang);
+                  return (
+                    <FeedItem
+                      key={`${entry.kind}:${entry.id}`}
+                      variant={p.variant}
+                      title={p.title}
+                      meta={p.meta}
+                      amount={p.amount}
+                      detail={p.detail}
+                      timestamp={entry.ts}
+                    />
+                  );
+                })}
+              </div>
             )}
 
             {/* §3 — SEE THE LIVE FEED is a MAJOR CTA, not a text link:
@@ -225,18 +197,9 @@ export default function FeedPreview() {
             </div>
           </div>
 
-          {/* Featured photo card */}
+          {/* Featured photo card — static (photographs never animate) */}
           {featured ? (
-            <motion.figure
-              initial={{
-                opacity: 0,
-                clipPath: reduceMotion ? 'inset(0%)' : 'inset(8%)',
-              }}
-              whileInView={{ opacity: 1, clipPath: 'inset(0%)' }}
-              viewport={{ amount: 0.3, once: true }}
-              transition={{ duration: reduceMotion ? 0 : 0.7, ease: EASE }}
-              className="min-w-0 lg:col-span-5"
-            >
+            <figure className="min-w-0 lg:col-span-5">
               <button
                 type="button"
                 onClick={() => navigate(`/gallery?photo=${featured.id}`)}
@@ -269,7 +232,7 @@ export default function FeedPreview() {
                   </div>
                 </figcaption>
               </button>
-            </motion.figure>
+            </figure>
           ) : null}
         </div>
       </div>

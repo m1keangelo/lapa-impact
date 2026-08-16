@@ -5,7 +5,7 @@
  * wait. We built it to respond." Left-aligned — the one editorial break
  * from the centered rhythm (PART 21).
  */
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageContext';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -32,13 +32,13 @@ export default function WhyBuilt() {
         <div className="max-w-[640px]">
           {/* FINAL TYPOGRAPHY §2/§3 — eyebrow → headline → body rhythm.
               The section label becomes the quiet tracked eyebrow… */}
-          <motion.p {...rise(0)} className="eyebrow">
+          <m.p {...rise(0)} className="eyebrow">
             {w.title}
-          </motion.p>
+          </m.p>
 
           {/* …and the thesis (§12) becomes the two-level serif headline:
               line 1 smaller/reflective, line 2 lands harder. */}
-          <motion.h2
+          <m.h2
             {...rise(0.06)}
             className="mt-6 font-display leading-[1.12] tracking-[-0.015em] text-text"
           >
@@ -54,68 +54,68 @@ export default function WhyBuilt() {
             >
               {w.timeMattersB}
             </span>
-          </motion.h2>
+          </m.h2>
 
-          <motion.p {...rise(0.12)} className="mt-7 text-[17px] leading-[1.65] text-text-muted md:text-[18px]">
+          <m.p {...rise(0.12)} className="mt-7 text-[17px] leading-[1.65] text-text-muted md:text-[18px]">
             {w.bodyA}
-          </motion.p>
-          <motion.p {...rise(0.18)} className="mt-4 text-[17px] leading-[1.65] text-text-muted md:text-[18px]">
+          </m.p>
+          <m.p {...rise(0.18)} className="mt-4 text-[17px] leading-[1.65] text-text-muted md:text-[18px]">
             {w.bodyB}
-          </motion.p>
+          </m.p>
 
           {/* The cost thesis as two standalone beats (red-team §05) */}
-          <motion.div {...rise(0.2)} className="mt-8 space-y-1">
+          <m.div {...rise(0.2)} className="mt-8 space-y-1">
             <p className="font-sans text-[16px] font-bold uppercase tracking-[0.04em] text-text md:text-[17px]">
               {w.costA}
             </p>
             <p className="font-sans text-[16px] font-bold uppercase tracking-[0.04em] text-text md:text-[17px]">
               {w.costB}
             </p>
-          </motion.div>
+          </m.div>
 
           {/* PART 42 — why speed matters */}
           <div className="mt-10 space-y-2">
             {w.timeLines.map((line, i) => (
-              <motion.p
+              <m.p
                 key={line}
                 {...rise(0.12 + i * 0.05)}
                 className="text-[16px] leading-[1.6] text-text-muted md:text-[17px]"
               >
                 {line}
-              </motion.p>
+              </m.p>
             ))}
           </div>
 
           {/* PART 43 — the ESPERAR / RESPONDER contrast, kept extremely
               simple: two words, one quiet, one strong (red-team §05/§10) */}
-          <motion.div {...rise(0.06)} className="mt-14">
+          <m.div {...rise(0.06)} className="mt-14">
             <p className="font-sans text-[15px] font-semibold uppercase tracking-[0.14em] text-text-faint">
               {w.waitWord}
             </p>
             <p className="mt-1 font-sans text-[22px] font-bold uppercase tracking-[0.06em] text-text md:text-[24px]">
               {w.respondWord}
             </p>
-          </motion.div>
+          </m.div>
 
           {/* The differentiation peak (dark ink, not blue: PART 34) —
               two lines: the rejection, then the answer landing harder. */}
-          <motion.p
+          <m.p
             {...rise(0.08)}
             className="mt-8 font-display leading-[1.18] tracking-[-0.015em]"
             style={{ fontSize: 'clamp(28px, 3.6vw, 50px)' }}
           >
             <span className="block font-medium text-text-muted">{w.peakA}</span>
             <span className="block font-semibold text-text">{w.peakB}</span>
-          </motion.p>
+          </m.p>
           <div className="mt-6 space-y-1.5">
             {w.closer.map((line, i) => (
-              <motion.p
+              <m.p
                 key={line}
                 {...rise(0.12 + i * 0.05)}
                 className="text-[16px] leading-[1.6] text-text-muted md:text-[17px]"
               >
                 {line}
-              </motion.p>
+              </m.p>
             ))}
           </div>
         </div>

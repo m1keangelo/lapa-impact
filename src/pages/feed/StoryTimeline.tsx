@@ -8,7 +8,6 @@
  * reports fill it. Days render chronologically: Day 1 → today.
  */
 import { useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { BadgeCheck } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { currentMissionDay, missionDay, missionDayLabel } from '@/lib/mission';
@@ -16,20 +15,12 @@ import { CONTEXT_MILESTONES, type ContextMilestone } from '@/lib/missionContext'
 import type { FeedEntry, MediaItem, Transfer } from '@/lib/types';
 import FeedEntryCard from './FeedEntryCard';
 
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-
-function ContextCard({ item, index }: { item: ContextMilestone; index: number }) {
+function ContextCard({ item }: { item: ContextMilestone }) {
   const { t, lang } = useLanguage();
   const title = lang === 'es' ? item.titleEs : item.titleEn;
   const body = lang === 'es' ? item.bodyEs : item.bodyEn;
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.45, ease: EASE, delay: Math.min(index * 0.05, 0.2) }}
-      className="rounded-card border border-dashed border-border-strong bg-surface-2/60 p-4"
-    >
+    <article className="rounded-card border border-dashed border-border-strong bg-surface-2/60 p-4">
       <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-text-faint">
         <BadgeCheck className="h-3.5 w-3.5 text-sage" />
         {t.story.contextLabel}
@@ -62,7 +53,7 @@ function ContextCard({ item, index }: { item: ContextMilestone; index: number })
       >
         {t.story.sourcePrefix}: {item.sourceName} →
       </a>
-    </motion.article>
+    </article>
   );
 }
 
@@ -158,7 +149,7 @@ export default function StoryTimeline({
             )}
             {/* Verified public record for the day. */}
             {context.map((m, i) => (
-              <ContextCard key={`${day}-${i}`} item={m} index={i} />
+              <ContextCard key={`${day}-${i}`} item={m} />
             ))}
           </div>
         </section>

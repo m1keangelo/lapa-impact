@@ -5,7 +5,7 @@
  * Event Spotlight and the /event page.
  */
 import { useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 
@@ -41,12 +41,12 @@ export default function FlyerViewer({
   return (
     <AnimatePresence>
       {open ? (
-        <motion.div
+        <m.div
           key="flyer"
           role="dialog"
           aria-modal="true"
           aria-label={alt}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-10"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 md:p-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -61,7 +61,7 @@ export default function FlyerViewer({
           >
             <X className="h-5 w-5" />
           </button>
-          <motion.img
+          <m.img
             src={src}
             alt={alt}
             initial={{ opacity: 0, scale: 0.96, y: 12 }}
@@ -71,7 +71,7 @@ export default function FlyerViewer({
             className="max-h-[86vh] w-auto max-w-full rounded-[10px] object-contain shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />
-        </motion.div>
+        </m.div>
       ) : null}
     </AnimatePresence>
   );

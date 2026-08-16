@@ -23,12 +23,33 @@
     <meta name="twitter:description" content="Our people are hurting. We can help." />
     <meta name="twitter:image" content="https://lapa-impact.vercel.app/og-image.jpg" />
 
-    <!-- Fonts: Fraunces (display), Inter (UI), IBM Plex Mono (ledger numbers) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fonts: Fraunces (display), Inter (UI), IBM Plex Mono (ledger
+         numbers) — SELF-HOSTED (§44): no cross-origin handshake, no
+         render-blocking third-party CSS. Variable latin subsets preloaded. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/fraunces-v38-6NU78FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0KxC9TeA.woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/inter-v20-UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+
+    <!-- LCP: start the hero photograph during HTML parse (§29/§44) -->
+    <link
+      rel="preload"
+      as="image"
+      href="/hero-1440.avif"
+      imagesrcset="/hero-390.avif 390w, /hero-768.avif 768w, /hero-1440.avif 1440w, /hero-1920.avif 1920w"
+      imagesizes="100vw"
+      fetchpriority="high"
     />
   </head>
   <body>

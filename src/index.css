@@ -16,14 +16,14 @@
     --text: #111111;
     --text-muted: #57534B;
     --text-faint: #8C867B;
-    --amber: #1769FF; /* LAPA blue — primary action / donations */
-    --amber-soft: #4D8AFF;
+    --amber: #003D7A; /* LAPA blue — primary action / donations */
+    --amber-soft: #0A4E97; /* hover of the primary blue */
     --terra: #C86B4A; /* warm accent — field work / transfers */
     --sage: #4E7E62; /* quiet green — proof / families */
     --danger: #C2402E;
 
     /* shadcn semantic vars (HSL triplets) */
-    --ring: 221 100% 55%;
+    --ring: 210 100% 24%;
     --radius: 10px;
 
     color-scheme: light;
@@ -65,7 +65,7 @@
   }
 
   ::selection {
-    background: rgba(23, 105, 255, 0.18);
+    background: rgba(0, 61, 122, 0.18);
     color: var(--text);
   }
 }
@@ -104,38 +104,39 @@
 }
 
 /* ── Hero intro sequence (identity hero) ───────────────────────────
-   One gentle rise per beat — no bounce, no typewriter. The beats walk
-   the visitor through the emotional progression: here → roots → the
-   flags answer "¿de dónde?" → no choosing → we show up. Per-flag and
-   per-word delays are set inline (animationDelay); these classes only
-   carry the motion. Reduced motion is handled by the global rule
-   above: everything lands instantly. */
+   One gentle rise per typographic beat — no bounce, no typewriter.
+   The beats walk the visitor through the emotional progression:
+   here → roots → the flags answer "¿de dónde?" as ONE block →
+   …pero… → AHÍ ESTAMOS. Typography only: the photograph, buttons
+   and numbers never move. Rise distance shrinks on small screens
+   (TYPOGRAPHIC MOTION §10). Reduced motion is handled by the global
+   rule above: everything lands instantly, fully visible. */
+:root {
+  --hero-rise: 20px;
+}
+@media (max-width: 640px) {
+  :root {
+    --hero-rise: 12px;
+  }
+}
+
 @keyframes hero-rise {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(var(--hero-rise)); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* The 🇺🇸 punctuation settles in right after SOMOS DE AQUÍ. — a tiny
-   bit of depth, no waving. */
-@keyframes hero-flag-in {
-  from { opacity: 0; transform: translateY(0.12em) rotate(-4deg) scale(0.9); }
-  to { opacity: 1; transform: translateY(0) rotate(0) scale(1); }
-}
-
-/* "Estamos ahí." turns LAPA blue after it lands */
+/* "AHÍ ESTAMOS." settles into LAPA blue after it lands — one-shot. */
 @keyframes hero-tag-blue {
   to { color: #4D8AFF; }
 }
 
-.hero-seq-badge      { animation: hero-rise 0.5s ease-out 0.1s both; }
 .hero-seq-eyebrow    { animation: hero-rise 0.6s ease-out 0.2s both; }
 .hero-seq-somos      { animation: hero-rise 0.7s ease-out 0.4s both; }
-.hero-seq-usflag     { animation: hero-flag-in 0.7s ease-out 0.85s both; }
 .hero-seq-raices     { animation: hero-rise 0.7s ease-out 1.2s both; }
-.hero-seq-flags      { animation: hero-rise 0.6s ease-out both; } /* delay inline per flag */
+.hero-seq-flags-row  { animation: hero-rise 0.7s ease-out 1.55s both; } /* the flag line as one block */
 .hero-seq-word       { animation: hero-rise 0.55s ease-out both; } /* delay inline per word */
 .hero-seq-payoff     { animation: hero-rise 0.8s ease-out 4.6s both; }
 .hero-seq-blue       { animation: hero-tag-blue 0.5s ease-out 5.1s both; }
 .hero-seq-mission    { animation: hero-rise 0.6s ease-out 5.2s both; }
-.hero-seq-cta        { animation: hero-rise 0.6s ease-out 5.5s both; }
-.hero-seq-numbers    { animation: hero-rise 0.6s ease-out 5.7s both; }
+/* The badge, CTA buttons and numbers toggle are NOT typography —
+   they render statically (TYPOGRAPHIC MOTION ONLY). */

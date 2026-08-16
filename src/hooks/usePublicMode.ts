@@ -15,10 +15,12 @@
  *
  * When Firebase is unconfigured or the doc doesn't exist yet, we default
  * to 'preview' (the safe, labeled state).
+ *
+ * The SDK is loaded lazily (firebaseCore) so the homepage bundle does not
+ * carry Firestore (PERFORMANCE §44).
  */
 import { useEffect, useState } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db, firebaseReady } from '@/lib/firebase';
+import { firebaseReady, getDb } from '@/lib/firebaseCore';
 
 export type PublicMode = 'preview' | 'live' | 'paused';
 
@@ -35,26 +37,35 @@ export function usePublicMode(): PublicModeState {
   });
 
   useEffect(() => {
-    if (!firebaseReady || !db) return;
-    const unsub = onSnapshot(
-      doc(db, 'settings', 'public'),
-      (snap) => {
-        const mode = snap.data()?.mode;
-        setState({
-          mode:
-            mode === 'live' || mode === 'paused' || mode === 'preview'
-              ? mode
-              : 'preview',
-          ready: true,
-        });
-      },
-      (err) => {
-        console.error('[usePublicMode] snapshot error:', err);
-        // Stay on the safe default rather than flashing real/empty data.
-        setState({ mode: 'preview', ready: true });
-      },
-    );
-    return unsub;
+    if (!firebaseReady) return;
+    let cancelled = false;
+    let unsub: (() => void) | undefined;
+    void (async () => {
+      const [db, fs] = await Promise.all([getDb(), import('firebase/firestore')]);
+      if (cancelled || !db) return;
+      unsub = fs.onSnapshot(
+        fs.doc(db, 'settings', 'public'),
+        (snap) => {
+          const mode = snap.data()?.mode;
+          setState({
+            mode:
+              mode === 'live' || mode === 'paused' || mode === 'preview'
+                ? mode
+                : 'preview',
+            ready: true,
+          });
+        },
+        (err) => {
+          console.error('[usePublicMode] snapshot error:', err);
+          // Stay on the safe default rather than flashing real/empty data.
+          setState({ mode: 'preview', ready: true });
+        },
+      );
+    })();
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
   }, []);
 
   return state;

@@ -5,7 +5,6 @@
  * donation (amber), transfer (terra), update (sage), photo (cream).
  */
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRightToLine,
   Camera,
@@ -118,22 +117,11 @@ export default function FeedItem({
         ) : null}
       </button>
 
-      <AnimatePresence initial={false}>
-        {open && detail ? (
-          <motion.div
-            key="detail"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden"
-          >
-            <p className="border-t border-border px-4 py-3 pl-[68px] text-sm leading-[1.55] text-text-muted">
-              {detail}
-            </p>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      {open && detail ? (
+        <p className="border-t border-border px-4 py-3 pl-[68px] text-sm leading-[1.55] text-text-muted">
+          {detail}
+        </p>
+      ) : null}
     </div>
   );
 }

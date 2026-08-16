@@ -1,10 +1,9 @@
 /**
  * Impact Section 3 — "What the pot deployed — your share" (dashboard.md §3).
  * A horizontal (desktop) / vertical (mobile) timeline of impact chips
- * derived from field-update metrics, connected by a 2px dashed line that
- * draws itself on scroll-into-view. Empty → Sprout EmptyState.
+ * derived from field-update metrics, connected by a static 2px dashed
+ * line (decorative elements never animate). Empty → Sprout EmptyState.
  */
-import { motion } from 'framer-motion';
 import {
   Droplets,
   House,
@@ -22,7 +21,6 @@ import { demoUpdates } from '@/lib/demoData';
 import { formatRelativeTime, pickMetrics } from '@/lib/format';
 import type { ImpactUpdate } from '@/lib/types';
 
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 interface Chip {
   id: string;
@@ -75,18 +73,14 @@ function chipsFromUpdates(
   return chips.slice(0, 4);
 }
 
-export default function Footprint({ reducedMotion }: { reducedMotion: boolean }) {
+export default function Footprint() {
   const { t, lang } = useLanguage();
   const feed = useFeed<ImpactUpdate>('updates', { limit: 6 });
   const updates = feed.isDemo ? demoUpdates : feed.items;
   const chips = chipsFromUpdates(updates, t, lang);
 
   return (
-    <motion.section
-      initial={{ opacity: 0, y: reducedMotion ? 0 : 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ amount: 0.2, once: true }}
-      transition={{ duration: reducedMotion ? 0 : 0.5, ease: EASE }}
+    <section
       aria-label={t.footprint.sectionAria}
       className="mt-12 rounded-card border border-border bg-surface p-6"
     >
@@ -116,39 +110,24 @@ export default function Footprint({ reducedMotion }: { reducedMotion: boolean })
         />
       ) : (
         <div className="relative mt-6">
-          {/* Connecting dashed line (desktop, horizontal) — draws on reveal */}
-          <motion.span
+          {/* Connecting dashed lines — static (decorative elements never
+              animate, TYPOGRAPHIC MOTION ONLY) */}
+          <span
             aria-hidden
-            initial={reducedMotion ? false : { scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ amount: 0.2, once: true }}
-            transition={{ duration: reducedMotion ? 0 : 0.9, ease: EASE, delay: 0.2 }}
-            className="absolute left-0 top-[18px] hidden h-0.5 w-full origin-left border-t-2 border-dashed border-border-strong md:block"
+            className="absolute left-0 top-[18px] hidden h-0.5 w-full border-t-2 border-dashed border-border-strong md:block"
           />
           {/* Mobile vertical line */}
-          <motion.span
+          <span
             aria-hidden
-            initial={reducedMotion ? false : { scaleY: 0 }}
-            whileInView={{ scaleY: 1 }}
-            viewport={{ amount: 0.2, once: true }}
-            transition={{ duration: reducedMotion ? 0 : 0.9, ease: EASE, delay: 0.2 }}
-            className="absolute bottom-2 left-[17px] top-2 w-0 origin-top border-l-2 border-dashed border-border-strong md:hidden"
+            className="absolute bottom-2 left-[17px] top-2 w-0 border-l-2 border-dashed border-border-strong md:hidden"
           />
 
           <ol className="relative flex flex-col gap-6 md:flex-row md:items-start md:justify-between md:gap-4">
-            {chips.map((chip, i) => {
+            {chips.map((chip) => {
               const Icon = chip.icon;
               return (
-                <motion.li
+                <li
                   key={chip.id}
-                  initial={{ opacity: 0, y: reducedMotion ? 0 : 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ amount: 0.2, once: true }}
-                  transition={{
-                    delay: reducedMotion ? 0 : 0.15 + i * 0.08,
-                    duration: reducedMotion ? 0 : 0.45,
-                    ease: EASE,
-                  }}
                   className="flex items-center gap-3 md:max-w-[220px] md:flex-1 md:flex-col md:items-start"
                 >
                   <span className="z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface-2">
@@ -169,12 +148,12 @@ export default function Footprint({ reducedMotion }: { reducedMotion: boolean })
                       {formatRelativeTime(chip.ts, lang)}
                     </span>
                   </span>
-                </motion.li>
+                </li>
               );
             })}
           </ol>
         </div>
       )}
-    </motion.section>
+    </section>
   );
 }

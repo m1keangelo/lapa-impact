@@ -11,7 +11,7 @@
  * massive whitespace, weight contrast inside each sentence, and the second
  * sentence set slightly stronger than the first.
  */
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageContext';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -24,7 +24,7 @@ export default function Closing() {
   return (
     <section className="mx-auto w-full max-w-container px-5 py-28 md:px-8 md:py-40">
       <div className="mx-auto max-w-[640px] text-center">
-        <motion.p
+        <m.p
           initial={{ opacity: 0, y: reduceMotion ? 0 : 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ amount: 0.45, once: true }}
@@ -41,7 +41,7 @@ export default function Closing() {
             <span className="font-medium">{c.purposeB1}</span>
             <span className="font-bold">{c.purposeB2}</span>
           </span>
-        </motion.p>
+        </m.p>
       </div>
     </section>
   );

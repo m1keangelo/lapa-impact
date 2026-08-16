@@ -6,7 +6,7 @@
  * The share loop stays: "I gave. I watched. This is where it went."
  */
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Check, HandCoins, Loader2, Share2 } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
@@ -25,6 +25,11 @@ export default function DonateSuccess() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { user, loading: authLoading } = useAuthUser();
+  const [searchParams] = useSearchParams();
+  /* Honesty contract (§52.13): Stripe appends ?session_id=… when it sends a
+     donor back after a completed payment. Without it there is nothing
+     confirmed — a direct visit or refresh must never fake a success. */
+  const sessionId = searchParams.get('session_id');
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -79,29 +84,56 @@ export default function DonateSuccess() {
     <div className="relative overflow-hidden">
       {/* faint blue glow, matching the FinalCta section */}
       <div
-        className="absolute inset-0 bg-[radial-gradient(600px_circle_at_50%_40%,rgba(23,105,255,0.07),transparent_70%)]"
+        className="absolute inset-0 bg-[radial-gradient(600px_circle_at_50%_40%,rgba(0,61,122,0.07),transparent_70%)]"
         aria-hidden
       />
       <div className="relative mx-auto flex min-h-[70dvh] w-full max-w-[680px] flex-col items-center justify-center px-5 py-20 text-center">
-        {/* Amber check pop with radiating pulse */}
-        <motion.div className="relative" aria-hidden>
-          {!reduceMotion ? (
-            <motion.span
-              className="absolute inset-0 rounded-full border-2 border-amber"
-              initial={{ opacity: 0.8, scale: 1 }}
-              animate={{ opacity: 0, scale: 2.2 }}
-              transition={{ duration: 1.2, ease: 'easeOut', delay: 0.35 }}
-            />
-          ) : null}
-          <motion.div
-            initial={reduceMotion ? false : { scale: 0, rotate: -30 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.05 }}
-            className="flex h-20 w-20 items-center justify-center rounded-full bg-amber"
-          >
-            <Check className="h-10 w-10 text-white" strokeWidth={3} />
-          </motion.div>
-        </motion.div>
+        {!sessionId ? (
+          /* No Stripe session → nothing was paid. Neutral, honest state. */
+          <>
+            <div
+              className="flex h-20 w-20 items-center justify-center rounded-full bg-surface-3"
+              aria-hidden
+            >
+              <HandCoins className="h-10 w-10 text-text-muted" strokeWidth={1.75} />
+            </div>
+            <motion.h1
+              {...rise(0.2)}
+              className="mt-8 font-display text-[32px] font-medium leading-[1.1] tracking-[-0.015em] text-text md:text-5xl"
+            >
+              {t.donate.success.noSessionTitle}
+            </motion.h1>
+            <motion.p
+              {...rise(0.3)}
+              className="mt-4 max-w-[50ch] text-[15px] leading-[1.55] text-text-muted"
+            >
+              {t.donate.success.noSessionBody}
+            </motion.p>
+            <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
+              <Link
+                to="/donate"
+                className="inline-flex items-center gap-2 rounded-[10px] bg-amber px-6 py-3.5 text-[15px] font-semibold text-white transition-all duration-150 ease-calm hover:bg-amber-soft active:scale-[0.98]"
+              >
+                <HandCoins className="h-4 w-4" />
+                {t.donate.success.noSessionDonate}
+              </Link>
+              <Link
+                to="/feed"
+                className="rounded-[10px] border border-border-strong px-6 py-3.5 text-[15px] font-semibold text-text transition-all duration-150 ease-calm hover:bg-surface-2/60 active:scale-[0.98]"
+              >
+                {t.donate.success.watchFeed}
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+        {/* Amber check — static (icons never animate, TYPOGRAPHIC MOTION ONLY) */}
+        <div
+          className="flex h-20 w-20 items-center justify-center rounded-full bg-amber"
+          aria-hidden
+        >
+          <Check className="h-10 w-10 text-white" strokeWidth={3} />
+        </div>
 
         <motion.h1
           {...rise(0.2)}
@@ -117,15 +149,12 @@ export default function DonateSuccess() {
         </motion.p>
 
         {authLoading ? (
-          <motion.div {...rise(0.4)} className="mt-10" role="status">
+          <div className="mt-10" role="status">
             <Loader2 className="h-7 w-7 animate-spin text-amber" strokeWidth={1.5} />
-          </motion.div>
+          </div>
         ) : user ? (
           /* Already signed in — nothing more to do. */
-          <motion.div
-            {...rise(0.4)}
-            className="mt-10 flex flex-col items-center gap-3 sm:flex-row"
-          >
+          <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
             <button
               type="button"
               onClick={() => navigate('/impact')}
@@ -140,10 +169,10 @@ export default function DonateSuccess() {
             >
               {t.donate.success.watchFeed}
             </Link>
-          </motion.div>
+          </div>
         ) : (
           /* Create the account that follows the mission (§35–36). */
-          <motion.div {...rise(0.4)} className="mt-10 w-full max-w-[420px]">
+          <div className="mt-10 w-full max-w-[420px]">
             <p className="text-[13px] font-medium leading-[1.5] tracking-[0.01em] text-text-muted">
               {t.donate.success.createAccountHint}
             </p>
@@ -233,18 +262,19 @@ export default function DonateSuccess() {
             >
               {t.donate.success.skipForNow}
             </Link>
-          </motion.div>
+          </div>
         )}
 
-        <motion.button
-          {...rise(0.55)}
+        <button
           type="button"
           onClick={() => void shareProof()}
           className="mt-8 inline-flex items-center gap-2 text-[13px] font-semibold text-text-muted underline decoration-dotted underline-offset-4 transition-colors hover:text-text"
         >
           <Share2 className="h-3.5 w-3.5" />
           {shared ? t.donate.success.copied : t.donate.success.shareCta}
-        </motion.button>
+        </button>
+          </>
+        )}
       </div>
     </div>
   );

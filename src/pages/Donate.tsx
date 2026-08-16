@@ -87,29 +87,18 @@ export default function Donate() {
         LAPA.Help · {campaignEyebrow(lang)}
       </motion.p>
 
-      {/* One strong human photograph */}
-      <motion.div
-        initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: EASE, delay: reduceMotion ? 0 : 0.06 }}
-        className="mt-4 overflow-hidden rounded-card"
-      >
+      {/* One strong human photograph — static (photographs never animate) */}
+      <div className="mt-4 overflow-hidden rounded-card">
         <img
           src={CAMPAIGN.donateImage}
           alt={lang === 'es' ? CAMPAIGN.locationEs : CAMPAIGN.location}
           className="aspect-[16/10] w-full object-cover"
           loading="eager"
         />
-      </motion.div>
+      </div>
 
-      {/* Headline + the single decision */}
-      <motion.section
-        initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: EASE, delay: reduceMotion ? 0 : 0.12 }}
-        className="mt-7"
-        aria-label={t.donate.page.chooseAmount}
-      >
+      {/* Headline + the single decision — static (forms/buttons never animate) */}
+      <section className="mt-7" aria-label={t.donate.page.chooseAmount}>
         <h1 className="text-center font-display text-[32px] font-medium leading-[1.1] tracking-[-0.01em] text-text md:text-[40px]">
           {t.donate.page.title}
         </h1>
@@ -205,10 +194,16 @@ export default function Donate() {
         <p className="mt-5 text-center text-[14px] font-medium leading-[1.55] text-text">
           {t.donate.page.supportLine}
         </p>
-        <p className="mt-3 text-center text-[12px] font-medium tracking-[0.01em] text-text-faint">
-          {t.donate.page.secureNote}
-        </p>
-      </motion.section>
+        {CHECKOUT_AVAILABLE ? (
+          <p className="mt-3 text-center text-[12px] font-medium tracking-[0.01em] text-text-faint">
+            {t.donate.page.secureNote}
+          </p>
+        ) : (
+          <p className="mt-3 text-center text-[13px] font-medium leading-[1.55] text-text-muted" role="status">
+            {t.donate.page.checkoutUnavailable}
+          </p>
+        )}
+      </section>
     </main>
   );
 }

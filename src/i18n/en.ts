@@ -852,6 +852,8 @@ export const en = {
       checkoutError:
         'We could not open secure checkout. Please try again in a moment.',
       secureNote: 'Secure checkout by Stripe · Cards, Apple Pay, Google Pay',
+      checkoutUnavailable:
+        'Online payment is not active yet. Check back soon — the public registry will show every dollar once the mission is underway.',
     },
     success: {
       confirmingTitle: 'Confirming your gift with Stripe…',
@@ -884,6 +886,10 @@ export const en = {
       unavailableBody:
         'This build isn’t wired to live payment confirmation. In the live app, your donor code appears here seconds after checkout.',
       backHome: 'Back to home',
+      noSessionTitle: 'Nothing to confirm here.',
+      noSessionBody:
+        'This page only appears after a completed Stripe payment. If you just donated, return via the confirmation link Stripe showed you at checkout.',
+      noSessionDonate: 'Go to donate',
       loadingAria: 'Confirming your donation',
     },
   },

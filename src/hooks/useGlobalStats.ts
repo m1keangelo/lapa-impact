@@ -2,10 +2,11 @@
  * Live global stats — onSnapshot on stats/global with the 4 designed
  * states (loading / empty / error / live). Falls back to demo data when
  * Firebase is not configured so the landing page renders fully.
+ *
+ * SDK loads lazily (firebaseCore) — the homepage bundle stays light (§44).
  */
 import { useEffect, useRef, useState } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db, firebaseReady } from '@/lib/firebase';
+import { firebaseReady, getDb } from '@/lib/firebaseCore';
 import { usePublicMode } from '@/hooks/usePublicMode';
 import { demoStats } from '@/lib/demoData';
 import type { GlobalStats, LiveStatus } from '@/lib/types';
@@ -37,39 +38,47 @@ export function useGlobalStats(): GlobalStatsResult {
   const first = useRef(true);
 
   useEffect(() => {
-    if (!firebaseReady || !db) return;
+    if (!firebaseReady) return;
     if (mode === 'preview') {
       // Back to clearly-labeled demo content; detach from real stats.
       setStats(demoStats);
       setStatus('live');
       return;
     }
-    const ref = doc(db, 'stats', 'global');
-    const unsub = onSnapshot(
-      ref,
-      (snap) => {
-        if (!snap.exists()) {
-          setStats(ZERO_STATS);
-          setStatus('empty');
-          return;
-        }
-        const data = snap.data() as Partial<GlobalStats>;
-        setStats({
-          totalIn: data.totalIn ?? 0,
-          totalOut: data.totalOut ?? 0,
-          familiesHelped: data.familiesHelped ?? 0,
-          updatedAt: data.updatedAt,
-        });
-        setStatus('live');
-        if (!first.current) setRevision((r) => r + 1);
-        first.current = false;
-      },
-      (err) => {
-        console.error('[useGlobalStats] snapshot error:', err);
-        setStatus('error');
-      },
-    );
-    return unsub;
+    let cancelled = false;
+    let unsub: (() => void) | undefined;
+    void (async () => {
+      const [db, fs] = await Promise.all([getDb(), import('firebase/firestore')]);
+      if (cancelled || !db) return;
+      unsub = fs.onSnapshot(
+        fs.doc(db, 'stats', 'global'),
+        (snap) => {
+          if (!snap.exists()) {
+            setStats(ZERO_STATS);
+            setStatus('empty');
+            return;
+          }
+          const data = snap.data() as Partial<GlobalStats>;
+          setStats({
+            totalIn: data.totalIn ?? 0,
+            totalOut: data.totalOut ?? 0,
+            familiesHelped: data.familiesHelped ?? 0,
+            updatedAt: data.updatedAt,
+          });
+          setStatus('live');
+          if (!first.current) setRevision((r) => r + 1);
+          first.current = false;
+        },
+        (err) => {
+          console.error('[useGlobalStats] snapshot error:', err);
+          setStatus('error');
+        },
+      );
+    })();
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
   }, [mode]);
 
   return { stats, status, isDemo, revision };

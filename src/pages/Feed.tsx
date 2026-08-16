@@ -7,7 +7,7 @@
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router';
-import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, useTransform } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { AlertTriangle, Camera, HandCoins, Inbox, Newspaper, Search, Send, X } from 'lucide-react';
 import EmptyState from '@/components/EmptyState';
 import LiveBadge from '@/components/LiveBadge';
@@ -49,23 +49,13 @@ function dayLabel(ts: number, t: LanguageContextValue['t'], lang: 'en' | 'es'): 
     .toUpperCase();
 }
 
-/** Tweening inline stat for the header row. */
+/** Static inline stat for the header row — numbers never animate
+    (TYPOGRAPHIC MOTION ONLY). */
 function InlineStat({ value, format, color }: { value: number; format: (n: number) => string; color: string }) {
-  const reduceMotion = useReducedMotion();
-  const mv = useMotionValue(reduceMotion ? value : 0);
-  useEffect(() => {
-    if (reduceMotion) {
-      mv.set(value);
-      return;
-    }
-    const controls = animate(mv, value, { duration: 1.2, ease: EASE });
-    return () => controls.stop();
-  }, [value, reduceMotion, mv]);
-  const text = useTransform(mv, (v) => format(Math.round(v)));
   return (
-    <motion.span className="font-mono font-medium" style={{ color, fontVariantNumeric: 'tabular-nums' }}>
-      {text}
-    </motion.span>
+    <span className="font-mono font-medium" style={{ color, fontVariantNumeric: 'tabular-nums' }}>
+      {format(value)}
+    </span>
   );
 }
 
@@ -118,7 +108,16 @@ export default function Feed() {
   const feed = usePublicFeed();
   const location = useLocation();
   const { t, lang } = useLanguage();
+  const reduceMotion = useReducedMotion();
   const FILTERS = buildFilters(t);
+
+  // Functional-section text reveal (TYPOGRAPHIC MOTION §6): fast, short,
+  // once — comprehension is never delayed.
+  const textIn = (delay: number, y = 14) => ({
+    initial: { opacity: 0, y: reduceMotion ? 0 : y },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: reduceMotion ? 0 : 0.4, ease: EASE, delay: reduceMotion ? 0 : delay },
+  });
 
   const [view, setView] = useState<'now' | 'story'>('now');
   const [filter, setFilter] = useState<FilterKind>('all');
@@ -205,12 +204,7 @@ export default function Feed() {
       {/* ——— Section 1: header ——— */}
       <section className="pt-10">
         <div className="flex items-center justify-between gap-4">
-          <motion.p
-            className="eyebrow flex items-center gap-2"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: EASE }}
-          >
+          <motion.p className="eyebrow flex items-center gap-2" {...textIn(0, 12)}>
             <span className="inline-block h-px w-4 bg-amber" aria-hidden />
             {t.feed.eyebrow}
           </motion.p>
@@ -223,30 +217,21 @@ export default function Feed() {
         <motion.h1
           className="mt-4 font-sans font-bold leading-[1.1] tracking-[-0.02em] text-text"
           style={{ fontSize: 'clamp(32px, 4vw, 52px)' }}
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE, delay: 0.07 }}
+          {...textIn(0.07, 18)}
         >
           {t.feed.title}
         </motion.h1>
         <motion.p
           className="mt-4 max-w-[56ch] text-[16px] leading-[1.6] text-text-muted md:text-[17px]"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE, delay: 0.14 }}
+          {...textIn(0.14, 14)}
         >
           {t.feed.sub}
         </motion.p>
 
         {/* §6 — preview content is ALWAYS clearly labeled, never mistaken
-            for real campaign activity. */}
+            for real campaign activity. Static card (not typography). */}
         {feed.isDemo ? (
-          <motion.div
-            className="mt-6 max-w-[640px] rounded-card border border-amber/40 bg-amber-glow p-5"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: EASE, delay: 0.18 }}
-          >
+          <div className="mt-6 max-w-[640px] rounded-card border border-amber/40 bg-amber-glow p-5">
             <PreviewChip />
             <p className="mt-2 text-[12px] font-bold uppercase tracking-[0.14em] text-amber">
               {t.publicMode.demoDataLabel}
@@ -257,14 +242,12 @@ export default function Feed() {
             <p className="mt-1 text-[14px] leading-[1.55] text-text-muted">
               {t.publicMode.previewBody}
             </p>
-          </motion.div>
+          </div>
         ) : null}
 
         <motion.p
           className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] tracking-[0.01em] text-text-muted"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}
+          {...textIn(0.2, 12)}
         >
           <InlineStat value={stats.totalIn} format={(n) => t.feed.moneyIn(formatMoney(n))} color="var(--amber)" />
           <span aria-hidden>·</span>
@@ -281,22 +264,20 @@ export default function Feed() {
         {feed.entries[0] ? (
           <motion.p
             className="mt-2 text-[12px] tracking-[0.01em] text-text-faint"
-            initial={{ opacity: 0 }}
+            initial={{ opacity: reduceMotion ? 1 : 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.28 }}
+            transition={{ duration: reduceMotion ? 0 : 0.4, delay: reduceMotion ? 0 : 0.26 }}
           >
             {t.feed.lastUpdated(formatRelativeTime(feed.entries[0].ts, lang))}
           </motion.p>
         ) : null}
 
-        {/* NOW vs STORY (spec §18–19): live stream ↔ day-by-day record */}
-        <motion.div
+        {/* NOW vs STORY (spec §18–19): live stream ↔ day-by-day record.
+            Static control — buttons never animate. */}
+        <div
           className="mt-6 inline-flex rounded-full border border-border bg-surface p-1"
           role="tablist"
           aria-label={t.story.storyTitle}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE, delay: 0.26 }}
         >
           {(['now', 'story'] as const).map((v) => {
             const active = view === v;
@@ -313,28 +294,24 @@ export default function Feed() {
                 )}
               >
                 {active ? (
-                  <motion.span
-                    layoutId="feed-view-pill"
-                    className="absolute inset-0 rounded-full bg-amber"
-                    transition={{ duration: 0.25, ease: EASE }}
-                  />
+                  <span className="absolute inset-0 rounded-full bg-amber" />
                 ) : null}
                 <span className="relative">{v === 'now' ? t.story.nowTab : t.story.storyTab}</span>
               </button>
             );
           })}
-        </motion.div>
+        </div>
       </section>
 
       {/* ——— Section 2: sticky filter bar (NOW view only) ——— */}
       {view === 'now' ? (
-      <div className="sticky top-[60px] z-40 -mx-5 mt-8 border-b border-border bg-bg/90 px-5 backdrop-blur-md md:-mx-8 md:px-8">
+      <div className="sticky top-[60px] z-40 -mx-5 mt-8 border-b border-border bg-bg px-5 md:-mx-8 md:px-8">
         <div className="flex min-h-[56px] flex-wrap items-center justify-between gap-2 py-2">
           <div className="flex items-center gap-1 overflow-x-auto no-scrollbar" role="tablist" aria-label={t.feed.filterAria}>
-            {FILTERS.map((f, i) => {
+            {FILTERS.map((f) => {
               const active = filter === f.id;
               return (
-                <motion.button
+                <button
                   key={f.id}
                   type="button"
                   role="tab"
@@ -344,16 +321,9 @@ export default function Feed() {
                     'relative flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium transition-colors duration-200',
                     active ? 'text-text' : 'text-text-muted hover:text-text',
                   )}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.35, ease: EASE, delay: 0.05 * i }}
                 >
                   {active ? (
-                    <motion.span
-                      layoutId="feed-chip-pill"
-                      className="absolute inset-0 rounded-full bg-surface-3"
-                      transition={{ duration: 0.2, ease: EASE }}
-                    />
+                    <span className="absolute inset-0 rounded-full bg-surface-3" />
                   ) : null}
                   {f.dot ? (
                     <span className="relative h-1.5 w-1.5 rounded-full" style={{ backgroundColor: f.dot }} aria-hidden />
@@ -367,7 +337,7 @@ export default function Feed() {
                       {formatCount(feed.totalLoaded)}
                     </span>
                   ) : null}
-                </motion.button>
+                </button>
               );
             })}
           </div>
@@ -393,31 +363,20 @@ export default function Feed() {
             {searchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
           </button>
         </div>
-        <AnimatePresence initial={false}>
-          {searchOpen ? (
-            <motion.div
-              key="mobile-search"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25, ease: EASE }}
-              className="overflow-hidden md:hidden"
-            >
-              <div className="relative pb-3">
-                <Search className="pointer-events-none absolute left-3 top-[18px] h-4 w-4 -translate-y-1/2 text-text-faint" />
-                <input
-                  type="search"
-                  autoFocus
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder={t.feed.searchPlaceholder}
-                  aria-label={t.feed.searchPlaceholder}
-                  className="h-10 w-full rounded-full border border-border bg-surface pl-9 pr-3 text-sm text-text placeholder:text-text-faint focus:border-border-strong focus:outline-none"
-                />
-              </div>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+        {searchOpen ? (
+          <div className="relative pb-3 md:hidden">
+            <Search className="pointer-events-none absolute left-3 top-[18px] h-4 w-4 -translate-y-1/2 text-text-faint" />
+            <input
+              type="search"
+              autoFocus
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t.feed.searchPlaceholder}
+              aria-label={t.feed.searchPlaceholder}
+              className="h-10 w-full rounded-full border border-border bg-surface pl-9 pr-3 text-sm text-text placeholder:text-text-faint focus:border-border-strong focus:outline-none"
+            />
+          </div>
+        ) : null}
       </div>
       ) : null}
 
@@ -480,11 +439,11 @@ export default function Feed() {
                 {groups.map((group) => (
                   <section key={group.label}>
                     <motion.header
-                      className="sticky top-[116px] z-30 mb-3 flex items-center gap-3 bg-bg/95 py-1 backdrop-blur-sm"
-                      initial={{ opacity: 0, x: -12 }}
-                      whileInView={{ opacity: 1, x: 0 }}
+                      className="sticky top-[116px] z-30 mb-3 flex items-center gap-3 bg-bg py-1"
+                      initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, amount: 0.8 }}
-                      transition={{ duration: 0.4, ease: EASE }}
+                      transition={{ duration: reduceMotion ? 0 : 0.35, ease: EASE }}
                     >
                       <h2
                         className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-text-faint"
@@ -496,25 +455,23 @@ export default function Feed() {
                     </motion.header>
 
                     <div className="space-y-4">
-                      <AnimatePresence initial={false}>
-                        {group.entries.map((entry) => (
-                          <div key={`${entry.kind}-${entry.id}`} id={`entry-${entry.id}`}>
-                            <FeedEntryCard
-                              entry={entry}
-                              shareable={!feed.isDemo}
-                              fresh={feed.freshIds.has(entry.id) || flashedId === entry.id}
-                              matched={
-                                entry.kind === 'photo'
-                                  ? Boolean(entry.media.donationId || entry.media.updateId)
-                                  : undefined
-                              }
-                              transfersById={transfersById}
-                              onOpenPhoto={openMediaLightbox}
-                              onOpenProof={openProofLightbox}
-                            />
-                          </div>
-                        ))}
-                      </AnimatePresence>
+                      {group.entries.map((entry) => (
+                        <div key={`${entry.kind}-${entry.id}`} id={`entry-${entry.id}`}>
+                          <FeedEntryCard
+                            entry={entry}
+                            shareable={!feed.isDemo}
+                            fresh={feed.freshIds.has(entry.id) || flashedId === entry.id}
+                            matched={
+                              entry.kind === 'photo'
+                                ? Boolean(entry.media.donationId || entry.media.updateId)
+                                : undefined
+                            }
+                            transfersById={transfersById}
+                            onOpenPhoto={openMediaLightbox}
+                            onOpenProof={openProofLightbox}
+                          />
+                        </div>
+                      ))}
                     </div>
                   </section>
                 ))}

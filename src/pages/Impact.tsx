@@ -167,7 +167,7 @@ export default function Impact() {
         </header>
 
         {/* ── My giving ──────────────────────────────────────────── */}
-        <motion.section {...rise(0.24)} className="mt-12" aria-label={t.myImpact.myGiving}>
+        <section className="mt-12" aria-label={t.myImpact.myGiving}>
           <div className="flex items-baseline justify-between gap-3">
             <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
               {t.myImpact.myGiving}
@@ -243,10 +243,10 @@ export default function Impact() {
               ))}
             </ul>
           )}
-        </motion.section>
+        </section>
 
         {/* ── From the mission ───────────────────────────────────── */}
-        <motion.section {...rise(0.32)} className="mt-12" aria-label={t.myImpact.updatesTitle}>
+        <section className="mt-12" aria-label={t.myImpact.updatesTitle}>
           <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
             {t.myImpact.updatesTitle}
           </h2>
@@ -302,7 +302,7 @@ export default function Impact() {
               {t.myImpact.proofCta}
             </Link>
           </div>
-        </motion.section>
+        </section>
 
         {/* ── Sign-out note ──────────────────────────────────────── */}
         <footer className="mt-16 text-center">

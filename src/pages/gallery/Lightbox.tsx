@@ -75,7 +75,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
       {open && current ? (
         <motion.div
           key="lightbox"
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-bg/95 p-4 backdrop-blur-md md:p-8"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-bg p-4 md:p-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

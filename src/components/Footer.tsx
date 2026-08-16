@@ -5,7 +5,7 @@
  * Firestore connection dot (sage when connected, blue otherwise).
  */
 import { Link } from 'react-router';
-import { firebaseReady } from '@/lib/firebase';
+import { firebaseReady } from '@/lib/firebaseCore';
 import { useGlobalStats } from '@/hooks/useGlobalStats';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { CAMPAIGN } from '@/lib/campaign';
@@ -81,17 +81,14 @@ export default function Footer() {
             {t.footer.bottomNote}
           </p>
           <span className="inline-flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              {connected ? (
-                <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-sage" />
-              ) : null}
-              <span
-                className={cn(
-                  'relative inline-flex h-2 w-2 rounded-full',
-                  connected ? 'bg-sage' : 'bg-amber',
-                )}
-              />
-            </span>
+            {/* Static status dot — icons never animate */}
+            <span
+              className={cn(
+                'inline-flex h-2 w-2 rounded-full',
+                connected ? 'bg-sage' : 'bg-amber',
+              )}
+              aria-hidden
+            />
             <span className="text-[12px] font-medium tracking-[0.01em] text-[#A39E93]">
               {isDemo
                 ? t.publicMode.statusPreview

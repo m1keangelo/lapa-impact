@@ -7,7 +7,7 @@
  */
 import { useEffect, useRef, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 
@@ -55,7 +55,7 @@ export default function Modal({
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-[90] flex items-end justify-center sm:items-center sm:p-6">
-          <motion.button
+          <m.button
             type="button"
             aria-label={t.common.dismiss}
             initial={{ opacity: 0 }}
@@ -63,9 +63,9 @@ export default function Modal({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="absolute inset-0 bg-[#111111]/55 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-[#111111]/55"
           />
-          <motion.div
+          <m.div
             ref={panelRef}
             role="dialog"
             aria-modal="true"
@@ -93,7 +93,7 @@ export default function Modal({
               </button>
             </div>
             {children}
-          </motion.div>
+          </m.div>
         </div>
       )}
     </AnimatePresence>,

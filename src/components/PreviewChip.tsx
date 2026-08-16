@@ -15,7 +15,7 @@ export default function PreviewChip({ className }: { className?: string }) {
         className,
       )}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-amber" aria-hidden />
+      <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />
       {t.publicMode.previewChip}
     </span>
   );

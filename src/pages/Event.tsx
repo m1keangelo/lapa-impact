@@ -90,7 +90,7 @@ export default function Event() {
           {/* Real event photo or poster once one exists (PART 70) —
               the visitor's language side first. Tap → full-size flyer. */}
           {poster ? (
-            <motion.figure {...rise(0.12)} className="relative mt-8">
+            <figure className="relative mt-8">
               <button
                 type="button"
                 onClick={() => setFlyerOpen(true)}
@@ -107,7 +107,7 @@ export default function Event() {
                   {t.event.viewFull}
                 </span>
               </button>
-            </motion.figure>
+            </figure>
           ) : null}
 
           {/* ── DATE / TIME / LOCATION ───────────────────────────── */}
@@ -141,7 +141,7 @@ export default function Event() {
         </motion.section>
 
         {/* ── WHAT'S HAPPENING ───────────────────────────────────── */}
-        <motion.section {...rise(0)} className="mt-16" aria-label={t.event.whatTitle}>
+        <section className="mt-16" aria-label={t.event.whatTitle}>
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber">
             {t.event.whatTitle}
           </p>
@@ -166,11 +166,10 @@ export default function Event() {
               </span>
             ))}
           </div>
-        </motion.section>
+        </section>
 
-        {/* ── TICKET / DONATE ────────────────────────────────────── */}
-        <motion.section
-          {...rise(0.1)}
+        {/* ── TICKET / DONATE — static card (buttons never animate) ── */}
+        <section
           className="mt-16 rounded-card border border-amber/40 bg-surface p-6 md:p-8"
           aria-label={t.event.ticketTitle}
         >
@@ -212,11 +211,11 @@ export default function Event() {
               </Link>
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* ── BUSINESSES SHOWING UP ──────────────────────────────── */}
         {event.businesses.length > 0 ? (
-          <motion.section {...rise(0)} className="mt-20" aria-label={t.event.bizTitle}>
+          <section className="mt-20" aria-label={t.event.bizTitle}>
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber">
               {t.event.bizTitle}
             </p>
@@ -224,17 +223,9 @@ export default function Event() {
               {t.event.bizSub}
             </h2>
             <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {event.businesses.map((biz, i) => (
-                <motion.li
+              {event.businesses.map((biz) => (
+                <li
                   key={biz.name}
-                  initial={{ opacity: 0, y: reduceMotion ? 0 : 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.4 }}
-                  transition={{
-                    delay: reduceMotion ? 0 : 0.05 * i,
-                    duration: reduceMotion ? 0 : 0.45,
-                    ease: EASE,
-                  }}
                   className="rounded-card border border-border bg-surface p-5"
                 >
                   <p className="font-display text-[17px] font-semibold tracking-[0.02em] text-text">
@@ -246,10 +237,10 @@ export default function Event() {
                   <span className="mt-3 inline-flex rounded-full border border-border bg-surface-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-text-faint">
                     {biz.kind[lang]}
                   </span>
-                </motion.li>
+                </li>
               ))}
             </ul>
-          </motion.section>
+          </section>
         ) : null}
 
         {/* ── WAYS TO HELP ───────────────────────────────────────── */}

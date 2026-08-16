@@ -10,15 +10,8 @@
  * - Demo fallback (firebaseReady === false) serves the bundled demo data.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  collection,
-  limit as fbLimit,
-  onSnapshot,
-  orderBy,
-  query,
-  type DocumentData,
-} from 'firebase/firestore';
-import { db, firebaseReady } from '@/lib/firebase';
+import type { DocumentData } from 'firebase/firestore';
+import { firebaseReady, getDb } from '@/lib/firebaseCore';
 import { usePublicMode } from '@/hooks/usePublicMode';
 import { toMillis } from '@/lib/format';
 import {
@@ -61,37 +54,46 @@ function useBoundedCollection<T extends { id: string }>(
   }, [onFresh]);
 
   useEffect(() => {
-    if (!firebaseReady || !db) return;
-    const q = query(
-      collection(db, name),
-      orderBy('timestamp', 'desc'),
-      fbLimit(limit),
-    );
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        const rows = snap.docs.map((d) => ({
-          id: d.id,
-          ...(d.data() as DocumentData),
-        })) as T[];
-        const seen = seenRef.current;
-        if (seen === null) {
-          seenRef.current = new Set(rows.map((r) => r.id));
-        } else {
-          const fresh = rows.filter((r) => !seen.has(r.id)).map((r) => r.id);
-          for (const r of rows) seen.add(r.id);
-          if (fresh.length > 0) onFreshRef.current(fresh);
-        }
-        setItems(rows);
-        setFull(rows.length >= limit);
-        setStatus(rows.length === 0 ? 'empty' : 'live');
-      },
-      (err) => {
-        console.error(`[usePublicFeed:${name}] snapshot error:`, err);
-        setStatus('error');
-      },
-    );
-    return unsub;
+    if (!firebaseReady) return;
+    let cancelled = false;
+    let unsub: (() => void) | undefined;
+    void (async () => {
+      const [db, fs] = await Promise.all([getDb(), import('firebase/firestore')]);
+      if (cancelled || !db) return;
+      const q = fs.query(
+        fs.collection(db, name),
+        fs.orderBy('timestamp', 'desc'),
+        fs.limit(limit),
+      );
+      unsub = fs.onSnapshot(
+        q,
+        (snap) => {
+          const rows = snap.docs.map((d) => ({
+            id: d.id,
+            ...(d.data() as DocumentData),
+          })) as T[];
+          const seen = seenRef.current;
+          if (seen === null) {
+            seenRef.current = new Set(rows.map((r) => r.id));
+          } else {
+            const fresh = rows.filter((r) => !seen.has(r.id)).map((r) => r.id);
+            for (const r of rows) seen.add(r.id);
+            if (fresh.length > 0) onFreshRef.current(fresh);
+          }
+          setItems(rows);
+          setFull(rows.length >= limit);
+          setStatus(rows.length === 0 ? 'empty' : 'live');
+        },
+        (err) => {
+          console.error(`[usePublicFeed:${name}] snapshot error:`, err);
+          setStatus('error');
+        },
+      );
+    })();
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
   }, [name, limit, retryNonce]);
 
   return { items, status, full };

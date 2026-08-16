@@ -4,7 +4,7 @@
  * (email + password account) and everyone else into the give/feed loop.
  */
 import { Link } from 'react-router';
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { ArrowRight, HandCoins } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { CHECKOUT_AVAILABLE } from '@/lib/donate';
@@ -26,32 +26,32 @@ export default function FinalCta() {
     <section className="relative overflow-hidden py-24 md:py-32">
       {/* subtle radial amber glow */}
       <div
-        className="absolute inset-0 bg-[radial-gradient(600px_circle_at_50%_60%,rgba(23,105,255,0.07),transparent_70%)]"
+        className="absolute inset-0 bg-[radial-gradient(600px_circle_at_50%_60%,rgba(0,61,122,0.07),transparent_70%)]"
         aria-hidden
       />
       <div className="relative mx-auto flex max-w-[680px] flex-col items-center px-5 text-center">
-        <motion.p {...stagger(0)} className="eyebrow flex items-center gap-3">
+        <m.p {...stagger(0)} className="eyebrow flex items-center gap-3">
           <span className="inline-block h-px w-4 bg-amber" aria-hidden />
           {t.home.finalCta.eyebrow}
           <span className="inline-block h-px w-4 bg-amber" aria-hidden />
-        </motion.p>
+        </m.p>
 
-        <motion.h2
+        <m.h2
           {...stagger(0.1)}
           className="mt-5 font-display font-medium leading-[1.1] tracking-[-0.015em] text-text"
           style={{ fontSize: 'clamp(32px, 4.2vw, 54px)' }}
         >
           {t.home.finalCta.title}
-        </motion.h2>
+        </m.h2>
 
-        <motion.p
+        <m.p
           {...stagger(0.2)}
           className="mt-4 max-w-[50ch] text-[16px] leading-[1.6] tracking-[0.005em] text-text-muted md:text-[17px]"
         >
           {t.home.finalCta.body}
-        </motion.p>
+        </m.p>
 
-        <motion.div {...stagger(0.3)} className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
           <Link
             to="/impact"
             className="inline-flex min-h-[44px] items-center gap-2 rounded-[4px] bg-[#003D7A] px-8 py-4 text-[15px] font-bold tracking-[0.02em] text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-[#0A4E97] active:scale-[0.98]"
@@ -69,9 +69,9 @@ export default function FinalCta() {
               {t.donate.giveNow}
             </Link>
           ) : null}
-        </motion.div>
+        </div>
 
-        <motion.div {...stagger(0.4)} className="mt-6 flex flex-col items-center gap-4">
+        <div className="mt-6 flex flex-col items-center gap-4">
           {CHECKOUT_AVAILABLE ? (
             <p className="max-w-[46ch] text-[12px] font-medium leading-[1.45] tracking-[0.01em] text-text-faint">
               {t.donate.potNote}
@@ -83,7 +83,7 @@ export default function FinalCta() {
           >
             {t.home.finalCta.noCode}
           </Link>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

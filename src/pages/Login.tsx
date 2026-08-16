@@ -149,7 +149,7 @@ export default function Login() {
           alt=""
           className="h-full w-full object-cover opacity-[0.15]"
         />
-        <div className="absolute inset-0 bg-[radial-gradient(520px_circle_at_50%_42%,rgba(23,105,255,0.08),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(520px_circle_at_50%_42%,rgba(0,61,122,0.08),transparent_70%)]" />
       </div>
 
       <div
@@ -168,15 +168,8 @@ export default function Login() {
           </Link>
         </div>
 
-        {/* Intro block */}
-        <motion.img
-          src="/logo-mark.png"
-          alt=""
-          initial={reduceMotion ? false : { opacity: 0, scale: 0.7 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: reduceMotion ? 0 : 0.8, ease: EASE }}
-          className="h-14 w-14 rounded-full"
-        />
+        {/* Intro block — logo static (images never animate) */}
+        <img src="/logo-mark.png" alt="" className="h-14 w-14 rounded-full" />
         <motion.h1
           {...introStagger(1)}
           className="mt-5 text-center font-display text-2xl font-medium leading-[1.2] tracking-[-0.01em] text-text md:text-[32px]"
@@ -192,12 +185,9 @@ export default function Login() {
           </motion.p>
         )}
 
-        {/* Email + password form */}
-        <motion.form
+        {/* Email + password form — static (forms never animate) */}
+        <form
           onSubmit={(e) => void submit(e)}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: reduceMotion ? 0 : 0.3, duration: 0.4 }}
           className="mt-8 flex w-full flex-col items-stretch gap-3"
         >
           {mode === 'up' ? (
@@ -299,15 +289,10 @@ export default function Login() {
               </button>
             ) : null}
           </div>
-        </motion.form>
+        </form>
 
-        {/* Secondary links — fade in last */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: reduceMotion ? 0 : 0.8, duration: 0.5 }}
-          className="mt-12 flex flex-col items-center gap-2.5 text-center text-[13px] font-medium tracking-[0.01em] text-text-muted"
-        >
+        {/* Secondary links — static */}
+        <div className="mt-12 flex flex-col items-center gap-2.5 text-center text-[13px] font-medium tracking-[0.01em] text-text-muted">
           <p>
             {t.auth.visiting}{' '}
             <Link to="/feed" className="text-amber transition-colors hover:text-amber-soft">
@@ -320,7 +305,7 @@ export default function Login() {
               {t.auth.teamSignIn}
             </Link>
           </p>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

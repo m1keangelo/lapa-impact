@@ -2,11 +2,11 @@
  * FeedEntryCard (feed.md §3) — rich ledger entry for the public stream.
  * Four variants: donation (amber), transfer (terra, proof chip), update
  * (sage, metrics mini-chips, expandable body), photo (cream, 16:9 thumb,
- * "matched" chip). Live-pushed entries get the signature treatment: slide
- * down + 1px amber left border that flashes and fades over 2s.
+ * "matched" chip). Live-pushed entries get a quiet static amber left
+ * edge while fresh — cards themselves never animate (TYPOGRAPHIC MOTION
+ * ONLY).
  */
 import { useState, type ReactNode } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRightToLine,
   Camera,
@@ -28,7 +28,6 @@ import { formatMoney, formatShortDate, pickLang, pickMetrics, privacyName } from
 import type { FeedEntry, MediaItem, Transfer } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 /** Resolve a campaign location id to its display name. */
 function locationLabel(id: string | undefined, lang: 'en' | 'es'): string | null {
@@ -139,22 +138,13 @@ export default function FeedEntryCard({
   }
 
   return (
-    <motion.div
-      layout="position"
-      initial={{ opacity: 0, y: -16 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
-      transition={{ duration: 0.45, ease: EASE, layout: { duration: 0.3, ease: EASE } }}
-      className="relative"
-    >
-      {/* Live-insert amber border flash (fades over 2s) */}
+    <div className="relative">
+      {/* Live-insert marker: a quiet static amber edge while the entry is
+          fresh — no flash animation (TYPOGRAPHIC MOTION ONLY). */}
       {fresh ? (
-        <motion.span
+        <span
           aria-hidden
           className="absolute inset-y-0 left-0 w-[3px] rounded-l-card bg-amber"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: 0 }}
-          transition={{ duration: 2, ease: 'easeOut' }}
         />
       ) : null}
 
@@ -352,18 +342,9 @@ export default function FeedEntryCard({
           ) : null}
         </div>
 
-        {/* Expanded detail */}
-        <AnimatePresence initial={false}>
-          {open ? (
-            <motion.div
-              key="detail"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: EASE }}
-              className="overflow-hidden"
-            >
-              <div className="border-t border-border px-4 py-3 pl-[68px]">
+        {/* Expanded detail — instant disclosure, no height animation */}
+        {open ? (
+          <div className="border-t border-border px-4 py-3 pl-[68px]">
                 {entry.kind === 'transfer' ? (
                   <dl className="space-y-1.5 text-sm leading-[1.55]">
                     <div>
@@ -422,11 +403,9 @@ export default function FeedEntryCard({
                     })()}
                   </>
                 ) : null}
-              </div>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+          </div>
+        ) : null}
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -6,10 +6,11 @@
  * (firestore.rules settings/{id}). When the doc is missing or the list is
  * empty, the hero falls back to the bundled default photo — the page is
  * never empty and never broken.
+ *
+ * SDK loads lazily (firebaseCore) — the homepage bundle stays light (§44).
  */
 import { useEffect, useState } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { firebaseReady, getDb } from '@/lib/firebaseCore';
 
 export interface HeroImagesState {
   /** Remote slideshow images, in rotation order. Empty = default photo. */
@@ -22,32 +23,44 @@ export function useHeroImages(): HeroImagesState {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!db) {
+    if (!firebaseReady) {
       setLoading(false);
       return;
     }
-    const unsub = onSnapshot(
-      doc(db, 'settings', 'hero'),
-      (snap) => {
-        if (snap.exists()) {
-          const data = snap.data() as { images?: unknown };
-          setImages(
-            Array.isArray(data.images)
-              ? data.images.filter((x): x is string => typeof x === 'string' && x.length > 0)
-              : [],
-          );
-        } else {
+    let cancelled = false;
+    let unsub: (() => void) | undefined;
+    void (async () => {
+      const [db, fs] = await Promise.all([getDb(), import('firebase/firestore')]);
+      if (cancelled || !db) {
+        if (!cancelled) setLoading(false);
+        return;
+      }
+      unsub = fs.onSnapshot(
+        fs.doc(db, 'settings', 'hero'),
+        (snap) => {
+          if (snap.exists()) {
+            const data = snap.data() as { images?: unknown };
+            setImages(
+              Array.isArray(data.images)
+                ? data.images.filter((x): x is string => typeof x === 'string' && x.length > 0)
+                : [],
+            );
+          } else {
+            setImages([]);
+          }
+          setLoading(false);
+        },
+        (err) => {
+          console.warn('[useHeroImages] listener failed:', err);
           setImages([]);
-        }
-        setLoading(false);
-      },
-      (err) => {
-        console.warn('[useHeroImages] listener failed:', err);
-        setImages([]);
-        setLoading(false);
-      },
-    );
-    return unsub;
+          setLoading(false);
+        },
+      );
+    })();
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
   }, []);
 
   return { images, loading };

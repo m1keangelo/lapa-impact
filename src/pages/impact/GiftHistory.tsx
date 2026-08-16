@@ -4,7 +4,6 @@
  * slide in at the top), a count badge, loading skeletons and a HandHeart
  * empty state.
  */
-import { AnimatePresence, motion } from 'framer-motion';
 import { HandHeart } from 'lucide-react';
 import EmptyState from '@/components/EmptyState';
 import FeedItem from '@/components/FeedItem';
@@ -12,7 +11,6 @@ import { useLanguage } from '@/i18n/LanguageContext';
 import { pickLang } from '@/lib/format';
 import type { Donation, LiveStatus } from '@/lib/types';
 
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 interface GiftHistoryProps {
   donations: Donation[];
@@ -20,7 +18,7 @@ interface GiftHistoryProps {
   reducedMotion: boolean;
 }
 
-export default function GiftHistory({ donations, status, reducedMotion }: GiftHistoryProps) {
+export default function GiftHistory({ donations, status }: GiftHistoryProps) {
   const { t, lang } = useLanguage();
   return (
     <section aria-label={t.giftHistory.sectionAria}>
@@ -59,27 +57,19 @@ export default function GiftHistory({ donations, status, reducedMotion }: GiftHi
             body={t.giftHistory.emptyBody}
           />
         ) : (
-          <motion.ul layout="position" className="space-y-3">
-            <AnimatePresence initial={false}>
-              {donations.map((d) => (
-                <motion.li
-                  key={d.id}
-                  layout="position"
-                  initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: reducedMotion ? 0.2 : 0.45, ease: EASE }}
-                >
-                  <FeedItem
-                    variant="donation"
-                    title={t.giftHistory.giftTitle}
-                    meta={d.note ? pickLang(d, 'note', lang) : undefined}
-                    amount={d.amount}
-                    timestamp={d.timestamp}
-                  />
-                </motion.li>
-              ))}
-            </AnimatePresence>
-          </motion.ul>
+          <ul className="space-y-3">
+            {donations.map((d) => (
+              <li key={d.id}>
+                <FeedItem
+                  variant="donation"
+                  title={t.giftHistory.giftTitle}
+                  meta={d.note ? pickLang(d, 'note', lang) : undefined}
+                  amount={d.amount}
+                  timestamp={d.timestamp}
+                />
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </section>

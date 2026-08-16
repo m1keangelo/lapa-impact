@@ -1,16 +1,14 @@
 /**
  * Feed sidebar (feed.md §4) — desktop only. "This week" totals with 7-day
- * sparklines (path draws on scroll into view), top supporters (privacy
- * names only), and the transparency note. Data comes from the loaded
- * public feed collections — all privacy-safe.
+ * sparklines (static — charts never draw themselves), top supporters
+ * (privacy names only), and the transparency note. Data comes from the
+ * loaded public feed collections — all privacy-safe.
  */
-import { useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion';
+import { useMemo, useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { formatCount, formatMoney, privacyName, toMillis } from '@/lib/format';
 import type { Donation, ImpactUpdate, Transfer } from '@/lib/types';
 
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 const DAY = 24 * 60 * 60 * 1000;
 
 /** 7 day-buckets (oldest → newest) summed by a value selector. */
@@ -29,9 +27,6 @@ function weekBuckets<T>(items: T[], ts: (t: T) => number, value: (t: T) => numbe
 }
 
 function Sparkline({ data, color }: { data: number[]; color: string }) {
-  const ref = useRef<SVGSVGElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.6 });
-  const reduceMotion = useReducedMotion();
   if (data.length < 2) return null;
 
   const w = 96;
@@ -46,17 +41,14 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
   const d = `M ${points.map((p) => p.join(',')).join(' L ')}`;
 
   return (
-    <svg ref={ref} width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="shrink-0" aria-hidden>
-      <motion.path
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="shrink-0" aria-hidden>
+      <path
         d={d}
         fill="none"
         stroke={color}
         strokeWidth="1.5"
         strokeLinejoin="round"
         strokeLinecap="round"
-        initial={{ pathLength: reduceMotion ? 1 : 0 }}
-        animate={inView ? { pathLength: 1 } : {}}
-        transition={{ duration: 0.9, ease: EASE }}
       />
     </svg>
   );
@@ -71,7 +63,6 @@ interface FeedSidebarProps {
 
 export default function FeedSidebar({ donations, transfers, updates }: FeedSidebarProps) {
   const { t, lang } = useLanguage();
-  const reduceMotion = useReducedMotion();
   const [showNumbers, setShowNumbers] = useState(false);
   const week = useMemo(() => {
     const gifts = weekBuckets(donations, (d) => toMillis(d.timestamp), (d) => d.amount);
@@ -113,13 +104,9 @@ export default function FeedSidebar({ donations, transfers, updates }: FeedSideb
 
   return (
     <aside className="sticky top-[140px] hidden w-[300px] shrink-0 flex-col gap-4 lg:flex">
-      {/* This week */}
-      <motion.section
+      {/* This week — static card (cards never animate) */}
+      <section
         className="rounded-card border border-border bg-surface p-5"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.5, ease: EASE }}
         aria-label={t.feedSidebar.thisWeek}
       >
         <p className="eyebrow">{t.feedSidebar.thisWeek}</p>
@@ -131,46 +118,31 @@ export default function FeedSidebar({ donations, transfers, updates }: FeedSideb
         >
           {showNumbers ? t.home.hero.hideNumbers : t.home.hero.seeNumbers}
         </button>
-        <AnimatePresence initial={false}>
-          {showNumbers && (
-            <motion.div
-              key="week-numbers"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.3, ease: EASE }}
-              className="overflow-hidden"
-            >
-              <div className="mt-4 space-y-4">
-                {rows.map((r) => (
-                  <div key={r.label} className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-faint">
-                        {r.label}
-                      </p>
-                      <p
-                        className="mt-0.5 font-mono text-[15px] font-medium text-text"
-                        style={{ fontVariantNumeric: 'tabular-nums' }}
-                      >
-                        {r.value}
-                      </p>
-                    </div>
-                    <Sparkline data={r.data} color={r.color} />
-                  </div>
-                ))}
+        {showNumbers ? (
+          <div className="mt-4 space-y-4">
+            {rows.map((r) => (
+              <div key={r.label} className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-faint">
+                    {r.label}
+                  </p>
+                  <p
+                    className="mt-0.5 font-mono text-[15px] font-medium text-text"
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
+                  >
+                    {r.value}
+                  </p>
+                </div>
+                <Sparkline data={r.data} color={r.color} />
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.section>
+            ))}
+          </div>
+        ) : null}
+      </section>
 
-      {/* Top supporters */}
-      <motion.section
+      {/* Top supporters — static card */}
+      <section
         className="rounded-card border border-border bg-surface p-5"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.5, ease: EASE, delay: 0.12 }}
         aria-label={t.feedSidebar.topSupporters}
       >
         <p className="eyebrow">{t.feedSidebar.topSupporters}</p>
@@ -200,20 +172,14 @@ export default function FeedSidebar({ donations, transfers, updates }: FeedSideb
         <p className="mt-4 border-t border-border pt-3 text-[12px] font-medium tracking-[0.01em] text-text-muted">
           {t.feedSidebar.thankYou}
         </p>
-      </motion.section>
+      </section>
 
-      {/* Transparency note */}
-      <motion.section
-        className="rounded-card border border-border bg-surface-2 p-5"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.5, ease: EASE, delay: 0.24 }}
-      >
+      {/* Transparency note — static card */}
+      <section className="rounded-card border border-border bg-surface-2 p-5">
         <p className="text-[12px] font-medium leading-[1.5] tracking-[0.01em] text-text-muted">
           {t.feedSidebar.transparency}
         </p>
-      </motion.section>
+      </section>
     </aside>
   );
 }

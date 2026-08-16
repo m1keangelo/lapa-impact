@@ -851,6 +851,8 @@ export const es: Dictionary = {
       checkoutError:
         'No pudimos abrir el pago seguro. Inténtalo de nuevo en un momento.',
       secureNote: 'Pago seguro con Stripe · Tarjetas, Apple Pay, Google Pay',
+      checkoutUnavailable:
+        'El pago en línea aún no está activo. Vuelve pronto — el registro mostrará cada dólar cuando la misión esté en marcha.',
     },
     success: {
       confirmingTitle: 'Confirmando tu donativo con Stripe…',
@@ -883,6 +885,10 @@ export const es: Dictionary = {
         'Esta compilación no está conectada a la confirmación de pagos en vivo. En la app real, tu código de donante aparece aquí segundos después del pago.',
       backHome: 'Volver al inicio',
       loadingAria: 'Confirmando tu donativo',
+      noSessionTitle: 'Aquí no hay nada que confirmar.',
+      noSessionBody:
+        'Esta página solo aparece después de un pago completado con Stripe. Si acabas de donar, vuelve desde el enlace de confirmación que Stripe te mostró al finalizar.',
+      noSessionDonate: 'Ir a donar',
     },
   },
   story: {

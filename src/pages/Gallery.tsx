@@ -6,7 +6,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { AlertTriangle, ArrowRight } from 'lucide-react';
 import LiveBadge from '@/components/LiveBadge';
 import { useLanguage, type LanguageContextValue } from '@/i18n/LanguageContext';
@@ -49,6 +49,7 @@ function GallerySkeleton() {
 }
 
 export default function Gallery() {
+  const reduceMotion = useReducedMotion();
   const media = useMedia();
   const [searchParams, setSearchParams] = useSearchParams();
   const [filter, setFilter] = useState<GalleryFilter>('all');
@@ -124,9 +125,9 @@ export default function Gallery() {
         <div className="flex items-center justify-between gap-4">
           <motion.p
             className="eyebrow flex items-center gap-2"
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: EASE }}
+            transition={{ duration: reduceMotion ? 0 : 0.45, ease: EASE }}
           >
             <span className="inline-block h-px w-4 bg-amber" aria-hidden />
             {t.gallery.eyebrow}
@@ -139,9 +140,9 @@ export default function Gallery() {
             <span key={word} className="inline-block overflow-hidden pb-1 align-top">
               <motion.span
                 className="inline-block"
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: reduceMotion ? 0 : 22 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: EASE, delay: 0.06 * i }}
+                transition={{ duration: reduceMotion ? 0 : 0.5, ease: EASE, delay: reduceMotion ? 0 : 0.06 * i }}
               >
                 {word}
                 {i < 2 ? ' ' : ''}
@@ -152,9 +153,9 @@ export default function Gallery() {
 
         <motion.p
           className="mt-3 max-w-[56ch] text-[15px] leading-[1.55] text-text-muted"
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: reduceMotion ? 0 : 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}
+          transition={{ duration: reduceMotion ? 0 : 0.45, ease: EASE, delay: reduceMotion ? 0 : 0.18 }}
         >
           {t.gallery.sub}
         </motion.p>
@@ -162,9 +163,9 @@ export default function Gallery() {
         <motion.p
           className="mt-4 font-mono text-[13px] tracking-[0.01em] text-text-muted"
           style={{ fontVariantNumeric: 'tabular-nums' }}
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE, delay: 0.26 }}
+          transition={{ duration: reduceMotion ? 0 : 0.45, ease: EASE, delay: reduceMotion ? 0 : 0.24 }}
         >
           {t.gallery.photosCount(formatCount(visibleItems.length))}
           {latestTs ? `${t.gallery.latestPrefix}${formatRelativeTime(latestTs, lang)}` : ''}
@@ -173,10 +174,10 @@ export default function Gallery() {
 
       {/* ——— Section 2: filter row ——— */}
       <div className="mt-8 flex items-center gap-1 overflow-x-auto no-scrollbar" role="tablist" aria-label={t.gallery.filterAria}>
-        {FILTERS.map((f, i) => {
+        {FILTERS.map((f) => {
           const active = filter === f.id;
           return (
-            <motion.button
+            <button
               key={f.id}
               type="button"
               role="tab"
@@ -186,22 +187,15 @@ export default function Gallery() {
                 'relative flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium transition-colors duration-200',
                 active ? 'text-text' : 'text-text-muted hover:text-text',
               )}
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.35, ease: EASE, delay: 0.05 * i }}
             >
               {active ? (
-                <motion.span
-                  layoutId="gallery-chip-pill"
-                  className="absolute inset-0 rounded-full bg-surface-3"
-                  transition={{ duration: 0.2, ease: EASE }}
-                />
+                <span className="absolute inset-0 rounded-full bg-surface-3" />
               ) : null}
               {f.dot ? (
                 <span className="relative h-1.5 w-1.5 rounded-full" style={{ backgroundColor: f.dot }} aria-hidden />
               ) : null}
               <span className="relative">{f.label}</span>
-            </motion.button>
+            </button>
           );
         })}
       </div>
@@ -246,16 +240,14 @@ export default function Gallery() {
           ) : (
             <>
               <div className="columns-2 gap-3 md:columns-3 xl:columns-4">
-                <AnimatePresence initial={false}>
-                  {photos.map((p) => (
-                    <GalleryTile
-                      key={p.media.id}
-                      media={p.media}
-                      matched={Boolean(p.media.donationId)}
-                      onOpen={() => openPhoto(p.media.id)}
-                    />
-                  ))}
-                </AnimatePresence>
+                {photos.map((p) => (
+                  <GalleryTile
+                    key={p.media.id}
+                    media={p.media}
+                    matched={Boolean(p.media.donationId)}
+                    onOpen={() => openPhoto(p.media.id)}
+                  />
+                ))}
               </div>
 
               {media.hasMore ? (
