@@ -184,6 +184,46 @@ export const en = {
       myImpactCta: 'Open My Impact',
       noCode: 'Just visiting? Watch the public feed →',
     },
+    oneNeed: {
+      eyebrow: 'What happened',
+      title: 'On August 10, the ground shook in Chocó.',
+      body: 'A magnitude 7.4 earthquake struck one of Colombia’s most forgotten regions. Families lost their roofs, their water and their safety overnight. Our people need us — and help cannot wait.',
+      stats: [
+        { value: 'M7.4', label: 'Earthquake magnitude' },
+        { value: 'AUG 10', label: 'Colombia, 2026' },
+        { value: 'Chocó', label: 'Disaster zone' },
+      ] as { value: string; label: string }[],
+    },
+    oneFunds: {
+      eyebrow: 'Where your money goes',
+      title: 'Every dollar has a destination.',
+      body: 'No vague promises. This is what your gift does on the ground:',
+      cards: [
+        {
+          title: 'Food & water',
+          tag: '$25',
+          body: 'feeds a family for a week.',
+          img: '/quake-1.jpg',
+        },
+        {
+          title: 'Shelter',
+          tag: '$100',
+          body: 'helps raise a roof before the next rain.',
+          img: '/quake-2.jpg',
+        },
+        {
+          title: 'Medicine',
+          tag: '$50',
+          body: 'gets medicine where no one else reaches.',
+          img: '/quake-3.jpg',
+        },
+      ] as { title: string; tag: string; body: string; img: string }[],
+    },
+    oneGive: {
+      eyebrow: 'Give now',
+      title: 'One page. One decision.',
+      body: 'Pick an amount and in under a minute your help is on its way. Then watch it work in the live ledger.',
+    },
   },
 
   login: {

@@ -1,21 +1,23 @@
 /**
- * Home / Landing (`/`) — public front door.
+ * Home / Landing (`/`) — ONE PAGE, one decision: get help moving.
  * Lenis smooth scroll on this page only.
- * Composition (FIN spec §7):
- * Hero → Quiénes Somos (one powerful pause) → Event Spotlight →
- * Path (how it works) → WhyBuilt → FeedPreview (proof) →
- * Closing → FinalCta. Footer from Layout.
+ *
+ * Composition (one-pager directive):
+ * Hero (identity) → OneNeed (what happened) → OneFunds (where the money
+ * goes) → FeedPreview (proof, live) → GiveSection (the ask, #donar) →
+ * Closing. Footer from Layout.
+ *
+ * The removed sections (WhoWeAre, EventSpotlight, Path, WhyBuilt,
+ * FinalCta) stay in the codebase — hidden, not deleted.
  */
 import { useEffect } from 'react';
 import Lenis from 'lenis';
 import Hero from './home/Hero';
-import WhoWeAre from './home/WhoWeAre';
-import EventSpotlight from './home/EventSpotlight';
-import Path from './home/Path';
-import WhyBuilt from './home/WhyBuilt';
+import OneNeed from './home/OneNeed';
+import OneFunds from './home/OneFunds';
 import FeedPreview from './home/FeedPreview';
+import GiveSection from './home/GiveSection';
 import Closing from './home/Closing';
-import FinalCta from './home/FinalCta';
 
 export default function Home() {
   // Lenis smooth scroll — this page only.
@@ -39,13 +41,11 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <WhoWeAre />
-      <EventSpotlight />
-      <Path />
-      <WhyBuilt />
+      <OneNeed />
+      <OneFunds />
       <FeedPreview />
+      <GiveSection />
       <Closing />
-      <FinalCta />
     </>
   );
 }

@@ -15,7 +15,6 @@
  * The photograph stays still: no parallax, no counters, no loops.
  */
 import { memo, useEffect, useState } from 'react';
-import { Link } from 'react-router';
 import { useReducedMotion } from 'framer-motion';
 import { ChevronDown, HandCoins } from 'lucide-react';
 import LiveBadge from '@/components/LiveBadge';
@@ -279,14 +278,14 @@ export default function Hero() {
         {/* CTA row — static (buttons never animate), subordinate to the type */}
         <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
           {CHECKOUT_AVAILABLE ? (
-            <Link
-              to="/donate"
+            <a
+              href="#donar"
               aria-label={t.donate.giveAria}
               className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[4px] bg-[#003D7A] px-8 py-4 text-[16px] font-bold tracking-[0.01em] text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-[#0A4E97] active:scale-[0.98] sm:w-auto"
             >
               <HandCoins className="h-4 w-4" />
               {t.donate.giveNow}
-            </Link>
+            </a>
           ) : null}
           <a
             href="#feed-preview"

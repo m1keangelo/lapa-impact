@@ -183,6 +183,46 @@ export const es: Dictionary = {
       myImpactCta: 'Abrir Mi impacto',
       noCode: '¿Solo mirando? Mira el registro público →',
     },
+    oneNeed: {
+      eyebrow: 'Lo que pasó',
+      title: 'El 10 de agosto, la tierra tembló en el Chocó.',
+      body: 'Un sismo de magnitud 7.4 sacudió una de las regiones más olvidadas de Colombia. Familias perdieron su techo, su agua y su tranquilidad de la noche a la mañana. Nuestra gente nos necesita — y la ayuda no puede esperar.',
+      stats: [
+        { value: 'M7.4', label: 'Magnitud del sismo' },
+        { value: '10 AGO', label: 'Colombia, 2026' },
+        { value: 'Chocó', label: 'Zona del desastre' },
+      ] as { value: string; label: string }[],
+    },
+    oneFunds: {
+      eyebrow: 'A dónde va tu dinero',
+      title: 'Cada dólar tiene un destino.',
+      body: 'Nada de promesas vagas. Esto es lo que tu aporte hace en el terreno:',
+      cards: [
+        {
+          title: 'Comida y agua',
+          tag: '$25',
+          body: 'alimentan a una familia durante una semana.',
+          img: '/quake-1.jpg',
+        },
+        {
+          title: 'Refugio',
+          tag: '$100',
+          body: 'ayudan a levantar un techo antes de la próxima lluvia.',
+          img: '/quake-2.jpg',
+        },
+        {
+          title: 'Medicina',
+          tag: '$50',
+          body: 'llevan medicinas donde nadie más llega.',
+          img: '/quake-3.jpg',
+        },
+      ] as { title: string; tag: string; body: string; img: string }[],
+    },
+    oneGive: {
+      eyebrow: 'Dona ahora',
+      title: 'Una página. Una decisión.',
+      body: 'Elige un monto y en menos de un minuto tu ayuda ya está en camino. Después, mírala trabajar en el registro en vivo.',
+    },
   },
 
   login: {

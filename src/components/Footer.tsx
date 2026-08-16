@@ -43,19 +43,18 @@ export default function Footer() {
           <div>
             <p className="eyebrow !text-[#A39E93]">{t.footer.quickLinks}</p>
             <ul className="mt-4 space-y-2.5">
+              {/* One-pager: footer links stay ON the page. */}
               {[
-                { to: '/feed', label: t.footer.liveFeed },
-                { to: '/event', label: t.nav.event },
-                { to: '/gallery', label: t.footer.photoGallery },
-                { to: '/impact', label: t.nav.myImpact },
+                { to: '/#donar', label: t.nav.give },
+                { to: '/#feed-preview', label: t.footer.liveFeed },
               ].map((l) => (
                 <li key={l.to}>
-                  <Link
-                    to={l.to}
+                  <a
+                    href={l.to}
                     className="text-[13px] font-medium tracking-[0.01em] text-[#A39E93] transition-colors hover:text-[#F7F5F0]"
                   >
                     {l.label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
