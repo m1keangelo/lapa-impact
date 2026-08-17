@@ -233,6 +233,9 @@ export const es: Dictionary = {
       completedChip: '✓ LOGRADO',
       completedLine: 'Meta alcanzada — gracias a quienes se sumaron.',
       oneFundNote: 'Un solo fondo. Cada necesidad se atiende en orden de urgencia.',
+      settlementNote: 'Los fondos tardan ~7 días en estar disponibles — eso no lo controlamos nosotros. Cuando lo están, la ayuda sale en minutos.',
+      aimedAt: 'Tu ayuda se dirige a:',
+      anyNeed: 'donde más se necesita',
     },
   },
 

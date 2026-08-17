@@ -246,9 +246,9 @@ export const demoCampaigns: Campaign[] = [
     title: 'A roof for Doña María',
     titleEs: 'Un techo para Doña María',
     story:
-      'Her home in San José del Palmar lost its roof in the quake. Materials are ready — we need the last stretch to put it up before the rains.',
+      'The quake took her roof in San José del Palmar. She sleeps under plastic now. Materials are bought and waiting — $400 puts the roof over her head before the rains. She stays dry tonight.',
     storyEs:
-      'Su casa en San José del Palmar perdió el techo en el sismo. Los materiales están listos — falta el último tramo para levantarlo antes de las lluvias.',
+      'El sismo le quitó el techo en San José del Palmar. Hoy duerme bajo plástico. Los materiales ya están comprados — $400 ponen el techo antes de las lluvias. Esta noche, ella no se moja.',
     goalCents: 40000,
     raisedCents: 15600,
     imageUrl: '/quake-2.jpg',
@@ -261,9 +261,9 @@ export const demoCampaigns: Campaign[] = [
     title: 'Formula for baby Samir',
     titleEs: 'Fórmula para el bebé Samir',
     story:
-      'A two-month-old in Quibdó needs formula for the next month. Every can counts while the roads reopen.',
+      'Samir is two months old. His mom is alone in Quibdó and formula costs $45 a month there. $120 feeds him for the next stretch. The baby eats today.',
     storyEs:
-      'Un bebé de dos meses en Quibdó necesita fórmula para el próximo mes. Cada lata cuenta mientras se reabren las vías.',
+      'Samir tiene dos meses. Su mamá está sola en Quibdó y la fórmula cuesta $45 al mes allá. $120 lo alimentan en este tramo. El bebé come hoy.',
     goalCents: 12000,
     raisedCents: 8450,
     imageUrl: '/quake-4.jpg',
@@ -276,9 +276,9 @@ export const demoCampaigns: Campaign[] = [
     title: 'Water filters for Alto Bonito',
     titleEs: 'Filtros de agua para Alto Bonito',
     story:
-      'Fourteen families in one vereda drinking unsafe water. $25 puts a filter in a home.',
+      'Fourteen families in Alto Bonito were drinking river water. $25 puts a filter in a home. Fourteen homes now drink clean water.',
     storyEs:
-      'Catorce familias en una vereda tomando agua no segura. $25 ponen un filtro en un hogar.',
+      'Catorce familias en Alto Bonito tomaban agua del río. $25 ponen un filtro en un hogar. Catorce hogares ya toman agua limpia.',
     goalCents: 35000,
     raisedCents: 35000,
     imageUrl: '/quake-6.jpg',

@@ -36,8 +36,14 @@ export const createCheckoutSession = onRequest(
       return;
     }
 
-    const body = (req.body ?? {}) as { type?: unknown; amountCents?: unknown };
+    const body = (req.body ?? {}) as { type?: unknown; amountCents?: unknown; campaignId?: unknown };
     const type = body.type === 'ticket' ? 'ticket' : 'donation';
+    // Optional mini-campaign attribution — bounded string, passes through
+    // to session metadata; the stripeWebhook increments that campaign's bar.
+    const campaignId =
+      typeof body.campaignId === 'string' && /^[a-zA-Z0-9_-]{1,64}$/.test(body.campaignId)
+        ? body.campaignId
+        : null;
 
     let amountCents: number;
     if (type === 'ticket') {
@@ -73,7 +79,7 @@ export const createCheckoutSession = onRequest(
             },
           },
         ],
-        metadata: { type },
+        metadata: { type, ...(campaignId ? { campaignId } : {}) },
         success_url: `${SITE_URL}/donate/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${SITE_URL}/donate`,
       });

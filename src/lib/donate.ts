@@ -33,12 +33,14 @@ export const CHECKOUT_AVAILABLE = Boolean(STRIPE_PAYMENT_LINK || FUNCTIONS_BASE_
 export async function startCheckout(
   type: 'donation' | 'ticket',
   amountCents?: number,
+  /** optional mini-campaign attribution — the webhook increments its bar */
+  campaignId?: string,
 ): Promise<void> {
   if (FUNCTIONS_BASE_URL) {
     const res = await fetch(`${FUNCTIONS_BASE_URL}/createCheckoutSession`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, amountCents }),
+      body: JSON.stringify({ type, amountCents, ...(campaignId ? { campaignId } : {}) }),
     });
     if (!res.ok) throw new Error(`checkout_failed:${res.status}`);
     const data = (await res.json()) as { url?: string };

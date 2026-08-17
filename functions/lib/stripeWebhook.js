@@ -155,6 +155,35 @@ exports.stripeWebhook = (0, https_1.onRequest)({ secrets: [STRIPE_SECRET_KEY, ST
         createdAt: firestore_1.FieldValue.serverTimestamp(),
     });
     await batch.commit();
+    // Mini-campaign attribution (additive): when the checkout session
+    // carries metadata.campaignId, move that campaign's progress bar by
+    // the confirmed amount — and mark it completed when the goal is met.
+    // Money still pools into the single fund; this is bookkeeping only.
+    const campaignId = session.metadata?.campaignId;
+    if (typeof campaignId === 'string' && campaignId.length > 0 && amount > 0) {
+        try {
+            const campRef = firestore.collection('campaigns').doc(campaignId);
+            await firestore.runTransaction(async (tx) => {
+                const snap = await tx.get(campRef);
+                if (!snap.exists)
+                    return;
+                const camp = snap.data();
+                const raised = (camp.raisedCents ?? 0) + amount;
+                const goal = camp.goalCents ?? 0;
+                tx.update(campRef, {
+                    raisedCents: raised,
+                    ...(camp.status === 'active' && goal > 0 && raised >= goal
+                        ? { status: 'completed', completedAt: firestore_1.FieldValue.serverTimestamp() }
+                        : {}),
+                });
+            });
+            console.log(`[stripeWebhook] campaign ${campaignId} += ${amount}¢`);
+        }
+        catch (err) {
+            // Never fail the webhook over attribution — the gift is recorded.
+            console.error('[stripeWebhook] campaign increment failed:', err);
+        }
+    }
     console.log(`[stripeWebhook] recorded ${amount}¢ from session ${session.id} → donor ${donorCode}`);
     res.status(200).json({ received: true });
 });

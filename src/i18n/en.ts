@@ -234,6 +234,9 @@ export const en = {
       completedChip: '✓ FUNDED',
       completedLine: 'Goal reached — thanks to everyone who showed up.',
       oneFundNote: 'One single fund. Every need is served in order of urgency.',
+      settlementNote: 'Funds take ~7 days to become available — that part is out of our hands. The moment they are, help moves in minutes.',
+      aimedAt: 'Your gift goes to:',
+      anyNeed: 'wherever the need is greatest',
     },
   },
 

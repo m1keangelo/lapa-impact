@@ -12,9 +12,10 @@
  * the functions are deployed, everything falls back to the fixed
  * Stripe Payment Link.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { m, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { useCampaigns } from '@/hooks/useCampaigns';
 import { CHECKOUT_AVAILABLE, startCheckout } from '@/lib/donate';
 import { formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -28,11 +29,24 @@ const MIN_CUSTOM_CENTS = 100;
 
 export default function DonateLadder() {
   const reduceMotion = useReducedMotion();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [selected, setSelected] = useState<number | null>(TICKET_CENTS);
   const [custom, setCustom] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
+
+  /* Campaign aiming: a card's "Help here" button fires lapa:campaign and
+     the ladder shows where the gift is headed (attribution tag — the
+     money still pools into the single fund, stated plainly on-page). */
+  const [aimId, setAimId] = useState<string | null>(null);
+  const { campaigns } = useCampaigns();
+  useEffect(() => {
+    const onAim = (e: Event) => setAimId((e as CustomEvent<string>).detail ?? null);
+    window.addEventListener('lapa:campaign', onAim);
+    return () => window.removeEventListener('lapa:campaign', onAim);
+  }, []);
+  const aimed = aimId ? campaigns.find((c) => c.id === aimId) : undefined;
+  const aimedTitle = aimed ? (lang === 'es' ? aimed.titleEs : aimed.title) : null;
 
   const customCents = useMemo(() => {
     const n = Math.round(Number(custom.replace(/[^0-9.]/g, '')) * 100);
@@ -59,7 +73,7 @@ export default function DonateLadder() {
     const type =
       !customValid && selected === TICKET_CENTS ? 'ticket' : 'donation';
     try {
-      await startCheckout(type, chosenCents);
+      await startCheckout(type, chosenCents, aimId ?? undefined);
       // Browser is navigating away — keep the busy state.
     } catch {
       setBusy(false);
@@ -77,6 +91,19 @@ export default function DonateLadder() {
 
   return (
     <div aria-label={t.donate.page.chooseAmount}>
+      {aimedTitle ? (
+        <p className="mb-3 flex items-center justify-center gap-2 rounded-full border border-amber/30 bg-amber/10 px-4 py-1.5 text-center text-[13px] font-semibold text-amber">
+          {t.home.campaigns.aimedAt} {aimedTitle}
+          <button
+            type="button"
+            onClick={() => setAimId(null)}
+            aria-label="×"
+            className="ml-1 rounded-full px-1 text-amber/70 transition-colors hover:text-amber"
+          >
+            ×
+          </button>
+        </p>
+      ) : null}
       <div className="grid grid-cols-2 gap-2.5 min-[420px]:grid-cols-3">
         {PRESETS.map((cents) => {
           const active = !customValid && selected === cents;
