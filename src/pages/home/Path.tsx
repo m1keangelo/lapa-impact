@@ -41,7 +41,7 @@ export default function Path() {
   });
 
   return (
-    <section aria-label={t.home.path.aria} className="py-24 md:py-32">
+    <section id="como-funciona" aria-label={t.home.path.aria} className="scroll-mt-20 py-24 md:py-32">
       <div className="mx-auto w-full max-w-container px-5 md:px-8">
         {/* Header — clear, trustworthy, authoritative; smaller than the
             identity sequence on purpose. */}

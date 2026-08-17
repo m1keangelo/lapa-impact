@@ -4,19 +4,21 @@
  *
  * Composition (one-pager directive):
  * Hero (identity) → OneNeed (what happened) → OneFunds (where the money
- * goes) → FeedPreview (proof, live) → GiveSection (the ask, #donar) →
- * Closing. Footer from Layout.
+ * goes) → Path (how it works, #como-funciona) → PhotoStrip (reality,
+ * second banner) → CampaignsSection (needs, dark) → GiveSection (the
+ * ask, #donar) → Closing. Footer from Layout.
  *
- * The removed sections (WhoWeAre, EventSpotlight, Path, WhyBuilt,
- * FinalCta) stay in the codebase — hidden, not deleted.
+ * The removed sections (WhoWeAre, EventSpotlight, FeedPreview,
+ * WhyBuilt, FinalCta) stay in the codebase — hidden, not deleted.
  */
 import { useEffect } from 'react';
 import Lenis from 'lenis';
 import Hero from './home/Hero';
 import OneNeed from './home/OneNeed';
 import OneFunds from './home/OneFunds';
+import Path from './home/Path';
+import PhotoStrip from './home/PhotoStrip';
 import CampaignsSection from './home/CampaignsSection';
-import FeedPreview from './home/FeedPreview';
 import GiveSection from './home/GiveSection';
 import Closing from './home/Closing';
 
@@ -44,8 +46,9 @@ export default function Home() {
       <Hero />
       <OneNeed />
       <OneFunds />
+      <Path />
+      <PhotoStrip />
       <CampaignsSection />
-      <FeedPreview />
       <GiveSection />
       <Closing />
     </>

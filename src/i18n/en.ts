@@ -56,6 +56,7 @@ export const en = {
     everyDollar: 'Every dollar is tracked publicly.',
     quickLinks: 'Quick links',
     liveFeed: 'Live feed',
+    howItWorks: 'How it works',
     photoGallery: 'Photo gallery',
     fieldNote: 'Field note',
     fieldNoteBody:
@@ -82,7 +83,7 @@ export const en = {
       familiesHelped: 'Families reached',
       seeNumbers: 'See the numbers',
       hideNumbers: 'Hide the numbers',
-      seeImpact: 'See the Impact',
+      seeImpact: 'How it works',
       scroll: 'scroll',
     },
     who: {
@@ -223,6 +224,10 @@ export const en = {
       eyebrow: 'Give now',
       title: 'One page. One decision.',
       body: 'Pick an amount and in under a minute your help is on its way. Then watch it work in the live ledger.',
+    },
+    photoBand: {
+      aria: 'Photos from Chocó after the earthquake',
+      line: 'This is real. This is now. This is Chocó.',
     },
     campaigns: {
       eyebrow: 'Real needs, right now',

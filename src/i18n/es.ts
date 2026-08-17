@@ -55,6 +55,7 @@ export const es: Dictionary = {
     everyDollar: 'Cada dólar queda a la vista de todos.',
     quickLinks: 'Enlaces rápidos',
     liveFeed: 'Registro en vivo',
+    howItWorks: 'Cómo funciona',
     photoGallery: 'Galería de fotos',
     fieldNote: 'Nota de campo',
     fieldNoteBody:
@@ -81,7 +82,7 @@ export const es: Dictionary = {
       familiesHelped: 'Familias alcanzadas',
       seeNumbers: 'Ver los números',
       hideNumbers: 'Ocultar los números',
-      seeImpact: 'Ver el impacto',
+      seeImpact: 'Cómo funciona',
       scroll: 'desliza',
     },
     who: {
@@ -222,6 +223,10 @@ export const es: Dictionary = {
       eyebrow: 'Dona ahora',
       title: 'Una página. Una decisión.',
       body: 'Elige un monto y en menos de un minuto tu ayuda ya está en camino. Después, mírala trabajar en el registro en vivo.',
+    },
+    photoBand: {
+      aria: 'Fotos del Chocó después del terremoto',
+      line: 'Esto es real. Esto es ahora. Esto es el Chocó.',
     },
     campaigns: {
       eyebrow: 'Necesidades reales, ahora',

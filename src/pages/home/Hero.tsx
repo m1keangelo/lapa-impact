@@ -288,7 +288,7 @@ export default function Hero() {
             </a>
           ) : null}
           <a
-            href="#feed-preview"
+            href="#como-funciona"
             className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[4px] border-2 border-[#F5F1E8]/60 px-8 py-4 text-[16px] font-bold tracking-[0.01em] text-[#F5F1E8] transition-all duration-150 ease-calm hover:bg-white/10 active:scale-[0.98] sm:w-auto"
           >
             {h.seeImpact}

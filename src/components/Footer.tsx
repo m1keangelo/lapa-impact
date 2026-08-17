@@ -46,7 +46,7 @@ export default function Footer() {
               {/* One-pager: footer links stay ON the page. */}
               {[
                 { to: '/#donar', label: t.nav.give },
-                { to: '/#feed-preview', label: t.footer.liveFeed },
+                { to: '/#como-funciona', label: t.footer.howItWorks },
               ].map((l) => (
                 <li key={l.to}>
                   <a
